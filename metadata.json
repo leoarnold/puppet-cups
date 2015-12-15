@@ -1,0 +1,15 @@
+{
+  "name": "leoarnold-cups",
+  "version": "0.1.0",
+  "author": "leoarnold",
+  "summary": "Puppet module for the Common Unix Printing System (CUPS)",
+  "license": "MIT",
+  "source": "https://github.com/leoarnold/puppet-cups",
+  "project_page": "https://github.com/leoarnold/puppet-cups",
+  "issues_url": "https://github.com/leoarnold/puppet-cups/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ],
+  "data_provider": null
+}
+
