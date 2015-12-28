@@ -1,5 +1,7 @@
 # cups
 
+[![Build Status](https://travis-ci.org/leoarnold/puppet-cups.svg)](https://travis-ci.org/leoarnold/puppet-cups)
+
 #### Table of Contents
 
 1. [Description](#description)
