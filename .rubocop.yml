@@ -1,0 +1,12 @@
+---
+Metrics/LineLength:
+  Max: 144
+  AllowURI: true
+  URISchemes:
+    - http
+    - https
+    - ipp
+    - ipps
+    - lpd
+    - socket
+    - puppet

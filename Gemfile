@@ -16,6 +16,7 @@ end
 
 group :development do
   gem 'puppetlabs_spec_helper', '>= 0.8.2', require: false
+  gem 'rubocop', '>= 0.35.0', require: false
   gem 'puppet-lint', '>= 1.0.0', require: false
   gem 'metadata-json-lint', '>= 0.0.11', require: false
 end
