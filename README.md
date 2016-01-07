@@ -6,54 +6,40 @@
 
 1. [Description](#description)
 1. [Setup - The basics of getting started with cups](#setup)
-    * [What cups affects](#what-cups-affects)
     * [Setup requirements](#setup-requirements)
     * [Beginning with cups](#beginning-with-cups)
 1. [Usage - Configuration options and additional functionality](#usage)
 1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+    * [Classes](#classes)
+    * [Defines](#defines)
+    * [Types](#types)
+    * [Facts](#facts)
 1. [Limitations - OS compatibility, etc.](#limitations)
 1. [Development - Guide for contributing to the module](#development)
 
 ## Description
 
-Start with a one- or two-sentence summary of what the module does and/or what
-problem it solves. This is your 30-second elevator pitch for your module.
-Consider including OS/Puppet version it works with.
+This module installs, configures, and manages the Common Unix Printing System (CUPS) service.
 
-You can give more descriptive information in a second paragraph. This paragraph
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?" If your module has a range of functionality (installation, configuration,
-management, etc.), this is the time to mention it.
+It provides Puppet types to install, configure, and manage CUPS printer queues and classes.
 
 ## Setup
 
-### What cups affects **OPTIONAL**
+### Setup Requirements
 
-If it's obvious what your module touches, you can skip this section. For
-example, folks can probably figure out that your mysql_instance module affects
-their MySQL instances.
+* Ruby 1.9.0 or later
+* Puppet 3.0.0 or later
+* CUPS 1.5 or later
 
-If there's more that they should know about, though, this is the place to mention:
+### Beginning with CUPS
 
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
+#### Minimal manifest
 
-### Setup Requirements **OPTIONAL**
+To ensure that CUPS is installed and the service is running, you should always declare the `cups` class.
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you might want to include an additional "Upgrading" section
-here.
-
-### Beginning with cups
-
-The very basic steps needed for a user to get the module up and running. This
-can include setup steps, if necessary, or it can be an example of the most
-basic use of the module.
+~~~puppet
+class { '::cups': }
+~~~
 
 ## Usage
 
@@ -63,10 +49,23 @@ examples and code samples for doing things with your module.
 
 ## Reference
 
-Here, include a complete list of your module's classes, types, providers,
-facts, along with the parameters for each. Users refer to this section (thus
-the name "Reference") to find specific details; most users don't read it per
-se.
+### Classes
+
+#### Public Classes
+
+* [`cups`](#class-cups)
+
+#### Private Classes
+
+### Types
+
+### Facts
+
+#### Class: `cups`
+
+Installs, configures, and manages the CUPS service.
+
+##### Parameters (all optional)
 
 ## Limitations
 
