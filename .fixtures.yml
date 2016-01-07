@@ -1,0 +1,6 @@
+---
+fixtures:
+  repositories:
+  symlinks:
+    "cups": "#{source_dir}"
+

@@ -1,0 +1,10 @@
+HOSTS:
+  ubuntu-14.04-i686:
+    roles:
+      - master
+    platform: ubuntu-14.04-i686
+    box: puppetlabs/ubuntu-14.04-32-nocm
+    hypervisor: vagrant
+CONFIG:
+  type: foss
+  log_level: debug

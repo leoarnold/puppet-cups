@@ -20,3 +20,9 @@ group :development do
   gem 'puppet-lint', '>= 1.0.0', require: false
   gem 'metadata-json-lint', '>= 0.0.11', require: false
 end
+
+group :acceptance_testing do
+  gem 'beaker-rspec', '>= 5.3.0', require: false
+  gem 'serverspec', '>= 2.26.0', require: false
+  gem 'beaker-puppet_install_helper', '>= 0.4.0', require: false
+end

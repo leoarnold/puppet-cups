@@ -1,6 +1,7 @@
 ---
 sudo: false
 language: ruby
+bundler_args: --without acceptance_testing
 script: "bundle exec rake validate && bundle exec rake lint && bundle exec rake spec"
 matrix:
   fast_finish: true
