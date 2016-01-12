@@ -61,6 +61,14 @@ examples and code samples for doing things with your module.
 
 ### Facts
 
+* `cups_classes`: An array of the names of all installed classes.
+
+* `cups_classmembers`: A hash with the names of all classes (as keys) and their members (as array value).
+
+* `cups_printers`: An array of the names of all installed print queues (*excluding* classes).
+
+* `cups_queues`: An array of the names of all installed print queues (*including* classes).
+
 #### Class: `cups`
 
 Installs, configures, and manages the CUPS service.
