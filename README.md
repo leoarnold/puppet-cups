@@ -57,6 +57,8 @@ examples and code samples for doing things with your module.
 
 #### Private Classes
 
+* [`cups::default_queue`](#class-cupsdefault_queue)
+
 ### Types
 
 * [`cups_queue`](#type-cups_queue)
@@ -76,6 +78,14 @@ examples and code samples for doing things with your module.
 Installs, configures, and manages the CUPS service.
 
 ##### Parameters (all optional)
+
+#### Class: `cups::default_queue`
+
+Manages the default destination of the CUPS server.
+
+##### Attributes
+
+* `queue`: *mandatory* - The name of the queue to which CUPS should send print jobs by default. A `cups_queue` resource by the same name will automatically be required.
 
 #### Type: `cups_queue`
 

@@ -17,8 +17,10 @@ end
 # http://www.rubydoc.info/github/puppetlabs/beaker/Beaker/DSL
 RSpec.configure do |c|
   project_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-  c.before :suite do
+  c.before(:suite) do
     hosts.each do |host|
+      shell("/bin/sed -i '/templatedir/d' #{default['puppetpath']}/puppet.conf")
+      on(host, puppet('module install puppetlabs-stdlib --version 4.5.0'), acceptable_exit_codes: [0, 1])
       copy_module_to(host, source: project_root, module_name: 'cups')
     end
   end
@@ -65,19 +67,5 @@ def purge_all_queues
     end
   else
     fail unless result.stderr.include?('No destinations added')
-  end
-end
-
-def it_applies_correctly(manifest)
-  it 'recongnizes the need to apply changes' do
-    apply_manifest(manifest, noop: true, expect_changes: true)
-  end
-
-  it 'applies changes' do
-    apply_manifest(manifest, expect_changes: true)
-  end
-
-  it 'is idempotent' do
-    apply_manifest(manifest, catch_changes: true)
   end
 end
