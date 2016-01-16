@@ -59,6 +59,8 @@ examples and code samples for doing things with your module.
 
 ### Types
 
+* [`cups_queue`](#type-cups_queue)
+
 ### Facts
 
 * `cups_classes`: An array of the names of all installed classes.
@@ -74,6 +76,26 @@ examples and code samples for doing things with your module.
 Installs, configures, and manages the CUPS service.
 
 ##### Parameters (all optional)
+
+#### Type: `cups_queue`
+
+Installs and manages CUPS printer queues.
+
+##### Attributes
+
+* `name`: *mandatory* - CUPS queue names are case insensitive and may contain any printable character except SPACE, TAB, "/", or "#".
+
+* `ensure`: *mandatory* - Specifies whether this queue should be a `class`, a `printer` or `absent`.
+
+##### Class-only attributes
+
+* `members`: *mandatory* - A non-empty array with the names of CUPS queues. The class will be synced to contain only these members in the given order. If the catalog contains `cups_queue` resources for these queues, they will be required automatically.
+
+##### Printers-only attributes
+
+* `model`: *mandatory* - A supported printer model. Use `lpinfo -m` on the node to list all models available.
+
+* `uri`: *mandatory* - The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.
 
 ## Limitations
 

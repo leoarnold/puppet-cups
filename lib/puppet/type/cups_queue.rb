@@ -1,0 +1,119 @@
+require 'uri'
+
+Puppet::Type.newtype(:cups_queue) do
+  @doc = "Installs and manages CUPS queues.
+
+    Printers: Providing only the mandatory attributes
+
+        cups_queue { 'MinimalPrinter':
+          ensure => 'printer',
+          model  => 'drv:///sample.drv/generic.ppd',
+          uri    => 'lpd://192.168.2.105/binary_p1'
+        }
+
+    The command `lpinfo -m` lists all models available on the node.
+
+    Classes: Providing only the mandatory attributes
+
+        cups_queue { 'MinimalClass':
+          ensure  => 'class',
+          members => ['Office', 'Warehouse']
+        }
+
+    Note that configurable options of a class are those of its first member."
+
+  validate do
+    case should(:ensure)
+    when :class
+      fail('Please provide a non-empty array of member printers.') unless (should(:members).is_a? Array) && !should(:members).empty?
+    when :printer
+      fail('Please provide a printer model.') unless value(:model)
+      fail('Please provide a destination URI.') unless should(:uri)
+    end
+  end
+
+  autorequire(:package) do
+    'cups'
+  end
+
+  autorequire(:service) do
+    'cups'
+  end
+
+  autorequire(:cups_queue) do
+    should(:members)
+  end
+
+  newproperty(:ensure) do
+    desc '(mandatory) Specifies whether this queue should be a `class`, a `printer` or `absent`.'
+
+    newvalue(:class) do
+      provider.destroy if provider.printer_exists?
+      provider.create_class unless provider.class_exists?
+    end
+
+    newvalue(:printer) do
+      provider.destroy if provider.class_exists?
+      provider.create_printer unless provider.printer_exists?
+    end
+
+    newvalue(:absent) do
+      provider.destroy
+    end
+
+    newvalue(:unspecified) do
+      fail("Please specify a value for 'ensure'.")
+    end
+
+    defaultto(:unspecified)
+
+    def change_to_s(currentvalue, newvalue)
+      return "created a #{should_to_s(newvalue)}" if currentvalue == :absent || currentvalue.nil?
+      return "removed a #{is_to_s(currentvalue)}" if newvalue == :absent
+      return "changed from #{is_to_s(currentvalue)} to #{should_to_s(newvalue)}"
+    rescue Puppet::Error, Puppet::DevError
+      raise
+    rescue => detail
+      raise Puppet::DevError, "Could not convert change #{name} to string: #{detail}", detail.backtrace
+    end
+  end
+
+  newparam(:name) do
+    desc '(mandatory) CUPS queue names are case insensitive and may contain any printable character except SPACE, TAB, "/", or "#".'
+
+    validate do |name|
+      fail ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if name =~ %r{[\s/#]}
+    end
+  end
+
+  newproperty(:members, array_matching: :all) do
+    desc '(class-only, mandatory) A non-empty array with the names of CUPS queues.' \
+      ' The class will be synced to contain only these members in the given order.' \
+      ' If the catalog contains `cups_queue` resources for these queues, they will be required automatically.'
+
+    validate do |value|
+      fail ArgumentError, 'The list of members must not be empty.' if value.length == 0
+      fail ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if value =~ %r{[\s/#]}
+    end
+  end
+
+  newparam(:model) do
+    desc '(printer-only, mandatory) A supported printer model. Use `lpinfo -m` on the node to list all models available.'
+  end
+
+  newproperty(:uri) do
+    desc '(printer-only, mandatory) The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.'
+
+    validate do |value|
+      components = URI.split(value)
+      scheme = components[0]
+      host = components[2]
+      path = components[5]
+      is_file = scheme.nil? && host.nil? && !path.nil?
+      is_file_uri = (scheme == 'file') && !path.nil?
+      is_uri = (value =~ /\A#{URI.regexp}\Z/) && !scheme.nil? && !host.nil?
+      fail ArgumentError, "The URI '#{value}' seems malformed. Did you mean 'file://#{value}'?" if is_file
+      fail ArgumentError, "The URI '#{value}' seems malformed." unless is_file_uri || is_uri
+    end
+  end
+end
