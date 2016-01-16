@@ -29,10 +29,15 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     end
 
     describe '#create_class' do
-      it 'installs the class' do
-        expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-c', 'GroundFloor')
-        expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Warehouse', '-c', 'GroundFloor')
-        @provider.create_class
+      context 'using the minimal manifest' do
+        it 'installs the class with default values' do
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-c', 'GroundFloor')
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Warehouse', '-c', 'GroundFloor')
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'GroundFloor', '-o', 'printer-is-shared=false')
+          expect(@provider).to receive(:cupsenable).with('-E', 'GroundFloor')
+          expect(@provider).to receive(:cupsaccept).with('-E', 'GroundFloor')
+          @provider.create_class
+        end
       end
     end
 
@@ -70,10 +75,15 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     end
 
     describe '#create_printer' do
-      it 'installs the printer' do
-        expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-m', 'drv:///sample.drv/generic.ppd')
-        expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', 'lpd://192.168.2.105/binary_p1')
-        @provider.create_printer
+      context 'using the minimal manifest' do
+        it 'installs the printer with default vaules' do
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-m', 'drv:///sample.drv/generic.ppd')
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', 'lpd://192.168.2.105/binary_p1')
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'printer-is-shared=false')
+          expect(@provider).to receive(:cupsenable).with('-E', 'Office')
+          expect(@provider).to receive(:cupsaccept).with('-E', 'Office')
+          @provider.create_printer
+        end
       end
     end
 

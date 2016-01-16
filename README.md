@@ -97,6 +97,16 @@ Installs and manages CUPS printer queues.
 
 * `ensure`: *mandatory* - Specifies whether this queue should be a `class`, a `printer` or `absent`.
 
+* `accepting`: Boolean value specifying whether the queue should accept print jobs or reject them. Default is `true`.
+
+* `description`: A short informative description of the queue.
+
+* `enabled`: Boolean value specifying whether the queue should be running or stopped. Default is `true`.
+
+* `location`: A short information where to find the hardcopies.
+
+* `shared`: Boolean value specifying whether to share this queue on the network. Default is `false`.
+
 ##### Class-only attributes
 
 * `members`: *mandatory* - A non-empty array with the names of CUPS queues. The class will be synced to contain only these members in the given order. If the catalog contains `cups_queue` resources for these queues, they will be required automatically.

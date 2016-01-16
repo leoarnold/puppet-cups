@@ -11,7 +11,7 @@ describe Puppet::Type.type(:cups_queue) do
           it 'fails to create an instance' do
             manifest = {
               ensure: 'class',
-              name: 'Печатник_Class'
+              name: 'GroundFloor'
             }
 
             expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
@@ -22,7 +22,7 @@ describe Puppet::Type.type(:cups_queue) do
           it 'fails to create an instance' do
             manifest = {
               ensure: 'class',
-              name: 'Печатник_Class',
+              name: 'GroundFloor',
               members: []
             }
 
@@ -34,7 +34,7 @@ describe Puppet::Type.type(:cups_queue) do
           it 'should be able to create an instance' do
             manifest = {
               ensure: 'class',
-              name: 'Печатник_Class',
+              name: 'GroundFloor',
               members: 'Office'
             }
 
@@ -46,7 +46,7 @@ describe Puppet::Type.type(:cups_queue) do
           it 'should be able to create an instance' do
             manifest = {
               ensure: 'class',
-              name: 'Печатник_Class',
+              name: 'GroundFloor',
               members: %w(Office Warehouse)
             }
 
@@ -61,7 +61,7 @@ describe Puppet::Type.type(:cups_queue) do
         it 'fails to create an instance' do
           manifest = {
             ensure: 'printer',
-            name: 'Печатник_Name'
+            name: 'Office'
           }
           expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
         end
@@ -71,7 +71,7 @@ describe Puppet::Type.type(:cups_queue) do
         it 'fails to create an instance' do
           manifest = {
             ensure: 'printer',
-            name: 'Печатник_Name',
+            name: 'Office',
             model: 'drv:///sample.drv/generic.ppd'
           }
           expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
@@ -82,7 +82,7 @@ describe Puppet::Type.type(:cups_queue) do
         it 'should be able to create an instance' do
           manifest = {
             ensure: 'printer',
-            name: 'Печатник_Name',
+            name: 'Office',
             model: 'drv:///sample.drv/generic.ppd',
             uri: 'lpd://192.168.2.105/binary_p1'
           }
@@ -96,7 +96,7 @@ describe Puppet::Type.type(:cups_queue) do
       it 'should NOT require any other attributes' do
         manifest = {
           ensure: 'absent',
-          name: 'Печатник_Name'
+          name: 'Office'
         }
 
         expect(type.new(manifest)).not_to be_nil
@@ -108,7 +108,7 @@ describe Puppet::Type.type(:cups_queue) do
     before(:each) do
       manifest = {
         ensure: 'printer',
-        name: 'Печатник_Name',
+        name: 'Office',
         model: 'drv:///sample.drv/generic.ppd',
         uri: 'lpd://192.168.2.105/binary_p1'
       }
@@ -169,7 +169,7 @@ describe Puppet::Type.type(:cups_queue) do
     before(:each) do
       manifest = {
         ensure: 'printer',
-        name: 'Печатник_Name',
+        name: 'Office',
         model: 'drv:///sample.drv/generic.ppd',
         uri: 'lpd://192.168.2.105/binary_p1'
       }
@@ -184,7 +184,7 @@ describe Puppet::Type.type(:cups_queue) do
       end
 
       it "defaults to 'unspecified'" do
-        resource = type.new(name: 'Печатник_Name')
+        resource = type.new(name: 'Office')
         expect(resource[:ensure]).to eq(:unspecified)
       end
 
@@ -211,10 +211,76 @@ describe Puppet::Type.type(:cups_queue) do
       end
     end
 
+    describe 'accepting' do
+      it 'should have documentation' do
+        expect(type.attrclass(:accepting).doc).to be_instance_of(String)
+        expect(type.attrclass(:accepting).doc.length).to be > 20
+      end
+
+      it 'should accept boolean values' do
+        @resource[:accepting] = :true
+        expect(@resource[:accepting]).to eq(:true)
+        @resource[:accepting] = :false
+        expect(@resource[:accepting]).to eq(:false)
+      end
+    end
+
+    describe 'description' do
+      it 'should have documentation' do
+        expect(type.attrclass(:description).doc).to be_instance_of(String)
+        expect(type.attrclass(:description).doc.length).to be > 20
+      end
+
+      it 'should accept a string' do
+        @resource[:description] = 'This is a string'
+        expect(@resource[:description]).to eq('This is a string')
+      end
+    end
+
+    describe 'enabled' do
+      it 'should have documentation' do
+        expect(type.attrclass(:enabled).doc).to be_instance_of(String)
+        expect(type.attrclass(:enabled).doc.length).to be > 20
+      end
+
+      it 'should accept boolean values' do
+        @resource[:enabled] = :true
+        expect(@resource[:enabled]).to eq(:true)
+        @resource[:enabled] = :false
+        expect(@resource[:enabled]).to eq(:false)
+      end
+    end
+
+    describe 'location' do
+      it 'should have documentation' do
+        expect(type.attrclass(:location).doc).to be_instance_of(String)
+        expect(type.attrclass(:location).doc.length).to be > 20
+      end
+
+      it 'should accept a string' do
+        @resource[:location] = 'This is a string'
+        expect(@resource[:location]).to eq('This is a string')
+      end
+    end
+
     describe 'members' do
       it 'should have documentation' do
         expect(type.attrclass(:members).doc).to be_instance_of(String)
         expect(type.attrclass(:members).doc.length).to be > 20
+      end
+    end
+
+    describe 'shared' do
+      it 'should have documentation' do
+        expect(type.attrclass(:shared).doc).to be_instance_of(String)
+        expect(type.attrclass(:shared).doc.length).to be > 20
+      end
+
+      it 'should accept boolean values' do
+        @resource[:shared] = :true
+        expect(@resource[:shared]).to eq(:true)
+        @resource[:shared] = :false
+        expect(@resource[:shared]).to eq(:false)
       end
     end
 

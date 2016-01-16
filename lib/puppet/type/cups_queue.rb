@@ -1,3 +1,4 @@
+require 'puppet/parameter/boolean'
 require 'uri'
 
 Puppet::Type.newtype(:cups_queue) do
@@ -30,6 +31,10 @@ Puppet::Type.newtype(:cups_queue) do
       fail('Please provide a printer model.') unless value(:model)
       fail('Please provide a destination URI.') unless should(:uri)
     end
+  end
+
+  autorequire(:class) do
+    'cups'
   end
 
   autorequire(:package) do
@@ -86,6 +91,36 @@ Puppet::Type.newtype(:cups_queue) do
     end
   end
 
+  newproperty(:accepting) do
+    desc 'Boolean value specifying whether the queue should accept print jobs or reject them. Default is `true`.'
+
+    newvalues(:true, :false)
+    defaultto(:true)
+  end
+
+  newproperty(:description) do
+    desc 'A short informative description of the queue.'
+
+    validate do |value|
+      fail ArgumentError, "The 'description' must be a string." unless value.is_a? String
+    end
+  end
+
+  newproperty(:enabled) do
+    desc 'Boolean value specifying whether the queue should be running or stopped. Default is `true`.'
+
+    newvalues(:true, :false)
+    defaultto(:true)
+  end
+
+  newproperty(:location) do
+    desc 'A short information where to find the hardcopies.'
+
+    validate do |value|
+      fail ArgumentError, "The 'location' must be a string." unless value.is_a? String
+    end
+  end
+
   newproperty(:members, array_matching: :all) do
     desc '(class-only, mandatory) A non-empty array with the names of CUPS queues.' \
       ' The class will be synced to contain only these members in the given order.' \
@@ -95,10 +130,25 @@ Puppet::Type.newtype(:cups_queue) do
       fail ArgumentError, 'The list of members must not be empty.' if value.length == 0
       fail ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if value =~ %r{[\s/#]}
     end
+
+    def should_to_s(newvalue)
+      is_to_s(newvalue)
+    end
   end
 
   newparam(:model) do
     desc '(printer-only, mandatory) A supported printer model. Use `lpinfo -m` on the node to list all models available.'
+
+    validate do |value|
+      fail ArgumentError, "The 'model' must be a string." unless value.is_a? String
+    end
+  end
+
+  newproperty(:shared) do
+    desc 'Boolean value specifying whether to share this queue on the network. Default is `false`.'
+
+    newvalues(:true, :false)
+    defaultto(:false)
   end
 
   newproperty(:uri) do

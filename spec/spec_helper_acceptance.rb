@@ -34,26 +34,26 @@ end
 
 def add_printers(names)
   names.each do |name|
-    shell("lpadmin -p #{name} -m drv:///sample.drv/generic.ppd")
+    shell("lpadmin -E -p #{name} -m drv:///sample.drv/generic.ppd -E -o printer-is-shared=false")
   end
 end
 
 def add_printers_to_classes(classmembers)
-  dummy = %w(Dummy)
-  add_printers(dummy)
+  add_printers(%w(Dummy))
   classmembers.keys.each do |classname|
     members = classmembers[classname]
-    members = dummy if members.empty?
+    members = %w(Dummy) if members.empty?
     members.each do |printername|
-      shell("lpadmin -p #{printername} -c #{classname}")
+      shell("lpadmin -E -p #{printername} -c #{classname}")
     end
+    shell("lpadmin -E -p #{classname} -E -o printer-is-shared=false")
   end
-  remove_queues(dummy)
+  remove_queues(%w(Dummy))
 end
 
 def remove_queues(names)
   names.each do |name|
-    shell("lpadmin -x #{name}")
+    shell("lpadmin -E -x #{name}")
   end
 end
 

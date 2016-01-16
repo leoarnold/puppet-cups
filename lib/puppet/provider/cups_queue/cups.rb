@@ -3,6 +3,10 @@ require_relative '../../../cups_helper.rb'
 Puppet::Type.type(:cups_queue).provide(:cups) do
   @doc = 'Installs and manages CUPS printer queues.'
 
+  commands(cupsaccept: 'cupsaccept')
+  commands(cupsdisable: 'cupsdisable')
+  commands(cupsenable: 'cupsenable')
+  commands(cupsreject: 'cupsreject')
   commands(lpadmin: 'lpadmin')
 
   ### Static provider methods
@@ -39,12 +43,24 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   ### Creation and destruction
 
   def create_class
-    self.members = resource.should(:members)
+    resource.should(:members).each { |member| lpadmin('-E', '-p', member, '-c', name) }
+    [:description, :location, :shared,
+     :enabled, :accepting].each do |property|
+      setter = (property.to_s + '=').to_sym
+      value = resource.should(property)
+      method(setter).call(value) if value
+    end
   end
 
   def create_printer
     lpadmin('-E', '-p', name, '-m', resource.value(:model))
-    self.uri = resource.should(:uri) if resource.should(:uri)
+    [:uri,
+     :description, :location, :shared,
+     :enabled, :accepting].each do |property|
+      setter = (property.to_s + '=').to_sym
+      value = resource.should(property)
+      method(setter).call(value) if value
+    end
   end
 
   def destroy
@@ -58,14 +74,54 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     prefetched ? prefetched : :absent
   end
 
+  def accepting
+    query('printer-is-accepting-jobs')
+  end
+
+  def accepting=(value)
+    value == :true ? cupsaccept('-E', name) : cupsreject('-E', name)
+  end
+
+  def description
+    query('printer-info')
+  end
+
+  def description=(value)
+    lpadmin('-E', '-p', name, '-D', value)
+  end
+
+  def enabled
+    query('printer-state') == 'stopped' ? :false : :true
+  end
+
+  def enabled=(value)
+    value == :true ? cupsenable('-E', name) : cupsdisable('-E', name)
+  end
+
+  def location
+    query('printer-location')
+  end
+
+  def location=(value)
+    lpadmin('-E', '-p', name, '-L', value)
+  end
+
   def members
     prefetched = @property_hash[:members]
     prefetched if prefetched
   end
 
-  def members=(value)
-    members.each { |member| lpadmin('-E', '-p', member, '-r', name) } if members
-    value.each { |member| lpadmin('-E', '-p', member, '-c', name) }
+  def members=(_value)
+    destroy
+    create_class
+  end
+
+  def shared
+    query('printer-is-shared')
+  end
+
+  def shared=(value)
+    lpadmin('-E', '-p', name, '-o', "printer-is-shared=#{value}")
   end
 
   def uri
