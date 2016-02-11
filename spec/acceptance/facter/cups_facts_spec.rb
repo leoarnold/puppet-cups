@@ -2,14 +2,9 @@ require 'spec_helper_acceptance'
 require 'json'
 
 def custom_fact(fact)
-  result = shell('puppet apply --color=false -e \'notice("<fact>${::' + fact + '}</fact>")\'')
-  lines = result.stdout.split("\n")
-  factline = ''
-  lines.each do |line|
-    factline = line if line =~ %r{<fact>.*</fact>}
-  end
-  fact = factline.gsub(%r{(.*<fact>|</fact>.*)}, '')
-  JSON.parse(fact.gsub('=>', ':'))
+  output = shell('puppet apply --color=false -e \'notice("<fact>${::' + fact + '}</fact>")\'').stdout
+  result = %r{<fact>(?<value>.*)</fact>}.match(output)
+  JSON.parse(result[:value].gsub('=>', ':')) if result
 end
 
 describe 'Custom Facts' do

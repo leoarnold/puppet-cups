@@ -22,6 +22,7 @@
 This module installs, configures, and manages the Common Unix Printing System (CUPS) service.
 
 It provides Puppet types to install, configure, and manage CUPS printer queues and classes.
+Key design goals include *locale independence* and *test driven development*.
 
 ## Setup
 

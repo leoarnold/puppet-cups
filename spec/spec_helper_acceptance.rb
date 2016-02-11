@@ -53,19 +53,19 @@ end
 
 def remove_queues(names)
   names.each do |name|
-    shell("lpadmin -E -x #{name}")
+    shell("lpadmin -E -x #{name}", acceptable_exit_codes: [0, 1])
   end
 end
 
 def purge_all_queues
-  result = shell('lpstat -v', acceptable_exit_codes: [0, 1])
-  if result.exit_code == 0
-    lines = result.stdout.split("\n")
-    lines.each do |line|
-      printer = line.gsub(/(device for |:.*)/, '')
-      remove_queues([printer])
-    end
-  else
-    fail unless result.stderr.include?('No destinations added')
-  end
+  request = '{
+          OPERATION CUPS-Get-Printers
+          GROUP operation
+          ATTR charset attributes-charset utf-8
+          ATTR language attributes-natural-language en
+          STATUS successful-ok
+          DISPLAY printer-name
+        }'
+  result = shell("echo '#{request}' | ipptool -c ipp://localhost/ /dev/stdin", acceptable_exit_codes: [0, 1])
+  remove_queues(result.stdout.split("\n")[1..-1]) if result.exit_code == 0
 end
