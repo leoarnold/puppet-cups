@@ -20,7 +20,7 @@ RSpec.configure do |c|
   c.before(:suite) do
     hosts.each do |host|
       shell("/bin/sed -i '/templatedir/d' #{default['puppetpath']}/puppet.conf")
-      on(host, puppet('module install puppetlabs-stdlib --version 4.5.0'), acceptable_exit_codes: [0, 1])
+      on(host, puppet('module install puppetlabs-stdlib --version 4.6.0'), acceptable_exit_codes: [0, 1])
       copy_module_to(host, source: project_root, module_name: 'cups')
     end
   end

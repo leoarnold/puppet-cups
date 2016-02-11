@@ -1,8 +1,8 @@
-class { '::cups::default_queue':
-  queue => 'Office'
+class { '::cups':
+  default_queue => 'Office',
 }
 
-# ... automatically requires ...
+# ... will fail unless the corresponding `cups_queue` is specified:
 
 cups_queue { 'Office':
   ensure => 'printer',

@@ -2,7 +2,9 @@
 #
 # Installs, configures, and manages the CUPS service and related files.
 #
-class cups inherits ::cups::params {
+class cups (
+  $default_queue = undef,
+) inherits ::cups::params {
 
   package { $::cups::packages :
     ensure  => 'present',
@@ -12,6 +14,13 @@ class cups inherits ::cups::params {
     ensure  => 'running',
     enable  => true,
     require => Package[$::cups::packages],
+  }
+
+  unless ($default_queue == undef) {
+    class { '::cups::default_queue' :
+      queue   => $default_queue,
+      require => Service[$::cups::services],
+    }
   }
 
 }
