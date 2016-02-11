@@ -38,7 +38,7 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   autorequire(:package) do
-    'cups'
+    ['cups', 'cups-ipptool']
   end
 
   autorequire(:service) do

@@ -7,6 +7,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   commands(cupsdisable: 'cupsdisable')
   commands(cupsenable: 'cupsenable')
   commands(cupsreject: 'cupsreject')
+  commands(ipptool: 'ipptool') # Used in cups_helper. Declared here for Puppet's provider suitability mechanism
   commands(lpadmin: 'lpadmin')
 
   ### Static provider methods

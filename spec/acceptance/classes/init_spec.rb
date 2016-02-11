@@ -1,13 +1,21 @@
 require 'spec_helper_acceptance'
 
 describe 'Including class "cups"' do
-  package_name = 'cups'
-  service_name = 'cups'
+  case fact('osfamily')
+  when 'Debian', 'Suse'
+    packages = ['cups']
+    services = ['cups']
+  when 'RedHat'
+    packages = ['cups', 'cups-ipptool']
+    services = ['cups']
+  else
+    fail('This version of the CUPS module does not know how to install CUPS on your operating system.')
+  end
 
   context 'Default class inclusion' do
     before(:all) do
       manifest = <<-EOS
-        package { "#{package_name}":
+        package { #{packages}:
           ensure  => purged,
         }
       EOS
@@ -16,7 +24,7 @@ describe 'Including class "cups"' do
     end
 
     context 'before applying' do
-      describe package(package_name) do
+      describe package(packages) do
         it { should_not be_installed }
       end
     end
@@ -34,13 +42,17 @@ describe 'Including class "cups"' do
     end
 
     context 'after applying' do
-      describe package(package_name) do
-        it { should be_installed }
+      packages.each do |name|
+        describe package(name) do
+          it { should be_installed }
+        end
       end
 
-      describe service(service_name) do
-        it { should be_running }
-        it { should be_enabled }
+      services.each do |name|
+        describe service(name) do
+          it { should be_running }
+          it { should be_enabled }
+        end
       end
     end
   end

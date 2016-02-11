@@ -1,0 +1,11 @@
+HOSTS:
+  fedora-20-i386:
+    roles:
+      - master
+    platform: fedora-20-i386
+    box: opscode/fedora-20-i386
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_fedora-20-i386_chef-provisionerless.box
+    hypervisor: vagrant
+CONFIG:
+  type: foss
+  log_level: debug

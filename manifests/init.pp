@@ -1,12 +1,17 @@
 # Class: cups
-class cups {
-  package { 'cups':
-    ensure => present,
+#
+# Installs, configures, and manages the CUPS service and related files.
+#
+class cups inherits ::cups::params {
+
+  package { $::cups::packages :
+    ensure  => 'present',
   }
 
-  service { 'cups':
-    ensure  => running,
+  service { $::cups::services :
+    ensure  => 'running',
     enable  => true,
-    require => Package['cups'],
+    require => Package[$::cups::packages],
   }
+
 }

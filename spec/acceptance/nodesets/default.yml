@@ -1,8 +1,8 @@
 HOSTS:
-  ubuntu-14.04-i686:
+  ubuntu-14.04-i386:
     roles:
       - master
-    platform: ubuntu-14.04-i686
+    platform: ubuntu-14.04-i386
     box: puppetlabs/ubuntu-14.04-32-nocm
     hypervisor: vagrant
 CONFIG:

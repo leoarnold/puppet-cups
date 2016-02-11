@@ -29,17 +29,20 @@ It provides Puppet types to install, configure, and manage CUPS printer queues a
 
 * Ruby 1.9.0 or later
 * Puppet 3.0.0 or later
-* CUPS 1.5 or later
+* CUPS with `ipptool` (included since CUPS 1.5)
 
 ### Beginning with CUPS
 
 #### Minimal manifest
 
-To ensure that CUPS is installed and the service is running, you should always declare the `cups` class.
+All resources in this module require the CUPS daemon to be installed and configured in a certain way.
+To ensure these preconditions you should include the main `cups` class wherever you use this module:
 
 ~~~puppet
-class { '::cups': }
+include '::cups'
 ~~~
+
+See the [section](#class-cups) on the `cups` class for details.
 
 ## Usage
 
