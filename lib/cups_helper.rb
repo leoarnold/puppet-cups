@@ -12,9 +12,7 @@ module Cups
       end
 
       def lines
-        answer = @output.split("\n")
-        answer.delete_at(0)
-        answer
+        @output.split("\n")[1..-1]
       end
 
       private

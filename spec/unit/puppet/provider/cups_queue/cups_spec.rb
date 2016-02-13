@@ -42,7 +42,8 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     end
 
     describe '#destroy' do
-      it 'deletes the printer' do
+      it 'deletes the class if it exists' do
+        expect(@provider).to receive(:queue_exists?).and_return(true)
         expect(@provider).to receive(:lpadmin).with('-E', '-x', 'GroundFloor')
         @provider.destroy
       end
@@ -88,7 +89,8 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     end
 
     describe '#destroy' do
-      it 'deletes the printer' do
+      it 'deletes the printer if it exists' do
+        expect(@provider).to receive(:queue_exists?).and_return(true)
         expect(@provider).to receive(:lpadmin).with('-E', '-x', 'Office')
         @provider.destroy
       end

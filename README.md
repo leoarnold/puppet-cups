@@ -41,11 +41,44 @@ Key design goals include *locale independence* and *test driven development*.
 All resources in this module require the CUPS daemon to be installed and configured in a certain way.
 To ensure these preconditions you should include the main `cups` class wherever you use this module:
 
-~~~puppet
+```puppet
 include '::cups'
-~~~
+```
 
 See the [section](#class-cups) on the `cups` class for details.
+
+#### Minimal printer manifest
+
+Using a suitable model from the output of the command `lpinfo -m` on the node:
+
+```puppet
+include '::cups'
+
+cups_queue { 'MinimalPrinter':
+  ensure => 'printer',
+  model  => 'drv:///sample.drv/generic.ppd'
+}
+```
+
+#### Minimal class manifest
+
+When defining a printer class, it is *mandatory* to also define its member printers in the same catalog:
+
+```puppet
+include '::cups'
+
+cups_queue { 'MinimalClass':
+  ensure  => 'class',
+  members => ['Office', 'Warehouse']
+}
+
+cups_queue { ['Office', 'Warehouse']:
+  ensure => 'printer',
+  model  => 'drv:///sample.drv/generic.ppd'
+}
+```
+
+For your convenience, the `Cups_queue['MinimalClass']` will autorequire its member resources `Cups_queue['Office', 'Warehouse']`.
 
 ## Usage
 
@@ -89,7 +122,7 @@ Installs, configures, and manages the CUPS service.
 
 #### Type: `cups_queue`
 
-Installs and manages CUPS printer queues.
+Installs and manages CUPS print queues.
 
 ##### Attributes
 
@@ -115,7 +148,7 @@ Installs and manages CUPS printer queues.
 
 * `model`: *mandatory* - A supported printer model. Use `lpinfo -m` on the node to list all models available.
 
-* `uri`: *mandatory* - The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.
+* `uri`: The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.
 
 ## Limitations
 

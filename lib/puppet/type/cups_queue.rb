@@ -1,4 +1,3 @@
-require 'puppet/parameter/boolean'
 require 'uri'
 
 Puppet::Type.newtype(:cups_queue) do
@@ -8,8 +7,7 @@ Puppet::Type.newtype(:cups_queue) do
 
         cups_queue { 'MinimalPrinter':
           ensure => 'printer',
-          model  => 'drv:///sample.drv/generic.ppd',
-          uri    => 'lpd://192.168.2.105/binary_p1'
+          model  => 'drv:///sample.drv/generic.ppd'
         }
 
     The command `lpinfo -m` lists all models available on the node.
@@ -27,9 +25,10 @@ Puppet::Type.newtype(:cups_queue) do
     case should(:ensure)
     when :class
       fail('Please provide a non-empty array of member printers.') unless (should(:members).is_a? Array) && !should(:members).empty?
+      fail('Classes do NOT support the following attributes: `model`, `uri`') if value(:model) || should(:uri)
     when :printer
       fail('Please provide a printer model.') unless value(:model)
-      fail('Please provide a destination URI.') unless should(:uri)
+      fail('Printers do not support the parameter `members`.') if should(:members)
     end
   end
 
@@ -53,12 +52,10 @@ Puppet::Type.newtype(:cups_queue) do
     desc '(mandatory) Specifies whether this queue should be a `class`, a `printer` or `absent`.'
 
     newvalue(:class) do
-      provider.destroy if provider.printer_exists?
       provider.create_class unless provider.class_exists?
     end
 
     newvalue(:printer) do
-      provider.destroy if provider.class_exists?
       provider.create_printer unless provider.printer_exists?
     end
 
@@ -152,18 +149,10 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newproperty(:uri) do
-    desc '(printer-only, mandatory) The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.'
+    desc '(printer-only) The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.'
 
     validate do |value|
-      components = URI.split(value)
-      scheme = components[0]
-      host = components[2]
-      path = components[5]
-      is_file = scheme.nil? && host.nil? && !path.nil?
-      is_file_uri = (scheme == 'file') && !path.nil?
-      is_uri = (value =~ /\A#{URI.regexp}\Z/) && !scheme.nil? && !host.nil?
-      fail ArgumentError, "The URI '#{value}' seems malformed. Did you mean 'file://#{value}'?" if is_file
-      fail ArgumentError, "The URI '#{value}' seems malformed." unless is_file_uri || is_uri
+      fail ArgumentError, "The URI '#{value}' seems malformed." unless (value =~ URI.regexp) || (value == URI(value).path)
     end
   end
 end

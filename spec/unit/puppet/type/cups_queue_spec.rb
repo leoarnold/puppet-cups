@@ -67,24 +67,12 @@ describe Puppet::Type.type(:cups_queue) do
         end
       end
 
-      context 'without providing a destination URI' do
-        it 'fails to create an instance' do
-          manifest = {
-            ensure: 'printer',
-            name: 'Office',
-            model: 'drv:///sample.drv/generic.ppd'
-          }
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
-        end
-      end
-
-      context 'providing name & model & uri' do
+      context 'providing only name and model' do
         it 'should be able to create an instance' do
           manifest = {
             ensure: 'printer',
             name: 'Office',
-            model: 'drv:///sample.drv/generic.ppd',
-            uri: 'lpd://192.168.2.105/binary_p1'
+            model: 'drv:///sample.drv/generic.ppd'
           }
 
           expect(type.new(manifest)).not_to be_nil
@@ -109,8 +97,7 @@ describe Puppet::Type.type(:cups_queue) do
       manifest = {
         ensure: 'printer',
         name: 'Office',
-        model: 'drv:///sample.drv/generic.ppd',
-        uri: 'lpd://192.168.2.105/binary_p1'
+        model: 'drv:///sample.drv/generic.ppd'
       }
 
       @resource = type.new(manifest)
@@ -170,8 +157,7 @@ describe Puppet::Type.type(:cups_queue) do
       manifest = {
         ensure: 'printer',
         name: 'Office',
-        model: 'drv:///sample.drv/generic.ppd',
-        uri: 'lpd://192.168.2.105/binary_p1'
+        model: 'drv:///sample.drv/generic.ppd'
       }
 
       @resource = type.new(manifest)
@@ -324,18 +310,6 @@ describe Puppet::Type.type(:cups_queue) do
         it 'a typical HP JetSocket URI' do
           @resource[:uri] = 'socket://hostname:9100'
           expect(@resource[:uri]).to eq('socket://hostname:9100')
-        end
-      end
-
-      describe 'should NOT accept' do
-        let(:resource) { type.new(minimal_example) }
-
-        it "a typical absolute UNIX file path without 'file://'" do
-          expect { @resource[:uri] = '/dev/printer0' }.to raise_error(Puppet::ResourceError, %r{file://})
-        end
-
-        it 'an URI without protocol' do
-          expect { @resource[:uri] = 'hostname:9100' }.to raise_error(Puppet::ResourceError)
         end
       end
     end

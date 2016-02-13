@@ -41,9 +41,14 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     Facter.value(:cups_printers).include? name
   end
 
+  def queue_exists?
+    class_exists? || printer_exists?
+  end
+
   ### Creation and destruction
 
   def create_class
+    destroy
     resource.should(:members).each { |member| lpadmin('-E', '-p', member, '-c', name) }
     [:description, :location, :shared,
      :enabled, :accepting].each do |property|
@@ -54,6 +59,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def create_printer
+    destroy
     lpadmin('-E', '-p', name, '-m', resource.value(:model))
     [:uri,
      :description, :location, :shared,
@@ -65,7 +71,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def destroy
-    lpadmin('-E', '-x', name)
+    lpadmin('-E', '-x', name) if queue_exists?
   end
 
   ### Property getters and setters
