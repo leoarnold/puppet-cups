@@ -1,0 +1,4 @@
+Gemfile linguist-vendored
+Rakefile linguist-vendored
+/spec/* linguist-vendored
+/tests/* linguist-vendored
