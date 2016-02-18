@@ -3,6 +3,7 @@
 Development:
 [![Build Status](https://travis-ci.org/leoarnold/puppet-cups.svg)](https://travis-ci.org/leoarnold/puppet-cups)
 [![Gemnasium](https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg)](https://gemnasium.com/leoarnold/puppet-cups)
+[![GitHub license](https://img.shields.io/github/license/leoarnold/puppet-cups.svg)](LICENSE)
 
 #### Table of Contents
 
