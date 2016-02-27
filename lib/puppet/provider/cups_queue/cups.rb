@@ -51,7 +51,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     destroy
     resource.should(:members).each { |member| lpadmin('-E', '-p', member, '-c', name) }
     [:description, :location, :shared,
-     :enabled, :accepting].each do |property|
+     :enabled, :held, :accepting].each do |property|
       setter = (property.to_s + '=').to_sym
       value = resource.should(property)
       method(setter).call(value) if value
@@ -62,7 +62,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     destroy
     [:interface, :model, :ppd, :uri,
      :description, :location, :shared,
-     :enabled, :accepting].each do |property|
+     :enabled, :held, :accepting].each do |property|
       setter = (property.to_s + '=').to_sym
       value = resource.value(property)
       method(setter).call(value) if value
@@ -102,6 +102,14 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def enabled=(value)
     value == :true ? cupsenable('-E', name) : cupsdisable('-E', name)
+  end
+
+  def held
+    query('printer-state-reasons') =~ /hold-new-jobs/ ? :true : :false
+  end
+
+  def held=(value)
+    value == :true ? cupsdisable('-E', '--hold', name) : cupsenable('-E', '--release', name)
   end
 
   def interface=(value)

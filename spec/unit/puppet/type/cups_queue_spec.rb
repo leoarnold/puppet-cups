@@ -427,6 +427,20 @@ describe Puppet::Type.type(:cups_queue) do
       end
     end
 
+    describe 'held' do
+      it 'should have documentation' do
+        expect(type.attrclass(:held).doc).to be_instance_of(String)
+        expect(type.attrclass(:held).doc.length).to be > 20
+      end
+
+      it 'should accept boolean values' do
+        @resource[:held] = :true
+        expect(@resource[:held]).to eq(:true)
+        @resource[:held] = :false
+        expect(@resource[:held]).to eq(:false)
+      end
+    end
+
     describe 'location' do
       it 'should have documentation' do
         expect(type.attrclass(:location).doc).to be_instance_of(String)

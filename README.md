@@ -360,6 +360,8 @@ Installs and manages CUPS print queues.
 
 * `enabled`: Boolean value specifying whether the queue should be running or stopped.
 
+* `held`: A held queue will print all jobs in print or pending, but all new jobs will be held. Setting `false` will release them.
+
 * `location`: A short information where to find the hardcopies.
 
 * `shared`: Boolean value specifying whether to share this queue on the network. Default is `false`.

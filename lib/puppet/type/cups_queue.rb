@@ -141,6 +141,12 @@ Puppet::Type.newtype(:cups_queue) do
     newvalues(:true, :false)
   end
 
+  newproperty(:held) do
+    desc 'A held queue will print all jobs in print or pending, but all new jobs will be held. Setting `false` will release them.'
+
+    newvalues(:true, :false)
+  end
+
   newparam(:interface) do
     desc '(printer-only) The absolute path to a System V interface script on the node.' \
       ' If the catalog contains a `file` resource with this path as title, it will automatically be required.'
