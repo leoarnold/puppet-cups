@@ -34,8 +34,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-c', 'GroundFloor')
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Warehouse', '-c', 'GroundFloor')
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'GroundFloor', '-o', 'printer-is-shared=false')
-          expect(@provider).to receive(:cupsenable).with('-E', 'GroundFloor')
-          expect(@provider).to receive(:cupsaccept).with('-E', 'GroundFloor')
+
           @provider.create_class
         end
       end

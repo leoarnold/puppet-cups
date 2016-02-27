@@ -122,10 +122,9 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newproperty(:accepting) do
-    desc 'Boolean value specifying whether the queue should accept print jobs or reject them. Default is `true`.'
+    desc 'Boolean value specifying whether the queue should accept print jobs or reject them.'
 
     newvalues(:true, :false)
-    defaultto(:true)
   end
 
   newproperty(:description) do
@@ -137,10 +136,9 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newproperty(:enabled) do
-    desc 'Boolean value specifying whether the queue should be running or stopped. Default is `true`.'
+    desc 'Boolean value specifying whether the queue should be running or stopped.'
 
     newvalues(:true, :false)
-    defaultto(:true)
   end
 
   newparam(:interface) do

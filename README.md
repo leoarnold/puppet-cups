@@ -289,6 +289,27 @@ The `Cups_queue['MinimalClass']` resource will autorequire its member resources 
 
 Once you have your minimal [printer](#managing-printers) or [class](#managing-classes) manifest, you will need to apply some configuration.
 
+**Job handling:**
+In CUPS, newly installed queues are disabled and rejecting by default, which can lead to confusion at times.
+The corresponding `cups_queue` properties are:
+
+  * `accepting`: Should incoming jobs be enqueued or rejected?
+
+  * `enabled`: Should pending jobs be sent to the device or kept pending?
+
+If you want your print queues to "just work", you should set both to `true` by default using
+
+  ```puppet
+  # Default values for all 'cups_queue' resources in the current scope:
+  # Use 'Cups_queue' with upper case first letter and without resource name
+  Cups_queue {
+    accepting => 'true',
+    enabled   => 'true',
+  }
+  ```
+
+This module does not set default values by itself, since it might be of disadvantage in a professional copy shop environment.
+
 ## Reference
 
 ### Classes
@@ -333,11 +354,11 @@ Installs and manages CUPS print queues.
 
 * `ensure`: *mandatory* - Specifies whether this queue should be a `class`, a `printer` or `absent`.
 
-* `accepting`: Boolean value specifying whether the queue should accept print jobs or reject them. Default is `true`.
+* `accepting`: Boolean value specifying whether the queue should accept print jobs or reject them.
 
 * `description`: A short informative description of the queue.
 
-* `enabled`: Boolean value specifying whether the queue should be running or stopped. Default is `true`.
+* `enabled`: Boolean value specifying whether the queue should be running or stopped.
 
 * `location`: A short information where to find the hardcopies.
 
