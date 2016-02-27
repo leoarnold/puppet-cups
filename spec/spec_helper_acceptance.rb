@@ -22,6 +22,22 @@ RSpec.configure do |c|
       shell("/bin/sed -i '/templatedir/d' #{default['puppetpath']}/puppet.conf")
       on(host, puppet('module install puppetlabs-stdlib --version 4.6.0'), acceptable_exit_codes: [0, 1])
       copy_module_to(host, source: project_root, module_name: 'cups')
+
+      case fact_on(host, 'osfamily')
+      when 'Debian'
+        manifest = <<-EOM
+          exec { 'locale-gen':
+            command => '/usr/sbin/locale-gen es_ES.UTF-8'
+          }
+
+          file { '/etc/default/locale':
+            ensure  => 'file',
+            content => 'LANG="es_ES.UTF-8"\nLANGUAGE="es_ES.UTF-8"'
+          }
+        EOM
+
+        apply_manifest_on(host, manifest)
+      end
     end
   end
 end
@@ -34,7 +50,7 @@ end
 
 def add_printers(names)
   names.each do |name|
-    shell("lpadmin -E -p #{name} -m drv:///sample.drv/generic.ppd -E -o printer-is-shared=false")
+    shell("lpadmin -E -p #{name} -m drv:///sample.drv/generic.ppd -o printer-is-shared=false")
   end
 end
 
@@ -46,7 +62,7 @@ def add_printers_to_classes(classmembers)
     members.each do |printername|
       shell("lpadmin -E -p #{printername} -c #{classname}")
     end
-    shell("lpadmin -E -p #{classname} -E -o printer-is-shared=false")
+    shell("lpadmin -E -p #{classname} -o printer-is-shared=false")
   end
   remove_queues(%w(Dummy))
 end

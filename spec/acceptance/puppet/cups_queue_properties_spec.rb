@@ -21,14 +21,16 @@ describe 'Custom type `cups_queue`' do
           manifest = <<-EOM
             cups_queue { 'Office':
               ensure    => 'printer',
-              model     => 'drv:///sample.drv/generic.ppd',
-              uri       => 'lpd://192.168.2.105/binary_p1',
               accepting => 'true'
             }
           EOM
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'sets the correct value' do
+            expect(shell('lpoptions -p Office').stdout).to include('printer-is-accepting-jobs=true')
           end
 
           it 'is idempotent' do
@@ -40,14 +42,16 @@ describe 'Custom type `cups_queue`' do
           manifest = <<-EOM
             cups_queue { 'Office':
               ensure    => 'printer',
-              model     => 'drv:///sample.drv/generic.ppd',
-              uri       => 'lpd://192.168.2.105/binary_p1',
               accepting => 'false'
             }
           EOM
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'sets the correct value' do
+            expect(shell('lpoptions -p Office').stdout).to include('printer-is-accepting-jobs=false')
           end
 
           it 'is idempotent' do
@@ -63,15 +67,17 @@ describe 'Custom type `cups_queue`' do
 
         manifest = <<-EOM
           cups_queue { 'Office':
-            ensure       => 'printer',
-            model        => 'drv:///sample.drv/generic.ppd',
-            uri          => 'lpd://192.168.2.105/binary_p1',
-            description  => 'duplex'
+            ensure      => 'printer',
+            description => 'duplex'
           }
         EOM
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'sets the correct value' do
+          expect(shell('lpoptions -p Office').stdout).to include('printer-info=duplex')
         end
 
         it 'is idempotent' do
@@ -87,15 +93,17 @@ describe 'Custom type `cups_queue`' do
         context '=> true' do
           manifest = <<-EOM
             cups_queue { 'Office':
-              ensure    => 'printer',
-              model     => 'drv:///sample.drv/generic.ppd',
-              uri       => 'lpd://192.168.2.105/binary_p1',
-              enabled   => 'true'
+              ensure  => 'printer',
+              enabled => 'true'
             }
           EOM
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'sets the correct value' do
+            expect(shell('lpoptions -p Office').stdout).not_to match(/printer-state-reasons=\S*paused\S*/)
           end
 
           it 'is idempotent' do
@@ -106,15 +114,17 @@ describe 'Custom type `cups_queue`' do
         context '=> false' do
           manifest = <<-EOM
             cups_queue { 'Office':
-              ensure    => 'printer',
-              model     => 'drv:///sample.drv/generic.ppd',
-              uri       => 'lpd://192.168.2.105/binary_p1',
-              enabled   => 'false'
+              ensure  => 'printer',
+              enabled => 'false'
             }
           EOM
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'sets the correct value' do
+            expect(shell('lpoptions -p Office').stdout).to match(/printer-state-reasons=\S*paused\S*/)
           end
 
           it 'is idempotent' do
@@ -162,7 +172,7 @@ describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell('lpoptions -p Office').stdout).not_to include(/printer-state-reasons=\S*hold-new-jobs\S*/)
+            expect(shell('lpoptions -p Office').stdout).not_to match(/printer-state-reasons=\S*hold-new-jobs\S*/)
           end
 
           it 'is idempotent' do
@@ -178,15 +188,17 @@ describe 'Custom type `cups_queue`' do
 
         manifest = <<-EOM
           cups_queue { 'Office':
-            ensure    => 'printer',
-            model     => 'drv:///sample.drv/generic.ppd',
-            uri       => 'lpd://192.168.2.105/binary_p1',
-            location  => 'Room 101'
+            ensure   => 'printer',
+            location => 'Room 101'
           }
         EOM
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'sets the correct value' do
+          expect(shell('lpstat -l -p Office').stdout).to include('Room 101')
         end
 
         it 'is idempotent' do
@@ -202,10 +214,8 @@ describe 'Custom type `cups_queue`' do
         context '=> true' do
           manifest = <<-EOM
             cups_queue { 'Office':
-              ensure    => 'printer',
-              model     => 'drv:///sample.drv/generic.ppd',
-              uri       => 'lpd://192.168.2.105/binary_p1',
-              shared    => 'true'
+              ensure => 'printer',
+              shared => 'true'
             }
           EOM
 
@@ -221,10 +231,8 @@ describe 'Custom type `cups_queue`' do
         context '=> false' do
           manifest = <<-EOM
             cups_queue { 'Office':
-              ensure    => 'printer',
-              model     => 'drv:///sample.drv/generic.ppd',
-              uri       => 'lpd://192.168.2.105/binary_p1',
-              shared    => 'false'
+              ensure => 'printer',
+              shared => 'false'
             }
           EOM
 
