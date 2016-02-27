@@ -472,6 +472,41 @@ describe Puppet::Type.type(:cups_queue) do
       end
     end
 
+    describe 'options' do
+      it 'should have documentation' do
+        expect(type.attrclass(:members).doc).to be_instance_of(String)
+        expect(type.attrclass(:members).doc.length).to be > 20
+      end
+
+      describe 'should accept' do
+        it 'an empty hash' do
+          @resource[:options] = {}
+          expect(@resource[:options]).to eq({})
+        end
+
+        it 'a typical options hash' do
+          @resource[:options] = { Duplex: 'DuplexNoTumble', PageSize: 'A4' }
+          expect(@resource[:options]).to eq(Duplex: 'DuplexNoTumble', PageSize: 'A4')
+        end
+      end
+
+      describe 'should NOT accept' do
+        it 'an array' do
+          expect { @resource[:options] = %w(a b) }.to raise_error(Puppet::ResourceError)
+        end
+
+        it 'a string' do
+          expect { @resource[:options] = 'This is a string' }.to raise_error(Puppet::ResourceError)
+        end
+
+        it 'a hash containing options already managed by other attributes' do
+          %w(printer-is-accepting-jobs printer-info printer-state printer-location printer-is-shared device-uri).each do |key|
+            expect { @resource[:options] = { key => 'some value' } }.to raise_error(Puppet::ResourceError)
+          end
+        end
+      end
+    end
+
     describe 'shared' do
       it 'should have documentation' do
         expect(type.attrclass(:shared).doc).to be_instance_of(String)

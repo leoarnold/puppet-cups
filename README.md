@@ -8,19 +8,20 @@ Development:
 #### Table of Contents
 
 1. [Description](#description)
-1. [Setup - The basics of getting started with cups](#setup)
+1. [Setup](#setup)
+    * [What cups affects](#what-cups-affects)
     * [Setup requirements](#setup-requirements)
     * [Beginning with cups](#beginning-with-cups)
 1. [Usage - A quick start guide](#usage)
     * [Managing printers](#managing-printers)
     * [Managing classes](#managing-classes)
     * [Configuring queues](#configuring-queues)
-1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+1. [Reference - The documentation of all features available](#reference)
     * [Classes](#classes)
     * [Defines](#defines)
     * [Types](#types)
     * [Facts](#facts)
-1. [Limitations - OS compatibility, etc.](#limitations)
+1. [Limitations](#limitations)
 1. [Development - Guide for contributing to the module](#development)
 
 ## Description
@@ -28,26 +29,46 @@ Development:
 This module installs, configures, and manages the Common Unix Printing System (CUPS) service.
 
 It provides Puppet types to install, configure, and manage CUPS printer queues and classes.
+
 Key design goals include *locale independence* and *test driven development*.
 
 ## Setup
 
+### What cups affects
+
+  * The CUPS packages will be installed.
+
+  * The CUPS service will be enabled and launched.
+
+  * The files in `/etc/cups/` will be modified using CUPS command line utilities.
+
+  * The file `/etc/cups/lpoptions` will be deleted. See the section on [limitations](#option-defaults) for details.
+
 ### Setup Requirements
 
-* Ruby 1.9.0 or later
-* Puppet 3.0.0 or later
-* CUPS with `ipptool` (included since CUPS 1.5)
+This module is written in Ruby 1.9 syntax and tested on systems using
+
+  * Ruby 1.9+ or 2.x
+
+  * CUPS 1.5+ or 2.x
+
+It might also work with CUPS versions prior to 1.5 after [manually installing](http://www.cups.org/software.php?VERSION=ipptool)
+the `ipptool` command line utility. It will however **not** work with Ruby versions prior to 1.9.
 
 ### Beginning with CUPS
 
-#### Minimal manifest
+First you need to install this module. One way to do this is
+
+  ```puppet
+  puppet module install leoarnold-cups
+  ```
 
 All resources in this module require the CUPS daemon to be installed and configured in a certain way.
 To ensure these preconditions you should include the main `cups` class wherever you use this module:
 
-```puppet
-include '::cups'
-```
+  ```puppet
+  include '::cups'
+  ```
 
 See the [section](#class-cups) on the `cups` class for details.
 Adding printer or class resources is described in the section on [usage](#usage).
@@ -310,17 +331,41 @@ If you want your print queues to "just work", you should set both to `true` by d
 
 This module does not set default values by itself, since it might be of disadvantage in a professional copy shop environment.
 
+**Option defaults:**
+Sometimes you need to set some default values for CUPS or vendor options of a print queue,
+e.g. to enable Duplex to save trees or because you use A4 paper instead of US Letter.
+
+To see all vendor options and their possible values for the queue `Office`, you can use `lpoptions`:
+
+  ```Shell
+  $ lpoptions -p Office -l
+  PageSize/Media Size: *Letter Legal Executive Tabloid A3 A4 A5 B5 EnvISOB5 Env10 EnvC5 EnvDL EnvMonarch
+  InputSlot/Media Source: *Default Upper Manual
+  Duplex/2-Sided Printing: *None DuplexNoTumble DuplexTumble
+  Option1/Duplexer: *False True
+  ```
+
+The asterisk (*) indicates the current value. Use this to adapt your manifest
+
+  ```puppet
+  cups_queue { 'Office':
+    ...
+    options => {
+      'Duplex'   => 'DuplexNoTumble',
+      'PageSize' => 'A4',
+    }
+  }
+  ```
+
+You only need to provide values for options you actually care about.
+
 ## Reference
 
 ### Classes
 
-#### Public Classes
-
 * [`cups`](#class-cups)
 
-#### Private Classes
-
-* `cups::default_queue`
+* `cups::default_queue` (private)
 
 ### Types
 
@@ -364,6 +409,8 @@ Installs and manages CUPS print queues.
 
 * `location`: A short information where to find the hardcopies.
 
+* `options`: A hash of options (as keys) and their target value. Use `lpoptions -p [queue_name] -l` on the node for a list of all options available for the queue and their supported values.
+
 * `shared`: Boolean value specifying whether to share this queue on the network. Default is `false`.
 
 ##### Class-only attributes
@@ -390,8 +437,23 @@ The recommended location for your PPD files is `/usr/share/cups/model/` or `/usr
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc. If there
-are Known Issues, you might want to include them under their own heading here.
+### Option defaults
+
+Sometimes it may be necessary to modify the default values for some queue options to ensure an intuitive user experience,
+e.g. to enable the use of an optional duplex unit.
+For historic reasons there are two ways to set default values for all users:
+
+* Daemon defaults are set using `sudo lpadmin` and will affect all jobs from both local and remote hosts.
+The CUPS daemon saves them frequently - but not immediately - to `/etc/cups/classes.conf`, `/etc/cups/printers.conf`, and the PPD files in `/etc/cups/ppd/`.
+
+* Local defaults are set using `sudo lpoptions` and will only affect jobs from the local host, *overriding* the daemon defaults for these jobs.
+The values are saved to the file `/etc/cups/lpoptions`.
+
+Hence there is no robust way to determine the current daemon defaults when used in conjunction with local defaults.
+If local defaults aren't used, the command `lpoptions -l` will return the daemon defaults.
+
+In order to provide a stable and idempotent way for Puppet to set default option values for all jobs sent to a queue,
+this module will *disable* the use of local defaults by deleting the file `/etc/cups/lpoptions`.
 
 ## Development
 

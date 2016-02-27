@@ -9,6 +9,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   commands(cupsreject: 'cupsreject')
   commands(ipptool: 'ipptool') # Used in cups_helper. Declared here for Puppet's provider suitability mechanism
   commands(lpadmin: 'lpadmin')
+  commands(lpoptions: 'lpoptions')
 
   ### Static provider methods
 
@@ -146,6 +147,17 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     create_class
   end
 
+  def options
+    options_should = resource.should(:options)
+    options_should.nil? ? all_options_is : specified_options_is(options_should)
+  end
+
+  def options=(options_should)
+    options_should.each do |key, value|
+      lpadmin('-E', '-p', name, '-o', "#{key}=#{value}")
+    end
+  end
+
   def ppd=(value)
     lpadmin('-E', '-p', name, '-P', value)
   end
@@ -178,5 +190,44 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def query(property)
     Cups::Queue::Attribute.query(name, property)
+  end
+
+  def specified_options_is(options_should)
+    answer = {}
+    supported_options_is = all_options_is
+
+    options_should.keys.each do |key|
+      if supported_options_is.key? key
+        answer[key] = supported_options_is[key]
+      else
+        fail("Managing the option '#{key}' is unsupported.")
+      end
+    end
+
+    answer
+  end
+
+  def all_options_is
+    cups_options.merge(ppd_options)
+  end
+
+  def cups_options
+    answer = {}
+
+    options = %w(job-k-limit job-page-limit job-quota-period job-sheets-default port-monitor printer-error-policy printer-op-policy)
+    options.each { |option| answer[option] = query(option) }
+
+    answer
+  end
+
+  def ppd_options
+    answer = {}
+
+    lpoptions('-E', '-p', name, '-l').each_line do |line|
+      result = %r{\A(?<key>\w+)/(.*):(.*)\*(?<value>\w+)}.match(line)
+      answer[result[:key]] = result[:value] if result
+    end
+
+    answer
   end
 end

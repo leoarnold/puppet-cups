@@ -206,6 +206,36 @@ describe 'Custom type `cups_queue`' do
         end
       end
 
+      context 'options' do
+        before(:all) do
+          shell('lpadmin -E -p Office -o Duplex=None -o PageSize=Letter')
+        end
+
+        manifest = <<-EOM
+          cups_queue { 'Office':
+            ensure  => 'printer',
+            options => {
+              'Duplex'   => 'DuplexNoTumble',
+              'PageSize' => 'A4'
+            }
+          }
+        EOM
+
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'sets the correct value' do
+          output = shell('lpoptions -p Office -l').stdout
+          expect(output).to match(%r{Duplex/.*\s\*DuplexNoTumble\s})
+          expect(output).to match(%r{PageSize/.*\s\*A4\s})
+        end
+
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
+
       context 'shared' do
         before(:all) do
           shell('lpadmin -E -p Office -o printer-is-shared=false')

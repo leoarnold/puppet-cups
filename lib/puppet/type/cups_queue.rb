@@ -75,7 +75,7 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   autorequire(:file) do
-    answer = []
+    answer = ['/etc/cups/lpoptions']
     answer << value(:interface) if value(:interface)
     answer << value(:ppd) if value(:ppd)
     answer
@@ -191,6 +191,30 @@ Puppet::Type.newtype(:cups_queue) do
 
     validate do |value|
       fail ArgumentError, "The 'model' must be a string." unless value.is_a? String
+    end
+  end
+
+  newproperty(:options) do
+    desc 'A hash of options (as keys) and their target value.' \
+      ' Use `lpoptions -p [queue_name] -l` on the node for a list of all options available for the queue and their supported values.'
+
+    validate do |value|
+      fail ArgumentError, 'Please provide a hash value.' unless value.is_a? Hash
+
+      properties = {
+        'printer-is-accepting-jobs' => 'accepting',
+        'printer-info' => 'description',
+        'printer-state' => 'enabled',
+        'printer-location' => 'location',
+        'printer-is-shared' => 'shared',
+        'device-uri' => 'uri'
+      }
+
+      value.keys.each do |key|
+        if properties.key? key
+          fail ArgumentError, "Please use the `cups_queue` property '#{properties[value]}' instead of setting the option '#{value}'."
+        end
+      end
     end
   end
 
