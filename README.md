@@ -11,7 +11,10 @@ Development:
 1. [Setup - The basics of getting started with cups](#setup)
     * [Setup requirements](#setup-requirements)
     * [Beginning with cups](#beginning-with-cups)
-1. [Usage - Configuration options and additional functionality](#usage)
+1. [Usage - A quick start guide](#usage)
+    * [Managing printers](#managing-printers)
+    * [Managing classes](#managing-classes)
+    * [Configuring queues](#configuring-queues)
 1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
     * [Classes](#classes)
     * [Defines](#defines)
@@ -47,45 +50,244 @@ include '::cups'
 ```
 
 See the [section](#class-cups) on the `cups` class for details.
-
-#### Minimal printer manifest
-
-Using a suitable model from the output of the command `lpinfo -m` on the node:
-
-```puppet
-include '::cups'
-
-cups_queue { 'MinimalPrinter':
-  ensure => 'printer',
-  model  => 'drv:///sample.drv/generic.ppd'
-}
-```
-
-#### Minimal class manifest
-
-When defining a printer class, it is *mandatory* to also define its member printers in the same catalog:
-
-```puppet
-include '::cups'
-
-cups_queue { 'MinimalClass':
-  ensure  => 'class',
-  members => ['Office', 'Warehouse']
-}
-
-cups_queue { ['Office', 'Warehouse']:
-  ensure => 'printer',
-  model  => 'drv:///sample.drv/generic.ppd'
-}
-```
-
-For your convenience, the `Cups_queue['MinimalClass']` will autorequire its member resources `Cups_queue['Office', 'Warehouse']`.
+Adding printer or class resources is described in the section on [usage](#usage).
 
 ## Usage
 
-This section is where you describe how to customize, configure, and do the
-fancy stuff with your module here. It's especially helpful if you include usage
-examples and code samples for doing things with your module.
+In this section, you will learn the straightforward way to set up CUPS queues from scratch.
+If the queues are already installed on the node, you can easily obtain a manifest with their current configuration by running
+
+  ```Shell
+  puppet resource cups_queue
+  ```
+
+and adjust it following the instructions on [configuring queues](#configuring-queues).
+
+### Managing Printers
+
+There are several ways to set up a printer queue in CUPS.
+This section provides the minimal manifest for each method.
+
+**Note** These minimal manifests will *not* update or change the PPD file on already existing queues,
+as CUPS does not provide a robust way to determine how the queue was installed.
+See however the section on [changing the driver](#changing-the-driver) for a workaround.
+
+If you are unsure which way to choose, we recommend to set up the printer
+using the tools provided by your operating system (or the [CUPS web interface](http://localhost:631)),
+then take the corresponding PPD file from `/etc/cups/ppd/` and use the `ppd` method.
+
+Minimal printer manifests:
+
+  * Creating a local raw printer:
+
+    ```puppet
+    include '::cups'
+
+    cups_queue { 'MinimalRaw':
+      ensure => 'printer',
+      uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+    }
+    ```
+
+    To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
+
+  * Using a suitable model from the output of the command `lpinfo -m` on the node:
+
+    ```puppet
+    include '::cups'
+
+    cups_queue { 'MinimalModel':
+      ensure => 'printer',
+      model  => 'drv:///sample.drv/generic.ppd',
+      uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+    }
+    ```
+
+    To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
+
+  * Using a custom PPD file:
+
+    ```puppet
+    include '::cups'
+
+    cups_queue { 'MinimalPPD':
+      ensure => 'printer',
+      ppd    => '/usr/share/cups/model/myprinter.ppd',
+      uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+    }
+    ```
+
+    To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
+
+    In a master-agent setting, you could transfer the PPD file to the client using a `file` resource
+
+    ```puppet
+    file { '/usr/share/cups/model/myprinter.ppd':
+      ensure => 'file',
+      source => 'puppet:///modules/myModule/myprinter.ppd'
+    }
+    ```
+
+    which will be autorequired by `Cups_queue['MinimalPrinter']`.
+
+  * Using a System V interface script:
+
+    ```puppet
+    include '::cups'
+
+    cups_queue { 'MinimalInterface':
+      ensure    => 'printer',
+      interface => '/usr/share/cups/model/myprinter.sh',
+      uri       => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+    }
+    ```
+
+    To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
+
+    In a master-agent setting, you could transfer the interface script to the client using a `file` resource
+
+    ```puppet
+    file { '/usr/share/cups/model/myprinter.sh':
+      ensure => 'file',
+      source => 'puppet:///modules/myModule/myprinter.sh'
+    }
+    ```
+
+    which will be autorequired by `Cups_queue['MinimalPrinter']`.
+
+#### Changing the driver
+
+When a printer queue is already present and managed using a PPD file, it is generally hard to tell which model or PPD file was used to install the queue.
+Nevertheless it might become necessary to change the model or update the PPD file *without* changing the queue name, e.g. because the PPD file contains some login credentials.
+
+This module introduces a way to update the driver (i.e. force a reinstall) through syncing the `make_and_model` property, which defaults to
+
+  * the `NickName` (fallback `ModelName`) value from the printer's PPD file in `/etc/cups/ppd/` if the printer was installed using a PPD file or a model.
+
+  * `Local System V Printer` if the printer uses a System V interface script.
+
+  * `Local Raw Printer` for raw print queues.
+
+**Example:** On the node, running `puppet resource cups_queue Office` returns
+
+  ```puppet
+  cups_queue { 'Office':
+    ensure         => 'printer',
+    make_and_model => 'HP Color LaserJet 4730mfp Postscript (recommended)',
+    ...
+  }
+  ```
+
+and you would like to
+
+  * use a different model
+
+    ```Shell
+    $ lpinfo -m | grep 4730mfp
+    ...
+    drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3
+    postscript-hp:0/ppd/hplip/HP/hp-color_laserjet_4730mfp-ps.ppd HP Color LaserJet 4730mfp Postscript (recommended)
+    ...
+    ```
+
+    then you just need to adapt the manifest from above to
+
+    ```puppet
+    cups_queue { 'Office':
+      ensure         => 'printer',
+      model          => 'drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd',
+      make_and_model => 'HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3',
+      ...
+    }
+    ```
+
+  * use a custom PPD file instead which contains the line
+
+    ```
+    *NickName: "HP Color LaserJet 4730mfp Postscript (MyCompany v2)"
+    ```
+
+    then you just need to adapt the manifest from above to
+
+    ```puppet
+    cups_queue { 'Office':
+      ensure         => 'printer',
+      ppd            => '/usr/share/cups/model/hp4730v2.ppd',
+      make_and_model => 'HP Color LaserJet 4730mfp Postscript (MyCompany v2)',
+      ...
+    }
+    ```
+
+  * use a System V interface script, then you just need to adapt the manifest from above to
+
+    ```puppet
+    cups_queue { 'Office':
+      ensure         => 'printer',
+      interface      => '/usr/share/cups/model/myprinter.sh',
+      make_and_model => 'Local System V Printer',
+      ...
+    }
+    ```
+
+    This will, however, **not** work if the printer was already using a System V interface script (and hence the `make_and_model` would not change).
+    Instead, you can just sync the script right to the place where CUPS expects it:
+
+    ```puppet
+    include '::cups'
+
+    file { '/etc/cups/interfaces/Office':
+      ensure => 'file',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+      source => 'puppet:///modules/myModule/myprinter.sh'
+    }
+
+    cups_queue { 'Office':
+      ensure    => 'printer',
+      interface => '/etc/cups/interfaces/Office',
+      ...
+    }
+    ```
+
+  * make it a raw queue. Then you just need to adapt the manifest from above to
+
+    ```puppet
+    cups_queue { 'Office':
+      ensure         => 'printer',
+      make_and_model => 'Local Raw Printer',
+      ...
+    }
+    ```
+
+### Managing Classes
+
+When defining a printer class, it is *mandatory* to also define its member printers in the same catalog:
+
+  ```puppet
+  include '::cups'
+
+  cups_queue { 'MinimalClass':
+    ensure  => 'class',
+    members => ['Office', 'Warehouse']
+  }
+
+  cups_queue { 'Office':
+    ensure => 'printer',
+    ...
+  }
+
+  cups_queue { 'Warehouse':
+    ensure => 'printer',
+    ...
+  }
+  ```
+
+The `Cups_queue['MinimalClass']` resource will autorequire its member resources `Cups_queue['Office', 'Warehouse']`.
+
+### Configuring queues
+
+Once you have your minimal [printer](#managing-printers) or [class](#managing-classes) manifest, you will need to apply some configuration.
 
 ## Reference
 
@@ -147,7 +349,19 @@ Installs and manages CUPS print queues.
 
 ##### Printers-only attributes
 
-* `model`: *mandatory* - A supported printer model. Use `lpinfo -m` on the node to list all models available.
+* `interface`: The absolute path to a System V interface script on the node.
+If the catalog contains a `file` resource with this path as title, it will automatically be required.
+
+* `make_and_model`: This value is used for [driver updates and changes](#changing-the-driver).
+Matches the `NickName` (fallback `ModelName`) value from the printer's PPD file
+if the printer was installed using a PPD file or a model,
+and `Local System V Printer` or `Local Raw Printer` otherwise.
+
+* `model`: A supported printer model. Use `lpinfo -m` on the node to list all models available.
+
+* `ppd`: The absolute path to a PPD file on the node.
+If the catalog contains a `file` resource with this path as title, it will automatically be required.
+The recommended location for your PPD files is `/usr/share/cups/model/` or `/usr/local/share/cups/model/`.
 
 * `uri`: The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.
 

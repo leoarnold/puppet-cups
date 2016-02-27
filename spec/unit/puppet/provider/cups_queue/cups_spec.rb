@@ -43,57 +43,93 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
     describe '#destroy' do
       it 'deletes the class if it exists' do
-        expect(@provider).to receive(:queue_exists?).and_return(true)
+        allow(@provider).to receive(:queue_exists?).and_return(true)
         expect(@provider).to receive(:lpadmin).with('-E', '-x', 'GroundFloor')
+
         @provider.destroy
       end
     end
   end
 
   context 'when managing a printer' do
-    before(:each) do
-      manifest = {
-        ensure: 'printer',
-        name: 'Office',
-        model: 'drv:///sample.drv/generic.ppd',
-        uri: 'lpd://192.168.2.105/binary_p1'
-      }
-
-      @resource = type.new(manifest)
-      @provider = provider.new(@resource)
-    end
-
-    describe '#printer_exists?' do
-      it 'returns true if a printer by that name exists' do
-        expect(Facter).to receive(:value).with(:cups_printers).and_return(%w(BackOffice Office Warehouse))
-        expect(@provider.printer_exists?).to be true
+    shared_examples 'provider contract' do |manifest|
+      before(:each) do
+        @resource = type.new(manifest)
+        @provider = provider.new(@resource)
       end
 
-      it 'returns false if no printer by that name exists' do
-        expect(Facter).to receive(:value).with(:cups_printers).and_return(%w(BackOffice Warehouse))
-        expect(@provider.printer_exists?).to be false
-      end
-    end
+      describe '#printer_exists?' do
+        it 'returns true if a printer by that name exists' do
+          expect(Facter).to receive(:value).with(:cups_printers).and_return(%w(BackOffice Office Warehouse))
+          expect(@provider.printer_exists?).to be true
+        end
 
-    describe '#create_printer' do
-      context 'using the minimal manifest' do
+        it 'returns false if no printer by that name exists' do
+          expect(Facter).to receive(:value).with(:cups_printers).and_return(%w(BackOffice Warehouse))
+          expect(@provider.printer_exists?).to be false
+        end
+      end
+
+      describe '#create_printer' do
         it 'installs the printer with default vaules' do
-          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-m', 'drv:///sample.drv/generic.ppd')
-          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', 'lpd://192.168.2.105/binary_p1')
+          switch = { interface: '-i', model: '-m', ppd: '-P' }
+          method = (manifest.keys & switch.keys)[0]
+
+          allow(@provider).to receive(:lpadmin).with('-E', '-x', 'Office')
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', switch[method], manifest[method]) if method
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'printer-is-shared=false')
-          expect(@provider).to receive(:cupsenable).with('-E', 'Office')
-          expect(@provider).to receive(:cupsaccept).with('-E', 'Office')
+
           @provider.create_printer
+        end
+      end
+
+      describe '#destroy' do
+        it 'deletes the printer if it exists' do
+          allow(@provider).to receive(:queue_exists?).and_return(true)
+          expect(@provider).to receive(:lpadmin).with('-E', '-x', 'Office')
+
+          @provider.destroy
         end
       end
     end
 
-    describe '#destroy' do
-      it 'deletes the printer if it exists' do
-        expect(@provider).to receive(:queue_exists?).and_return(true)
-        expect(@provider).to receive(:lpadmin).with('-E', '-x', 'Office')
-        @provider.destroy
-      end
+    describe 'as raw queue' do
+      manifest = {
+        ensure: 'printer',
+        name: 'Office'
+      }
+
+      include_examples 'provider contract', manifest
+    end
+
+    describe 'using a model' do
+      manifest = {
+        ensure: 'printer',
+        name: 'Office',
+        model: 'drv:///sample.drv/deskjet.ppd'
+      }
+
+      include_examples 'provider contract', manifest
+    end
+
+    describe 'using a PPD file' do
+      manifest = {
+        ensure: 'printer',
+        name: 'Office',
+        ppd: '/usr/share/ppd/cupsfilters/textonly.ppd'
+      }
+
+      include_examples 'provider contract', manifest
+    end
+
+    describe 'using a System V interface script' do
+      manifest = {
+        ensure: 'printer',
+        name: 'Office',
+        interface: '/usr/share/cups/model/myprinter.sh'
+      }
+
+      include_examples 'provider contract', manifest
     end
   end
 end

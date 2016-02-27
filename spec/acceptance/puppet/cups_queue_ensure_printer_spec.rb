@@ -7,17 +7,8 @@ describe 'Custom type `cups_queue`' do
 
   name = 'Office'
 
-  context 'ensuring a printer' do
-    context 'using a model' do
-      manifest = <<-EOM
-        cups_queue { #{name}:
-          ensure => 'printer',
-          model  => 'drv:///sample.drv/generic.ppd',
-        }
-      EOM
-
-      make_and_model = 'Generic PostScript Printer'
-
+  describe 'ensuring a printer' do
+    shared_examples 'installing a printer' do |manifest, make_and_model|
       context 'when the queue is absent' do
         before(:all) do
           purge_all_queues
@@ -31,7 +22,7 @@ describe 'Custom type `cups_queue`' do
           apply_manifest(manifest, catch_changes: true)
         end
 
-        it 'installed the specified model' do
+        it 'installed the specified printer' do
           expect(shell("lpoptions -p #{name}").stdout).to include("printer-make-and-model='#{make_and_model}'")
         end
       end
@@ -65,6 +56,139 @@ describe 'Custom type `cups_queue`' do
           expect(shell("lpoptions -p #{name}").stdout).to include("printer-make-and-model='#{make_and_model}'")
         end
       end
+    end
+
+    shared_examples 'modifying a printer' do |manifest, make_and_model|
+      context 'when the queue is present as a printer' do
+        before(:all) do
+          purge_all_queues
+          add_printers([name])
+        end
+
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+
+        it 'replaced the printer with the specified printer' do
+          expect(shell("lpoptions -p #{name}").stdout).to include("printer-make-and-model='#{make_and_model}'")
+        end
+      end
+    end
+
+    describe 'as raw queue' do
+      manifest = <<-EOM
+        cups_queue { #{name}:
+          ensure => 'printer',
+        }
+      EOM
+
+      include_examples 'installing a printer', [manifest, 'Local Raw Printer']
+    end
+
+    describe 'using a model' do
+      manifest = <<-EOM
+        cups_queue { #{name}:
+          ensure => 'printer',
+          model  => 'drv:///sample.drv/deskjet.ppd',
+        }
+      EOM
+
+      include_examples 'installing a printer', [manifest, 'HP DeskJet Series']
+    end
+
+    describe 'using a PPD file' do
+      manifest = <<-EOM
+        cups_queue { #{name}:
+          ensure => 'printer',
+          ppd    => '/usr/share/ppd/cupsfilters/textonly.ppd',
+        }
+      EOM
+
+      include_examples 'installing a printer', [manifest, 'Generic text-only printer']
+    end
+
+    describe 'using a System V interface script' do
+      before(:all) do
+        manifest = %q(
+          file { '/usr/share/cups/model/myprinter.sh':
+            ensure  => file,
+            content => "#!/bin/sh\nshift;shift;shift;shift;shift\ncat $*\necho -e \"\\f\\c\"\n"
+          }
+        )
+
+        apply_manifest(manifest)
+      end
+
+      manifest = <<-EOM
+        cups_queue { #{name}:
+          ensure    => 'printer',
+          interface => '/usr/share/cups/model/myprinter.sh',
+        }
+      EOM
+
+      include_examples 'installing a printer', [manifest, 'Local System V Printer']
+    end
+
+    describe 'as raw queue and specifying `make_and_model`' do
+      manifest = <<-EOM
+        cups_queue { #{name}:
+          ensure         => 'printer',
+          make_and_model => 'Local Raw Printer',
+        }
+      EOM
+
+      include_examples 'modifying a printer', [manifest, 'Local Raw Printer']
+    end
+
+    describe 'using a model and specifying `make_and_model`' do
+      manifest = <<-EOM
+        cups_queue { #{name}:
+          ensure         => 'printer',
+          model          => 'drv:///sample.drv/deskjet.ppd',
+          make_and_model => 'HP DeskJet Series',
+        }
+      EOM
+
+      include_examples 'modifying a printer', [manifest, 'HP DeskJet Series']
+    end
+
+    describe 'using a PPD file and specifying `make_and_model`' do
+      manifest = <<-EOM
+        cups_queue { #{name}:
+          ensure         => 'printer',
+          ppd            => '/usr/share/ppd/cupsfilters/textonly.ppd',
+          make_and_model => 'Generic text-only printer',
+        }
+      EOM
+
+      include_examples 'modifying a printer', [manifest, 'Generic text-only printer']
+    end
+
+    describe 'using a System V interface script and specifying `make_and_model`' do
+      before(:all) do
+        manifest = %q(
+          file { '/usr/share/cups/model/myprinter.sh':
+            ensure  => file,
+            content => "#!/bin/sh\nshift;shift;shift;shift;shift\ncat $*\necho -e \"\\f\\c\"\n"
+          }
+        )
+
+        apply_manifest(manifest)
+      end
+
+      manifest = <<-EOM
+        cups_queue { #{name}:
+          ensure         => 'printer',
+          interface      => '/usr/share/cups/model/myprinter.sh',
+          make_and_model => 'Local System V Printer',
+        }
+      EOM
+
+      include_examples 'modifying a printer', [manifest, 'Local System V Printer']
     end
   end
 

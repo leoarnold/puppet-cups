@@ -8,6 +8,5 @@ cups_queue { 'MinimalClass':
 # ... will autorequire the following resources:
 
 cups_queue { ['Office', 'Warehouse']:
-  ensure => 'printer',
-  model  => 'drv:///sample.drv/generic.ppd',
+  ensure => 'printer'
 }

@@ -60,12 +60,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def create_printer
     destroy
-    lpadmin('-E', '-p', name, '-m', resource.value(:model))
-    [:uri,
+    [:interface, :model, :ppd, :uri,
      :description, :location, :shared,
      :enabled, :accepting].each do |property|
       setter = (property.to_s + '=').to_sym
-      value = resource.should(property)
+      value = resource.value(property)
       method(setter).call(value) if value
     end
   end
@@ -105,6 +104,10 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     value == :true ? cupsenable('-E', name) : cupsdisable('-E', name)
   end
 
+  def interface=(value)
+    lpadmin('-E', '-p', name, '-i', value)
+  end
+
   def location
     query('printer-location')
   end
@@ -113,14 +116,30 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     lpadmin('-E', '-p', name, '-L', value)
   end
 
+  def make_and_model
+    query('printer-make-and-model')
+  end
+
+  def make_and_model=(_value)
+    create_printer if printer?
+    create_class if class?
+  end
+
+  def model=(value)
+    lpadmin('-E', '-p', name, '-m', value)
+  end
+
   def members
     prefetched = @property_hash[:members]
     prefetched if prefetched
   end
 
   def members=(_value)
-    destroy
     create_class
+  end
+
+  def ppd=(value)
+    lpadmin('-E', '-p', name, '-P', value)
   end
 
   def shared
