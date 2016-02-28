@@ -12,6 +12,112 @@ describe 'Custom type `cups_queue`' do
     end
 
     context 'changing only the property' do
+      context 'access' do
+        before(:all) do
+          shell('lpadmin -E -p Office -u allow:all')
+        end
+
+        context 'with policy => allow' do
+          manifest = <<-EOM
+            cups_queue { 'Office':
+              ensure => 'printer',
+              access => {
+                'policy' => 'allow',
+                'users'  => ['nina', 'lumbergh', '@council', 'nina'],
+              }
+            }
+          EOM
+
+          it 'applies changes' do
+            apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'is idempotent' do
+            apply_manifest(manifest, catch_changes: true)
+          end
+        end
+
+        context 'with policy => allow and changing users' do
+          manifest = <<-EOM
+            cups_queue { 'Office':
+              ensure => 'printer',
+              access => {
+                'policy' => 'allow',
+                'users'  => ['lumbergh', 'bolton'],
+              }
+            }
+          EOM
+
+          it 'applies changes' do
+            apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'is idempotent' do
+            apply_manifest(manifest, catch_changes: true)
+          end
+        end
+
+        context 'with policy => deny' do
+          manifest = <<-EOM
+            cups_queue { 'Office':
+              ensure => 'printer',
+              access => {
+                'policy' => 'deny',
+                'users'  => ['nina', 'lumbergh', '@council', 'nina'],
+              }
+            }
+          EOM
+
+          it 'applies changes' do
+            apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'is idempotent' do
+            apply_manifest(manifest, catch_changes: true)
+          end
+        end
+
+        context 'with policy => deny and changing users' do
+          manifest = <<-EOM
+            cups_queue { 'Office':
+              ensure => 'printer',
+              access => {
+                'policy' => 'deny',
+                'users'  => ['lumbergh', 'bolton'],
+              }
+            }
+          EOM
+
+          it 'applies changes' do
+            apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'is idempotent' do
+            apply_manifest(manifest, catch_changes: true)
+          end
+        end
+
+        context 'unsetting all restrictions' do
+          manifest = <<-EOM
+            cups_queue { 'Office':
+              ensure => 'printer',
+              access => {
+                'policy' => 'allow',
+                'users'  => ['all'],
+              }
+            }
+          EOM
+
+          it 'applies changes' do
+            apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'is idempotent' do
+            apply_manifest(manifest, catch_changes: true)
+          end
+        end
+      end
+
       context 'accepting' do
         before(:all) do
           shell('cupsreject -E Office')

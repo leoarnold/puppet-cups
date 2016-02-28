@@ -401,6 +401,52 @@ describe Puppet::Type.type(:cups_queue) do
       end
     end
 
+    describe 'access' do
+      it 'should have documentation' do
+        expect(type.attrclass(:access).doc).to be_instance_of(String)
+        expect(type.attrclass(:access).doc.length).to be > 20
+      end
+
+      describe 'should accept' do
+        it 'policy => allow' do
+          @resource[:access] = { 'policy' => 'allow', 'users' => ['nina', 'lumbergh', '@council', 'nina'] }
+          expect(@resource[:access]).to eq('policy' => 'allow', 'users' => ['nina', 'lumbergh', '@council'])
+        end
+
+        it 'policy => deny' do
+          @resource[:access] = { 'policy' => 'deny', 'users' => ['nina', 'lumbergh', '@council', 'nina'] }
+          expect(@resource[:access]).to eq('policy' => 'deny', 'users' => ['nina', 'lumbergh', '@council'])
+        end
+      end
+
+      describe 'should NOT accept' do
+        it 'an array' do
+          expect { @resource[:access] = %w(a b) }.to raise_error(Puppet::ResourceError)
+        end
+
+        it 'a string' do
+          expect { @resource[:access] = 'This is a string' }.to raise_error(Puppet::ResourceError)
+        end
+
+        it 'an empty hash' do
+          expect { @resource[:access] = {} }.to raise_error(Puppet::ResourceError)
+        end
+
+        it 'a hash with unsupported policy' do
+          expect { @resource[:access] = { 'policy' => 'random', 'users' => ['lumbergh'] } }.to raise_error(Puppet::ResourceError, /unsupported/)
+        end
+
+        it 'a hash with empty users array' do
+          expect { @resource[:access] = { 'policy' => 'allow', 'users' => [] } }.to raise_error(Puppet::ResourceError, /non-empty/)
+        end
+
+        it 'a hash with malformed user names' do
+          expect { @resource[:access] = { 'policy' => 'allow', 'users' => ['@coun cil'] } }.to raise_error(Puppet::ResourceError, /malformed/)
+          expect { @resource[:access] = { 'policy' => 'allow', 'users' => ['@coun,cil'] } }.to raise_error(Puppet::ResourceError, /malformed/)
+        end
+      end
+    end
+
     describe 'description' do
       it 'should have documentation' do
         expect(type.attrclass(:description).doc).to be_instance_of(String)
@@ -474,8 +520,8 @@ describe Puppet::Type.type(:cups_queue) do
 
     describe 'options' do
       it 'should have documentation' do
-        expect(type.attrclass(:members).doc).to be_instance_of(String)
-        expect(type.attrclass(:members).doc.length).to be > 20
+        expect(type.attrclass(:options).doc).to be_instance_of(String)
+        expect(type.attrclass(:options).doc.length).to be > 20
       end
 
       describe 'should accept' do
@@ -511,6 +557,11 @@ describe Puppet::Type.type(:cups_queue) do
       it 'should have documentation' do
         expect(type.attrclass(:shared).doc).to be_instance_of(String)
         expect(type.attrclass(:shared).doc.length).to be > 20
+      end
+
+      it "defaults to 'false'" do
+        resource = type.new(name: 'Office')
+        expect(resource[:shared]).to eq(:false)
       end
 
       it 'should accept boolean values' do

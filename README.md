@@ -359,6 +359,38 @@ The asterisk (*) indicates the current value. Use this to adapt your manifest
 
 You only need to provide values for options you actually care about.
 
+**Access control:**
+Of course you want your boss Mr. Lumbergh, the secretary Nina and every member of the workers' council
+to be able to print to the office printer from every node. But all others should be denied to use this printer.
+
+Assuming they respectively have the user accounts `lumbergh`, `nina`, and the user group `council`, this can be achieved by:
+
+  ```puppet
+  cups_queue { 'Office':
+    ...
+    access => {
+      'policy' => 'allow',
+      'users'  => ['lumbergh', 'nina', '@council'],
+    }
+  }
+  ```
+
+Note that group names must be prefixed with an `@` sign.
+
+Changing the policy to `deny` would deny all `users`, but allow everybody else. Furthermore, you can unset all restrictions by using
+
+  ```puppet
+  cups_queue { 'Office':
+    ...
+    access => {
+      'policy' => 'allow',
+      'users'  => ['all'],
+    }
+  }
+  ```
+
+because `all` is interpreted by CUPS as a wildcard, not as an account name.
+
 ## Reference
 
 ### Classes
@@ -398,6 +430,10 @@ Installs and manages CUPS print queues.
 * `name`: *mandatory* - CUPS queue names are case insensitive and may contain any printable character except SPACE, TAB, "/", or "#".
 
 * `ensure`: *mandatory* - Specifies whether this queue should be a `class`, a `printer` or `absent`.
+
+* `access`:  Manages queue access control. Takes a hash with keys `policy` and `users`.
+The `allow` policy restricts access to the `users` provided, while the `deny` policy lets everybody except the specified `users` submit jobs.
+The `users` are provided as a non-empty array of Unix group names (prefixed with an `@`) and Unix user names.
 
 * `accepting`: Boolean value specifying whether the queue should accept print jobs or reject them.
 

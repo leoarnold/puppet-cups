@@ -89,6 +89,16 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     value == :true ? cupsaccept('-E', name) : cupsreject('-E', name)
   end
 
+  def access
+    policy = (users_denied.nil? ? 'allow' : 'deny')
+    users = (users_is.sort == users_should.sort ? users_should : users_is)
+    { 'policy' => policy, 'users' => users }
+  end
+
+  def access=(value)
+    lpadmin('-E', '-p', name, '-u', value['policy'] + ':' + users_should.join(','))
+  end
+
   def description
     query('printer-info')
   end
@@ -229,5 +239,32 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     end
 
     answer
+  end
+
+  def users_is
+    allowed = users_allowed
+    denied = users_denied
+
+    if allowed
+      names = allowed
+    elsif denied
+      names = denied
+    else
+      names = 'all'
+    end
+
+    names.gsub(/[\'\"]/, '').split(',')
+  end
+
+  def users_should
+    resource.should(:access).nil? ? [] : resource.should(:access)['users']
+  end
+
+  def users_allowed
+    query('requesting-user-name-allowed')
+  end
+
+  def users_denied
+    query('requesting-user-name-denied')
   end
 end

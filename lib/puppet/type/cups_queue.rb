@@ -127,6 +127,29 @@ Puppet::Type.newtype(:cups_queue) do
     newvalues(:true, :false)
   end
 
+  newproperty(:access) do
+    desc 'Manages queue access control. Takes a hash with keys `policy` and `users`.' \
+      ' The `allow` policy restricts access to the `users` provided,' \
+      ' while the `deny` policy lets everybody except the specified `users` submit jobs.' \
+      ' The `users` are provided as a non-empty array of Unix group names (prefixed with an `@`) and Unix user names.'
+
+    validate do |value|
+      fail ArgumentError, 'Please provide a hash value.' unless value.is_a?(Hash)
+      fail ArgumentError, 'Please provide a hash with both keys `policy` and `users`.' unless value.keys.sort == %w(policy users).sort
+      fail ArgumentError, "The value 'policy => #{value['policy']}' is unsupported. Valid values are 'allow' and 'deny'." \
+        if value.key?('policy') && !%(allow, deny).include?(value['policy'])
+      fail ArgumentError, 'Please provide a non-empty array of user names.' unless value['users'].is_a?(Array) && value['users'].length > 0
+      value['users'].each do |name|
+        fail ArgumentError, "The user or group name '#{name}' seems malformed" unless name =~ /\A@?[\w\-]+\Z/
+      end
+    end
+
+    munge do |value|
+      value['users'] = value['users'].uniq
+      value
+    end
+  end
+
   newproperty(:description) do
     desc 'A short informative description of the queue.'
 
