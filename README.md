@@ -24,7 +24,7 @@ Development:
     * [Types](#types)
     * [Facts](#facts)
 1. [Limitations](#limitations)
-1. [Development - Guide for contributing to the module](#development)
+1. [Contributing - Guidelines for users and developers](#contributing)
 
 ## Description
 
@@ -545,18 +545,26 @@ The CUPS daemon saves them frequently - but not immediately - to `/etc/cups/clas
 The values are saved to the file `/etc/cups/lpoptions`.
 
 Hence there is no robust way to determine the current daemon defaults when used in conjunction with local defaults.
-If local defaults aren't used, the command `lpoptions -l` will return the daemon defaults.
+If local defaults aren't used, the command `lpoptions -p [queue_name] -l` will return the daemon defaults.
 
 In order to provide a stable and idempotent way for Puppet to set default option values for all jobs sent to a queue,
 this module will *disable* the use of local defaults by deleting the file `/etc/cups/lpoptions`.
 
-## Development
+## Contributing
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
+There are several ways to contribute for both users and developers:
 
-## Release Notes/Contributors/Etc. **Optional**
+* This module is striving for the ["Puppet approved"](https://forge.puppetlabs.com/approved) badge.
+If you like this module, please show your appreciation by giving it a
+[positive rating](https://forge.puppetlabs.com/leoarnold/cups) in the PuppetForge
+and spreading the news in your favorite way.
 
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You can also add any additional sections you feel
-are necessary or important to include here. Please use the `## ` header.
+* Want to suggesting a new feature, point out a flaw in the documentation or report a bug?
+Please open a [GitHub issue](https://github.com/leoarnold/puppet-cups/issues)
+using the suggested skeleton from the [contribution guidelines](CONTRIBUTING.md).
+
+* Developers might want to submit a [GitHub pull request](https://github.com/leoarnold/puppet-cups/pulls).
+It is highly recommended to open an **issue first** and discuss changes with the maintainer.
+See the [contribution guidelines](CONTRIBUTING.md) for our quality standards and legal requirements.
+
+_Thank you for your interest in the CUPS module._
