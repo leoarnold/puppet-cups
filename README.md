@@ -16,6 +16,7 @@ Development:
     * [Managing printers](#managing-printers)
     * [Managing classes](#managing-classes)
     * [Configuring queues](#configuring-queues)
+    * [Using Hiera](#using-hiera)
 1. [Reference - The documentation of all features available](#reference)
     * [Classes](#classes)
     * [Defines](#defines)
@@ -391,6 +392,36 @@ Changing the policy to `deny` would deny all `users`, but allow everybody else. 
 
 because `all` is interpreted by CUPS as a wildcard, not as an account name.
 
+### Using Hiera
+
+You can also create `cups_queue` resources using Hiera.
+Make sure your setup includes the `::cups` class on the relevant nodes and replace a manifest like
+
+  ```puppet
+  cups_queue { 'Office':
+    ensure    => 'printer',
+    uri       => 'lpd://192.168.2.105/binary_p1',
+  }
+
+  cups_queue { 'BackOffice':
+    ensure    => 'printer',
+    uri       => 'lpd://192.168.2.254/binary_p1',
+  }
+  ```
+
+with the Hiera data
+
+  ```YAML
+  ---
+  cups::queues:
+    'Office':
+      ensure: 'printer'
+      uri: 'lpd://192.168.2.105/binary_p1'
+    'BackOffice':
+      ensure: 'printer'
+      uri: 'lpd://192.168.2.254/binary_p1'
+  ```
+
 ## Reference
 
 ### Classes
@@ -420,6 +451,8 @@ Installs, configures, and manages the CUPS service.
 ##### Attributes (all optional)
 
 * `default_queue`: The name of the default destination for all print jobs. Requires the catalog to contain a `cups_queue` resource with the same name.
+
+* `queues`: This attribute should only be used for [Hiera lookup](#using-hiera).
 
 #### Type: `cups_queue`
 

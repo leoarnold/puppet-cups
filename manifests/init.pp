@@ -4,6 +4,7 @@
 #
 class cups (
   $default_queue = undef,
+  $queues = undef
 ) inherits ::cups::params {
 
   package { $::cups::packages :
@@ -14,6 +15,10 @@ class cups (
     ensure  => 'running',
     enable  => true,
     require => Package[$::cups::packages],
+  }
+
+  unless ($queues == undef) {
+    create_resources('cups_queue', $queues)
   }
 
   unless ($default_queue == undef) {
