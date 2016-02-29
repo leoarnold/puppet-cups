@@ -18,12 +18,12 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
     describe '#class_exists?' do
       it 'returns true if a class by that name exists' do
-        expect(Facter).to receive(:value).with(:cups_classes).and_return(%w(GroundFloor UpperFloor))
+        expect(described_class).to receive(:cups_classes).and_return(%w(GroundFloor UpperFloor))
         expect(@provider.class_exists?).to be true
       end
 
       it 'returns false if no class by that name exists' do
-        expect(Facter).to receive(:value).with(:cups_classes).and_return(%w(UpperFloor))
+        expect(described_class).to receive(:cups_classes).and_return(%w(UpperFloor))
         expect(@provider.class_exists?).to be false
       end
     end
@@ -59,12 +59,12 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
       describe '#printer_exists?' do
         it 'returns true if a printer by that name exists' do
-          expect(Facter).to receive(:value).with(:cups_printers).and_return(%w(BackOffice Office Warehouse))
+          expect(described_class).to receive(:cups_printers).and_return(%w(BackOffice Office Warehouse))
           expect(@provider.printer_exists?).to be true
         end
 
         it 'returns false if no printer by that name exists' do
-          expect(Facter).to receive(:value).with(:cups_printers).and_return(%w(BackOffice Warehouse))
+          expect(described_class).to receive(:cups_printers).and_return(%w(BackOffice Warehouse))
           expect(@provider.printer_exists?).to be false
         end
       end
@@ -75,6 +75,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           method = (manifest.keys & switch.keys)[0]
 
           allow(@provider).to receive(:lpadmin).with('-E', '-x', 'Office')
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', '/dev/null')
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', switch[method], manifest[method]) if method
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'printer-is-shared=false')
 
@@ -129,6 +130,29 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       }
 
       include_examples 'provider contract', manifest
+    end
+  end
+
+  describe 'provider methods' do
+    before(:each) do
+      manifest = {
+        ensure: 'printer',
+        name: 'Office'
+      }
+
+      @resource = type.new(manifest)
+      @provider = provider.new(@resource)
+    end
+
+    describe '#make_and_model=(_value)' do
+      context 'when ensuring a printer' do
+        it 'calls #create_printer' do
+          allow(@provider).to receive(:ensure).and_return(:printer)
+          expect(@provider).to receive(:create_printer)
+
+          @provider.make_and_model = 'Local Raw Printer'
+        end
+      end
     end
   end
 end

@@ -13,12 +13,28 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   ### Static provider methods
 
+  def self.cups_classes
+    Cups::Facts::Classes.fact
+  end
+
+  def self.cups_classmembers
+    Cups::Facts::ClassMembers.fact
+  end
+
+  def self.cups_printers
+    Cups::Facts::Printers.fact
+  end
+
+  def self.cups_queues
+    Cups::Facts::Queues.fact
+  end
+
   def self.instances
     providers = []
-    Facter.value(:cups_classmembers).each do |classname, membernames|
+    cups_classmembers.each do |classname, membernames|
       providers << new(name: classname, ensure: :class, members: membernames)
     end
-    Facter.value(:cups_printers).each do |printername|
+    cups_printers.each do |printername|
       providers << new(name: printername, ensure: :printer)
     end
     providers
@@ -35,15 +51,15 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   ### Existence
 
   def class_exists?
-    Facter.value(:cups_classes).include? name
+    self.class.cups_classes.include? name
   end
 
   def printer_exists?
-    Facter.value(:cups_printers).include? name
+    self.class.cups_printers.include? name
   end
 
   def queue_exists?
-    class_exists? || printer_exists?
+    self.class.cups_queues.include? name
   end
 
   ### Creation and destruction
@@ -61,6 +77,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def create_printer
     destroy
+    lpadmin('-E', '-p', name, '-v', '/dev/null')
     [:interface, :model, :ppd, :uri,
      :description, :location, :shared,
      :enabled, :held, :accepting].each do |property|
@@ -140,8 +157,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def make_and_model=(_value)
-    create_printer if printer?
-    create_class if class?
+    create_printer if self.ensure == :printer
   end
 
   def model=(value)
@@ -181,7 +197,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def uri
-    query('device-uri') if printer?
+    query('device-uri') if self.ensure == :printer
   end
 
   def uri=(value)
@@ -189,14 +205,6 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   private
-
-  def class?
-    self.ensure == :class
-  end
-
-  def printer?
-    self.ensure == :printer
-  end
 
   def query(property)
     Cups::Queue::Attribute.query(name, property)
