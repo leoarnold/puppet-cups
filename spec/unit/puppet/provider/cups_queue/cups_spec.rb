@@ -201,6 +201,42 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         end
       end
     end
+
+    describe '#options' do
+      context 'when the `options` property is NOT specified' do
+        it 'returns a hash of all retrievable options and their current values' do
+          current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
+
+          allow(@resource).to receive(:should).with(:options).and_return(nil)
+          allow(@provider).to receive(:all_options_is).and_return(current)
+
+          expect(@provider.options).to eq(current)
+        end
+      end
+
+      context 'when the `options` property is specified' do
+        it 'fails on unsupported options' do
+          current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
+          should = { 'TimeZone' => 'Saturn' }
+
+          allow(@resource).to receive(:should).with(:options).and_return(should)
+          allow(@provider).to receive(:all_options_is).and_return(current)
+
+          expect { @provider.options }.to raise_error(Puppet::Error, /TimeZone/)
+        end
+
+        it 'returns a hash of all specified options and their current values' do
+          current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
+          should = { 'PageSize' => 'A4' }
+          expected = { 'PageSize' => 'Letter' }
+
+          allow(@resource).to receive(:should).with(:options).and_return(should)
+          allow(@provider).to receive(:all_options_is).and_return(current)
+
+          expect(@provider.options).to eq(expected)
+        end
+      end
+    end
   end
 
   describe 'private functions' do
@@ -212,6 +248,61 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
       @resource = type.new(manifest)
       @provider = provider.new(@resource)
+    end
+
+    describe '#specified_options_is' do
+      it 'fails on unsupported options' do
+        current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
+        should = { 'TimeZone' => 'Saturn' }
+
+        allow(@provider).to receive(:all_options_is).and_return(current)
+
+        expect { @provider.send(:specified_options_is, should) }.to raise_error(Puppet::Error, /TimeZone/)
+      end
+
+      it 'returns a hash of all specified options and their current values' do
+        current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
+        should = { 'PageSize' => 'A4' }
+        expected = { 'PageSize' => 'Letter' }
+
+        allow(@provider).to receive(:all_options_is).and_return(current)
+
+        expect(@provider.send(:specified_options_is, should)).to eq(expected)
+      end
+    end
+
+    describe '#vendor_options' do
+      context 'for a raw queue' do
+        it 'should return an empty hash' do
+          input = "lpoptions: Unable to get PPD file for Rawe: Not Found\n"
+
+          allow(@provider).to receive(:lpoptions).with('-E', '-p', 'Office', '-l').and_return(input)
+
+          expect(@provider.send(:vendor_options)).to eq({})
+        end
+      end
+
+      context 'for a queue using a PPD file' do
+        it 'should return a hash of vendor options and their current values' do
+          input = <<-EOT
+PageSize/Who: Custom.WIDTHxHEIGHT Letter Legal Executive FanFoldGermanLegal *A4 A5 A6 Env10 EnvMonarch EnvDL EnvC5
+MediaType/cares: *PLAIN THIN THICK THICKERPAPER2 BOND ENV ENVTHICK ENVTHIN RECYCLED
+InputSlot/about: MANUAL *TRAY1
+Duplex/this: DuplexTumble DuplexNoTumble *None
+          EOT
+
+          expected = {
+            'PageSize' => 'A4',
+            'MediaType' => 'PLAIN',
+            'InputSlot' => 'TRAY1',
+            'Duplex' => 'None'
+          }
+
+          allow(@provider).to receive(:lpoptions).with('-E', '-p', 'Office', '-l').and_return(input)
+
+          expect(@provider.send(:vendor_options)).to eq(expected)
+        end
+      end
     end
 
     describe '#users_is' do

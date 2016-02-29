@@ -225,10 +225,10 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def all_options_is
-    cups_options.merge(ppd_options)
+    native_options.merge(vendor_options)
   end
 
-  def cups_options
+  def native_options
     answer = {}
 
     options = %w(job-k-limit job-page-limit job-quota-period job-sheets-default port-monitor printer-error-policy printer-op-policy)
@@ -237,7 +237,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     answer
   end
 
-  def ppd_options
+  def vendor_options
     answer = {}
 
     lpoptions('-E', '-p', name, '-l').each_line do |line|
