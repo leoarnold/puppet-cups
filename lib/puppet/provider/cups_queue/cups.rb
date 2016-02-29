@@ -108,12 +108,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def access
     policy = (users_denied.nil? ? 'allow' : 'deny')
-    users = (users_is.sort == users_should.sort ? users_should : users_is)
-    { 'policy' => policy, 'users' => users }
+    { 'policy' => policy, 'users' => users_is }
   end
 
   def access=(value)
-    lpadmin('-E', '-p', name, '-u', value['policy'] + ':' + users_should.join(','))
+    lpadmin('-E', '-p', name, '-u', value['policy'] + ':' + value['users'].join(','))
   end
 
   def description
@@ -254,14 +253,12 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     denied = users_denied
 
     if allowed
-      names = allowed
+      allowed
     elsif denied
-      names = denied
+      denied
     else
-      names = 'all'
+      ['all']
     end
-
-    names.gsub(/[\'\"]/, '').split(',')
   end
 
   def users_should
@@ -269,10 +266,16 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def users_allowed
-    query('requesting-user-name-allowed')
+    names = query('requesting-user-name-allowed')
+    user_array(names)
   end
 
   def users_denied
-    query('requesting-user-name-denied')
+    names = query('requesting-user-name-denied')
+    user_array(names)
+  end
+
+  def user_array(names)
+    names.gsub(/[\'\"]/, '').split(',').sort.uniq if names
   end
 end

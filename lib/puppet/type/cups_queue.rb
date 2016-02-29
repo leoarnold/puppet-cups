@@ -145,7 +145,7 @@ Puppet::Type.newtype(:cups_queue) do
     end
 
     munge do |value|
-      value['users'] = value['users'].uniq
+      value['users'] = value['users'].sort.uniq
       value
     end
   end

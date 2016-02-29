@@ -409,13 +409,18 @@ describe Puppet::Type.type(:cups_queue) do
 
       describe 'should accept' do
         it 'policy => allow' do
-          @resource[:access] = { 'policy' => 'allow', 'users' => ['nina', 'lumbergh', '@council', 'nina'] }
-          expect(@resource[:access]).to eq('policy' => 'allow', 'users' => ['nina', 'lumbergh', '@council'])
+          @resource[:access] = { 'policy' => 'allow', 'users' => ['all'] }
+          expect(@resource[:access]).to eq('policy' => 'allow', 'users' => ['all'])
         end
 
         it 'policy => deny' do
-          @resource[:access] = { 'policy' => 'deny', 'users' => ['nina', 'lumbergh', '@council', 'nina'] }
-          expect(@resource[:access]).to eq('policy' => 'deny', 'users' => ['nina', 'lumbergh', '@council'])
+          @resource[:access] = { 'policy' => 'deny', 'users' => ['all'] }
+          expect(@resource[:access]).to eq('policy' => 'deny', 'users' => ['all'])
+        end
+
+        it 'a `users` array, should sort it, and should remove duplicates' do
+          @resource[:access] = { 'policy' => 'allow', 'users' => ['nina', '@council', 'nina', 'lumbergh'] }
+          expect(@resource[:access]).to eq('policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'])
         end
       end
 

@@ -144,6 +144,53 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       @provider = provider.new(@resource)
     end
 
+    describe '#access' do
+      context 'when no policy is in place' do
+        it 'returns all users allowed' do
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
+
+          expect(@provider.access).to eq('policy' => 'allow', 'users' => ['all'])
+        end
+      end
+
+      context 'when an allow policy is in place' do
+        it 'returns all allowed user names' do
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('@council,lumbergh,nina')
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
+
+          expect(@provider.access).to eq('policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'])
+        end
+      end
+
+      context 'when a deny policy is in place' do
+        it 'returns all denied user names' do
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('@council,lumbergh,nina')
+
+          expect(@provider.access).to eq('policy' => 'deny', 'users' => ['@council', 'lumbergh', 'nina'])
+        end
+      end
+    end
+
+    describe '#access=' do
+      context "{ 'policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'] }" do
+        it 'executes the correct command' do
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-u', 'allow:@council,lumbergh,nina')
+
+          @provider.access = { 'policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'] }
+        end
+      end
+
+      context "{ 'policy' => 'deny', 'users' => ['@council', 'lumbergh', 'nina'] }" do
+        it 'executes the correct command' do
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-u', 'deny:@council,lumbergh,nina')
+
+          @provider.access = { 'policy' => 'deny', 'users' => ['@council', 'lumbergh', 'nina'] }
+        end
+      end
+    end
+
     describe '#make_and_model=(_value)' do
       context 'when ensuring a printer' do
         it 'calls #create_printer' do
@@ -151,6 +198,101 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           expect(@provider).to receive(:create_printer)
 
           @provider.make_and_model = 'Local Raw Printer'
+        end
+      end
+    end
+  end
+
+  describe 'private functions' do
+    before(:each) do
+      manifest = {
+        ensure: 'printer',
+        name: 'Office'
+      }
+
+      @resource = type.new(manifest)
+      @provider = provider.new(@resource)
+    end
+
+    describe '#users_is' do
+      context 'when no policy is in place' do
+        it "returns 'all'" do
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
+
+          expect(@provider.send(:users_is)).to eq(%w(all))
+        end
+      end
+
+      context 'when there are users on an allow policy' do
+        it 'returns a sorted array without duplicates' do
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('nina,@council,nina,lumbergh')
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
+
+          expect(@provider.send(:users_is)).to eq(%w(@council lumbergh nina))
+        end
+      end
+
+      context 'when there are users on an deny policy' do
+        it 'returns a sorted array without duplicates' do
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('nina,@council,nina,lumbergh')
+
+          expect(@provider.send(:users_is)).to eq(%w(@council lumbergh nina))
+        end
+      end
+    end
+
+    describe '#users_should' do
+      context 'when the `access` property was NOT specified' do
+        it 'returns an empty array' do
+          allow(@resource).to receive(:should).with(:access).and_return(nil)
+
+          expect(@provider.send(:users_should)).to eq([])
+        end
+      end
+
+      context 'when the `access` property was specified' do
+        it 'returns the value for `users`' do
+          allow(@resource).to receive(:should).with(:access).and_return('policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'])
+
+          expect(@provider.send(:users_should)).to eq(['@council', 'lumbergh', 'nina'])
+        end
+      end
+    end
+
+    describe '#users_allowed' do
+      context 'when there are NO users on an allow policy' do
+        it 'returns nil' do
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
+
+          expect(@provider.send(:users_allowed)).to be nil
+        end
+      end
+
+      context 'when there are users on an allow policy' do
+        it 'returns a sorted array without duplicates' do
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('nina,@council,nina,lumbergh')
+
+          expect(@provider.send(:users_allowed)).to eq(%w(@council lumbergh nina))
+        end
+      end
+    end
+
+    describe '#users_denied' do
+      context 'when there are NO users on a deny policy' do
+        it 'returns nil' do
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
+
+          expect(@provider.send(:users_denied)).to be nil
+        end
+      end
+
+      context 'when there are users on a deny policy' do
+        it 'returns a sorted array without duplicates' do
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('nina,@council,nina,lumbergh')
+
+          expect(@provider.send(:users_denied)).to eq(%w(@council lumbergh nina))
         end
       end
     end
