@@ -16,6 +16,7 @@ Development:
     * [Managing printers](#managing-printers)
     * [Managing classes](#managing-classes)
     * [Configuring queues](#configuring-queues)
+    * [Configuring CUPS](#configuring-cups)
     * [Using Hiera](#using-hiera)
 1. [Reference - The documentation of all features available](#reference)
     * [Classes](#classes)
@@ -392,20 +393,38 @@ Changing the policy to `deny` would deny all `users`, but allow everybody else. 
 
 because `all` is interpreted by CUPS as a wildcard, not as an account name.
 
+### Configuring CUPS
+
+Now that you have created manifest for all your queues, you may want to set the default destination.
+
+  ```puppet
+  class { '::cups'
+    default_destination => 'Office',
+  }
+  ```
+
+This will require the resource `Cups_queue['Office']` to be defined in the catalog.
+
+To find out about all options available for `Class['::cups']` see the [section below](#class-cups).
+
 ### Using Hiera
 
 You can also create `cups_queue` resources using Hiera.
 Make sure your setup includes the `::cups` class on the relevant nodes and replace a manifest like
 
   ```puppet
-  cups_queue { 'Office':
-    ensure    => 'printer',
-    uri       => 'lpd://192.168.2.105/binary_p1',
+  class { '::cups':
+    default_queue => 'GroundFloor',
   }
 
-  cups_queue { 'BackOffice':
-    ensure    => 'printer',
-    uri       => 'lpd://192.168.2.254/binary_p1',
+  cups_queue { 'Office':
+    ensure => 'printer',
+    uri    => 'lpd://192.168.2.105/binary_p1',
+  }
+
+  cups_queue { 'GroundFloor':
+    ensure  => 'class',
+    members => ['Office', 'Warehouse'],
   }
   ```
 
@@ -413,13 +432,14 @@ with the Hiera data
 
   ```YAML
   ---
+  cups::default_queue: 'GroundFloor'
   cups::queues:
     'Office':
       ensure: 'printer'
       uri: 'lpd://192.168.2.105/binary_p1'
-    'BackOffice':
-      ensure: 'printer'
-      uri: 'lpd://192.168.2.254/binary_p1'
+    'GroundFloor':
+      ensure: 'class'
+      members: ['Office', 'Warehouse']
   ```
 
 ## Reference
@@ -429,6 +449,10 @@ with the Hiera data
 * [`cups`](#class-cups)
 
 * `cups::default_queue` (private)
+
+### Defines
+
+* `cups::directive` (private)
 
 ### Types
 
@@ -453,6 +477,8 @@ Installs, configures, and manages the CUPS service.
 * `default_queue`: The name of the default destination for all print jobs. Requires the catalog to contain a `cups_queue` resource with the same name.
 
 * `queues`: This attribute should only be used for [Hiera lookup](#using-hiera).
+
+* `webinterface`: Boolean value to enable or disable the CUPS web interface at [`http://localhost:631`](http://localhost:631).
 
 #### Type: `cups_queue`
 

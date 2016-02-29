@@ -1,9 +1,11 @@
 # Class: cups::default_queue
 #
-# Sets the default destination for all print jobs,
+# Sets the default destination for all print jobs.
 #
 # Every node can only have one default CUPS destination.
 # Therefore we implement it as class to generate a Puppet catalog singleton.
+#
+# String :: queue
 #
 class cups::default_queue (
   $queue
