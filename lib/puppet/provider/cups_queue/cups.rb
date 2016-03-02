@@ -214,11 +214,8 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     supported_options_is = all_options_is
 
     options_should.keys.each do |key|
-      if supported_options_is.key? key
-        answer[key] = supported_options_is[key]
-      else
-        fail("Managing the option '#{key}' is unsupported.")
-      end
+      raise("Managing the option '#{key}' is unsupported.") unless supported_options_is.key? key
+      answer[key] = supported_options_is[key]
     end
 
     answer

@@ -222,7 +222,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           allow(@resource).to receive(:should).with(:options).and_return(should)
           allow(@provider).to receive(:all_options_is).and_return(current)
 
-          expect { @provider.options }.to raise_error(Puppet::Error, /TimeZone/)
+          expect { @provider.options }.to raise_error(/TimeZone/)
         end
 
         it 'returns a hash of all specified options and their current values' do
@@ -257,7 +257,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
         allow(@provider).to receive(:all_options_is).and_return(current)
 
-        expect { @provider.send(:specified_options_is, should) }.to raise_error(Puppet::Error, /TimeZone/)
+        expect { @provider.send(:specified_options_is, should) }.to raise_error(/TimeZone/)
       end
 
       it 'returns a hash of all specified options and their current values' do

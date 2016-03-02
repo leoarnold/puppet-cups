@@ -88,7 +88,7 @@ module Cups
     class IppResult
       def initialize(request, resource = '/')
         @output, @error, process = query(resource, request)
-        fail('Unexpected response from CUPS server.') if process.exitstatus != 0
+        raise('Unexpected response from CUPS server.') if process.exitstatus != 0
       end
 
       def lines

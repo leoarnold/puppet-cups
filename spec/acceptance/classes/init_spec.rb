@@ -9,7 +9,7 @@ describe 'Including class "cups"' do
     packages = ['cups', 'cups-ipptool']
     services = ['cups']
   else
-    fail('This version of the CUPS module does not know how to install CUPS on your operating system.')
+    raise('This version of the CUPS module does not know how to install CUPS on your operating system.')
   end
 
   context 'Default class inclusion' do

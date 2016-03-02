@@ -87,7 +87,7 @@ describe 'cups' do
       end
     end
 
-    context 'with attribute webinterface' do
+    describe 'webinterface' do
       context 'not provided' do
         it { should_not contain_cups__directive('WebInterface') }
       end

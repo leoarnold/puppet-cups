@@ -14,7 +14,7 @@ describe Puppet::Type.type(:cups_queue) do
               name: 'GroundFloor'
             }
 
-            expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+            expect { type.new(manifest) }.to raise_error(/member/)
           end
         end
 
@@ -26,7 +26,7 @@ describe Puppet::Type.type(:cups_queue) do
               members: []
             }
 
-            expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+            expect { type.new(manifest) }.to raise_error(/member/)
           end
         end
 
@@ -128,7 +128,7 @@ describe Puppet::Type.type(:cups_queue) do
             ppd: '/usr/share/cups/model/myprinter.ppd'
           }
 
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+          expect { type.new(manifest) }.to raise_error(/mutually/)
         end
       end
 
@@ -141,7 +141,7 @@ describe Puppet::Type.type(:cups_queue) do
             interface: '/usr/share/cups/model/myprinter.sh'
           }
 
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+          expect { type.new(manifest) }.to raise_error(/mutually/)
         end
       end
 
@@ -154,7 +154,7 @@ describe Puppet::Type.type(:cups_queue) do
             interface: '/usr/share/cups/model/myprinter.sh'
           }
 
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+          expect { type.new(manifest) }.to raise_error(/mutually/)
         end
       end
 
@@ -168,7 +168,7 @@ describe Puppet::Type.type(:cups_queue) do
             interface: '/usr/share/cups/model/myprinter.sh'
           }
 
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+          expect { type.new(manifest) }.to raise_error(/mutually/)
         end
       end
     end
@@ -185,7 +185,7 @@ describe Puppet::Type.type(:cups_queue) do
             model: 'drv:///sample.drv/generic.ppd'
           }
 
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+          expect { type.new(manifest) }.to raise_error(/support/)
         end
       end
 
@@ -198,7 +198,7 @@ describe Puppet::Type.type(:cups_queue) do
             ppd: '/usr/share/cups/model/myprinter.ppd'
           }
 
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+          expect { type.new(manifest) }.to raise_error(/support/)
         end
       end
 
@@ -211,7 +211,7 @@ describe Puppet::Type.type(:cups_queue) do
             interface: '/usr/share/cups/model/myprinter.sh'
           }
 
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+          expect { type.new(manifest) }.to raise_error(/support/)
         end
       end
 
@@ -224,7 +224,7 @@ describe Puppet::Type.type(:cups_queue) do
             make_and_model: 'Local Printer Class'
           }
 
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+          expect { type.new(manifest) }.to raise_error(/support/)
         end
       end
 
@@ -237,7 +237,7 @@ describe Puppet::Type.type(:cups_queue) do
             uri: 'lpd://192.168.2.105/binary_p1'
           }
 
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+          expect { type.new(manifest) }.to raise_error(/support/)
         end
       end
     end
@@ -252,7 +252,7 @@ describe Puppet::Type.type(:cups_queue) do
             members: %w(Office Warehouse)
           }
 
-          expect { type.new(manifest) }.to raise_error(Puppet::ResourceError)
+          expect { type.new(manifest) }.to raise_error(/support/)
         end
       end
     end
@@ -324,7 +324,7 @@ describe Puppet::Type.type(:cups_queue) do
         end
 
         it "a string with a '#'" do
-          expect { @resource[:name] = "RSpec\#Test_Printer" }.to raise_error(/may NOT contain/)
+          expect { @resource[:name] = 'RSpec#Test_Printer' }.to raise_error(/may NOT contain/)
         end
       end
     end

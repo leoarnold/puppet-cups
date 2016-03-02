@@ -48,13 +48,13 @@ Puppet::Type.newtype(:cups_queue) do
   validate do
     case should(:ensure)
     when :class
-      fail('Please provide a non-empty array of member printers.') unless (should(:members).is_a? Array) && !should(:members).empty?
-      fail('Classes do NOT support the following attributes: `model`, `ppd`, `interface`, `uri`') \
+      raise('Please provide a non-empty array of member printers.') unless (should(:members).is_a? Array) && !should(:members).empty?
+      raise('Classes do NOT support the following attributes: `model`, `ppd`, `interface`, `make_and_model`, `uri`') \
         if value(:model) || value(:ppd) || value(:interface) || should(:make_and_model) || should(:uri)
     when :printer
-      fail("The attributes 'interface', 'model' and 'ppd' are mutually exclusive. Please specify at most one of them.") \
+      raise("The attributes 'interface', 'model' and 'ppd' are mutually exclusive. Please specify at most one of them.") \
         if [value(:interface).nil?, value(:model).nil?, value(:ppd).nil?].count(false) > 1
-      fail('Printers do not support the parameter `members`.') if should(:members)
+      raise('Printers do not support the attribute `members`.') if should(:members)
     end
   end
 
@@ -97,7 +97,7 @@ Puppet::Type.newtype(:cups_queue) do
     end
 
     newvalue(:unspecified) do
-      fail("Please specify a value for 'ensure'.")
+      raise("Please specify a value for 'ensure'.")
     end
 
     defaultto(:unspecified)
@@ -117,7 +117,7 @@ Puppet::Type.newtype(:cups_queue) do
     desc '(mandatory) CUPS queue names are case insensitive and may contain any printable character except SPACE, TAB, "/", or "#".'
 
     validate do |name|
-      fail ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if name =~ %r{[\s/#]}
+      raise ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if name =~ %r{[\s/#]}
     end
   end
 
@@ -134,13 +134,13 @@ Puppet::Type.newtype(:cups_queue) do
       ' The `users` are provided as a non-empty array of Unix group names (prefixed with an `@`) and Unix user names.'
 
     validate do |value|
-      fail ArgumentError, 'Please provide a hash value.' unless value.is_a?(Hash)
-      fail ArgumentError, 'Please provide a hash with both keys `policy` and `users`.' unless value.keys.sort == %w(policy users).sort
-      fail ArgumentError, "The value 'policy => #{value['policy']}' is unsupported. Valid values are 'allow' and 'deny'." \
+      raise ArgumentError, 'Please provide a hash value.' unless value.is_a?(Hash)
+      raise ArgumentError, 'Please provide a hash with both keys `policy` and `users`.' unless value.keys.sort == %w(policy users).sort
+      raise ArgumentError, "The value 'policy => #{value['policy']}' is unsupported. Valid values are 'allow' and 'deny'." \
         if value.key?('policy') && !%(allow, deny).include?(value['policy'])
-      fail ArgumentError, 'Please provide a non-empty array of user names.' unless value['users'].is_a?(Array) && value['users'].length > 0
+      raise ArgumentError, 'Please provide a non-empty array of user names.' unless value['users'].is_a?(Array) && !value['users'].empty?
       value['users'].each do |name|
-        fail ArgumentError, "The user or group name '#{name}' seems malformed" unless name =~ /\A@?[\w\-]+\Z/
+        raise ArgumentError, "The user or group name '#{name}' seems malformed" unless name =~ /\A@?[\w\-]+\Z/
       end
     end
 
@@ -154,7 +154,7 @@ Puppet::Type.newtype(:cups_queue) do
     desc 'A short informative description of the queue.'
 
     validate do |value|
-      fail ArgumentError, "The 'description' must be a string." unless value.is_a? String
+      raise ArgumentError, "The 'description' must be a string." unless value.is_a? String
     end
   end
 
@@ -175,7 +175,7 @@ Puppet::Type.newtype(:cups_queue) do
       ' If the catalog contains a `file` resource with this path as title, it will automatically be required.'
 
     validate do |value|
-      fail("The absolute local file path '#{value}' seems malformed.") unless URI(value).path == value
+      raise("The absolute local file path '#{value}' seems malformed.") unless URI(value).path == value
     end
   end
 
@@ -183,7 +183,7 @@ Puppet::Type.newtype(:cups_queue) do
     desc 'A short information where to find the hardcopies.'
 
     validate do |value|
-      fail ArgumentError, "The 'location' must be a string." unless value.is_a? String
+      raise ArgumentError, "The 'location' must be a string." unless value.is_a? String
     end
   end
 
@@ -194,7 +194,7 @@ Puppet::Type.newtype(:cups_queue) do
       ' and `Local System V Printer` or `Local Raw Printer` otherwise.'
 
     validate do |value|
-      fail ArgumentError, "The 'make_and_model' must be a string." unless value.is_a? String
+      raise ArgumentError, "The 'make_and_model' must be a string." unless value.is_a? String
     end
   end
 
@@ -204,8 +204,8 @@ Puppet::Type.newtype(:cups_queue) do
       ' If the catalog contains `cups_queue` resources for these queues, they will be required automatically.'
 
     validate do |value|
-      fail ArgumentError, 'The list of members must not be empty.' if value.length == 0
-      fail ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if value =~ %r{[\s/#]}
+      raise ArgumentError, 'The list of members must not be empty.' if value.empty?
+      raise ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if value =~ %r{[\s/#]}
     end
   end
 
@@ -213,7 +213,7 @@ Puppet::Type.newtype(:cups_queue) do
     desc '(printer-only) A supported printer model. Use `lpinfo -m` on the node to list all models available.'
 
     validate do |value|
-      fail ArgumentError, "The 'model' must be a string." unless value.is_a? String
+      raise ArgumentError, "The 'model' must be a string." unless value.is_a? String
     end
   end
 
@@ -222,7 +222,7 @@ Puppet::Type.newtype(:cups_queue) do
       ' Use `lpoptions -p [queue_name] -l` on the node for a list of all options available for the queue and their supported values.'
 
     validate do |value|
-      fail ArgumentError, 'Please provide a hash value.' unless value.is_a? Hash
+      raise ArgumentError, 'Please provide a hash value.' unless value.is_a? Hash
 
       properties = {
         'printer-is-accepting-jobs' => 'accepting',
@@ -235,7 +235,7 @@ Puppet::Type.newtype(:cups_queue) do
 
       value.keys.each do |key|
         if properties.key? key
-          fail ArgumentError, "Please use the `cups_queue` property '#{properties[value]}' instead of setting the option '#{value}'."
+          raise ArgumentError, "Please use the `cups_queue` property '#{properties[value]}' instead of setting the option '#{value}'."
         end
       end
     end
@@ -247,7 +247,7 @@ Puppet::Type.newtype(:cups_queue) do
       ' The recommended location for your PPD files is `/usr/share/cups/model/` or `/usr/local/share/cups/model/`.'
 
     validate do |value|
-      fail("The absolute local file path '#{value}' seems malformed.") unless URI(value).path == value
+      raise("The absolute local file path '#{value}' seems malformed.") unless URI(value).path == value
     end
   end
 
@@ -262,7 +262,7 @@ Puppet::Type.newtype(:cups_queue) do
     desc '(printer-only) The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.'
 
     validate do |value|
-      fail ArgumentError, "The URI '#{value}' seems malformed." unless (value =~ URI.regexp) || (value == URI(value).path)
+      raise ArgumentError, "The URI '#{value}' seems malformed." unless (value =~ URI.regexp) || (value == URI(value).path)
     end
   end
 end
