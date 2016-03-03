@@ -24,8 +24,8 @@ describe 'Including class "cups"' do
 
     context 'when the catalog contains a `cups_queue` resource with the same name' do
       before(:all) do
-        add_printers(%w(Warehouse))
-        shell('lpadmin -d Warehouse')
+        add_printers(%w(BackOffice))
+        shell('lpadmin -d BackOffice')
       end
 
       manifest = <<-EOM
@@ -45,7 +45,7 @@ describe 'Including class "cups"' do
       end
 
       it 'sets the correct value' do
-        expect(shell('lpstat -d').stdout).to match(/Office/)
+        expect(shell('lpstat -d').stdout.split(/\s/)).to include('Office')
       end
 
       it 'is idempotent' do

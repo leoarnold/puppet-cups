@@ -1,10 +1,11 @@
 # Class: cups
 #
-# String       :: default_queue
+# String :: confdir
+# String :: default_queue
+# String :: hiera
 # String/Array :: packages
 # String/Array :: services
-# Hiera_hash   :: queues
-# boolean      :: webinterface
+# boolean :: webinterface
 #
 class cups (
   $confdir = $::cups::params::confdir,

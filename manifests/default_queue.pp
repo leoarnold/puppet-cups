@@ -16,8 +16,8 @@ class cups::default_queue (
 
   exec { 'lpadmin-d':
     command => "lpadmin -E -d ${queue}",
-    unless  => "lpstat -d | grep ${queue}",
-    path    => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
+    unless  => "lpstat -d | grep -w ${queue}",
+    path    => ['/usr/local/sbin/', '/usr/local/bin/', '/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
     require => Cups_queue[$queue]
   }
 }

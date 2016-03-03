@@ -11,7 +11,8 @@ define cups::ctl (
   validate_string($ensure)
 
   exec { "cupsctl-${title}":
-    command => "/usr/sbin/cupsctl -E ${title}=${ensure}",
-    unless  => "/usr/sbin/cupsctl | /bin/grep -i '${title}=${ensure}'"
+    command => "cupsctl -E ${title}=${ensure}",
+    unless  => "cupsctl -E | grep -iw '${title}=${ensure}'",
+    path    => ['/usr/local/sbin/', '/usr/local/bin/', '/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
   }
 }

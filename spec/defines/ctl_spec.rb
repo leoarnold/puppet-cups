@@ -12,7 +12,7 @@ describe 'cups::ctl' do
       context 'specified' do
         let(:params) { { ensure: 'Yes' } }
 
-        it { should contain_exec("cupsctl-#{title}").with(command: "/usr/sbin/cupsctl -E #{title}=Yes") }
+        it { should contain_exec("cupsctl-#{title}").with(command: "cupsctl -E #{title}=Yes") }
       end
     end
   end

@@ -246,7 +246,7 @@ describe 'cups' do
 
         it { is_expected.to contain_cups__ctl('WebInterface').with(ensure: 'Yes') }
 
-        it { is_expected.to contain_exec('cupsctl-WebInterface').with(command: '/usr/sbin/cupsctl -E WebInterface=Yes') }
+        it { is_expected.to contain_exec('cupsctl-WebInterface').with(command: 'cupsctl -E WebInterface=Yes') }
       end
 
       context '= false' do
@@ -254,7 +254,7 @@ describe 'cups' do
 
         it { is_expected.to contain_cups__ctl('WebInterface').with(ensure: 'No') }
 
-        it { is_expected.to contain_exec('cupsctl-WebInterface').with(command: '/usr/sbin/cupsctl -E WebInterface=No') }
+        it { is_expected.to contain_exec('cupsctl-WebInterface').with(command: 'cupsctl -E WebInterface=No') }
       end
     end
   end
