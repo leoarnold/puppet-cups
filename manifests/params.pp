@@ -19,6 +19,6 @@ class cups::params {
     }
   }
 
-  $lpoptions_file = '/etc/cups/lpoptions'
+  $confdir = '/etc/cups'
 
 }

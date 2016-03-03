@@ -7,6 +7,7 @@
 # boolean      :: webinterface
 #
 class cups (
+  $confdir = $::cups::params::confdir,
   $default_queue = undef,
   $packages = $::cups::params::packages,
   $services = $::cups::params::services,
@@ -32,8 +33,9 @@ class cups (
     }
   }
 
-  file { $::cups::lpoptions_file :
+  file { 'lpoptions' :
     ensure  => 'absent',
+    path    => "${confdir}/lpoptions",
     require => Package[$packages],
   }
 

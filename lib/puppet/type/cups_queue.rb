@@ -75,7 +75,7 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   autorequire(:file) do
-    answer = ['/etc/cups/lpoptions']
+    answer = ['lpoptions']
     answer << value(:interface) if value(:interface)
     answer << value(:ppd) if value(:ppd)
     answer
