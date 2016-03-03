@@ -9,9 +9,9 @@
 class cups (
   $confdir = $::cups::params::confdir,
   $default_queue = undef,
+  $hiera = undef,
   $packages = $::cups::params::packages,
   $services = $::cups::params::services,
-  $queues = undef,
   $webinterface = undef,
 ) inherits cups::params {
 
@@ -39,8 +39,12 @@ class cups (
     require => Package[$packages],
   }
 
-  unless ($queues == undef) {
-    create_resources('cups_queue', $queues)
+  unless ($hiera == undef) {
+    case $hiera {
+      'priority': { create_resources('cups_queue', hiera('cups_queue')) }
+      'merge': { create_resources('cups_queue', hiera_hash('cups_queue')) }
+      default: { fail("Unsupported value 'hiera => ${hiera}'.") }
+    }
   }
 
   unless ($default_queue == undef) {

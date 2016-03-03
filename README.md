@@ -433,7 +433,8 @@ with the Hiera data
   ```YAML
   ---
   cups::default_queue: 'GroundFloor'
-  cups::queues:
+  cups::hiera: priority
+  cups_queue:
     'Office':
       ensure: 'printer'
       uri: 'lpd://192.168.2.105/binary_p1'
@@ -480,11 +481,11 @@ Installs, configures, and manages the CUPS service.
 
 * `default_queue`: The name of the default destination for all print jobs. Requires the catalog to contain a `cups_queue` resource with the same name.
 
+* `hiera`: When set to `priority` or `merge`, Puppet will look up the Hiera key `cups_queue` to manage `cups_queue` resources. See also the [example](#using-hiera) above. Disabled by default.
+
 * `packages`: An array with the names of all packages needed to install for CUPS and `ipptool`. Use `[]` to disable automatic package management. OS dependent defaults apply.
 
 * `services`: An array with the names of all CUPS services to be managed. Use `[]` to disable automatic service management. OS dependent defaults apply.
-
-* `queues`: This attribute should only be used for [Hiera lookup](#using-hiera).
 
 * `webinterface`: Boolean value to enable or disable the CUPS web interface at [`http://localhost:631`](http://localhost:631).
 
