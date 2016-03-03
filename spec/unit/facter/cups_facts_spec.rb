@@ -36,6 +36,14 @@ describe Cups::Facts do
   describe '$::cups_classes' do
     let(:fact) { Facter.value(:cups_classes) }
 
+    context 'upon failure' do
+      it 'defaults to an empty array' do
+        allow(Open3).to receive(:capture3).and_raise('failure')
+
+        expect(fact).to eq([])
+      end
+    end
+
     context 'without printers or classes installed' do
       it 'returns an empty array' do
         classmembers = {}
@@ -80,6 +88,14 @@ describe Cups::Facts do
   describe '$::cups_classmembers' do
     let(:fact) { Facter.value(:cups_classmembers) }
 
+    context 'upon failure' do
+      it 'defaults to an empty hash' do
+        allow(Open3).to receive(:capture3).and_raise('failure')
+
+        expect(fact).to eq({})
+      end
+    end
+
     context 'with no classes installed' do
       it 'returns an empty hash' do
         classmembers = {}
@@ -115,6 +131,14 @@ describe Cups::Facts do
 
   describe '$::cups_printers' do
     let(:fact) { Facter.value(:cups_printers) }
+
+    context 'upon failure' do
+      it 'defaults to an empty array' do
+        allow(Open3).to receive(:capture3).and_raise('failure')
+
+        expect(fact).to eq([])
+      end
+    end
 
     context 'without printers or classes installed' do
       it 'returns an empty array' do
@@ -159,6 +183,14 @@ describe Cups::Facts do
 
   describe '$::cups_queues' do
     let(:fact) { Facter.value(:cups_queues) }
+
+    context 'upon failure' do
+      it 'defaults to an empty array' do
+        allow(Open3).to receive(:capture3).and_raise('failure')
+
+        expect(fact).to eq([])
+      end
+    end
 
     context 'without queues installed' do
       it 'returns an empty array' do

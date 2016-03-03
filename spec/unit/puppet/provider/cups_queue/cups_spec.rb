@@ -4,6 +4,88 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
   let(:type) { Puppet::Type.type(:cups_queue) }
   let(:provider) { described_class }
 
+  describe 'static class methods' do
+    describe '#instances' do
+      shared_examples 'correct instances' do |classmembers, printers|
+        it 'returns the correct array of provider instances' do
+          allow(Cups::Facts::ClassMembers).to receive(:fact).and_return(classmembers)
+          allow(Cups::Facts::Printers).to receive(:fact).and_return(printers)
+
+          instances = provider.instances
+          instance = nil
+
+          printers.each do |name|
+            instances.delete_if { |i| instance = i if i.name == name }
+            expect(instance).to be_a provider
+            expect(instance.ensure).to eq(:printer)
+          end
+
+          classmembers.each do |name, members|
+            instances.delete_if { |i| instance = i if i.name == name }
+            expect(instance).to be_a provider
+            expect(instance.ensure).to eq(:class)
+            expect(instance.members).to eq(members)
+          end
+
+          expect(instances).to eq([])
+        end
+      end
+
+      context 'without printers or classes installed' do
+        include_examples 'correct instances', [{}, []]
+      end
+
+      context 'with printers, but without classes installed' do
+        include_examples 'correct instances', [{}, %w(BackOffice Office Warehouse)]
+      end
+
+      context 'with printers and classes installed' do
+        include_examples 'correct instances', [{
+          'CrawlSpace'  => %w(),
+          'GroundFloor' => %w(Office Warehouse),
+          'UpperFloor'  => %w(BackOffice)
+        }, %w(BackOffice Office Warehouse)]
+      end
+    end
+
+    describe '#prefetch' do
+      shared_examples 'correct prefetch' do |specified, installed|
+        it 'adds all discovered provider instance to their resources if specified' do
+          instances = []
+          resource_hash = {}
+
+          installed.each do |name|
+            instances << provider.new(type.new(name: name, ensure: :printer))
+          end
+
+          allow(provider).to receive(:instances).and_return(instances)
+
+          specified.each do |name|
+            resource_hash[name] = type.new(name: name, ensure: :printer)
+          end
+          
+          provider.prefetch(resource_hash)
+
+          specified.each do |name|
+            expect(resource_hash[name].provider).to be_a provider if installed.include? name
+          end
+        end
+      end
+
+      context 'when no queues are installed' do
+        include_examples 'correct prefetch', [%w(BackOffice Office Warehouse), %w()]
+      end
+
+      context 'when some specified queues are installed' do
+        include_examples 'correct prefetch', [%w(BackOffice Office Warehouse), %w(Office)]
+      end
+
+      context 'when more queues are installed than specified' do
+        include_examples 'correct prefetch', [%w(Office), %w(BackOffice Office Warehouse)]
+      end
+    end
+  end
+
   context 'when managing a class' do
     before(:each) do
       manifest = {
@@ -18,12 +100,12 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
     describe '#class_exists?' do
       it 'returns true if a class by that name exists' do
-        expect(described_class).to receive(:cups_classes).and_return(%w(GroundFloor UpperFloor))
+        expect(Cups::Facts::Classes).to receive(:fact).and_return(%w(GroundFloor UpperFloor))
         expect(@provider.class_exists?).to be true
       end
 
       it 'returns false if no class by that name exists' do
-        expect(described_class).to receive(:cups_classes).and_return(%w(UpperFloor))
+        expect(Cups::Facts::Classes).to receive(:fact).and_return(%w(UpperFloor))
         expect(@provider.class_exists?).to be false
       end
     end
@@ -59,12 +141,12 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
       describe '#printer_exists?' do
         it 'returns true if a printer by that name exists' do
-          expect(described_class).to receive(:cups_printers).and_return(%w(BackOffice Office Warehouse))
+          expect(Cups::Facts::Printers).to receive(:fact).and_return(%w(BackOffice Office Warehouse))
           expect(@provider.printer_exists?).to be true
         end
 
         it 'returns false if no printer by that name exists' do
-          expect(described_class).to receive(:cups_printers).and_return(%w(BackOffice Warehouse))
+          expect(Cups::Facts::Printers).to receive(:fact).and_return(%w(BackOffice Warehouse))
           expect(@provider.printer_exists?).to be false
         end
       end
@@ -190,6 +272,16 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         end
       end
     end
+    
+    describe '#make_and_model' do
+      context 'when fetching a class' do
+        it 'returns nil' do
+          allow(@provider).to receive(:ensure).and_return(:class)
+
+          expect(@provider.make_and_model).to be nil
+        end
+      end
+    end
 
     describe '#make_and_model=(_value)' do
       context 'when ensuring a printer' do
@@ -236,6 +328,26 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           expect(@provider.options).to eq(expected)
         end
       end
+
+      describe '#options=' do
+        context "{ 'PageSize' => 'A4', 'Duplex' => 'None' }" do
+          it 'makes the correct calls to `lpadmin`' do
+            expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'PageSize=A4')
+            expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'Duplex=None')
+            @provider.options = { 'PageSize' => 'A4', 'Duplex' => 'None' }
+          end
+        end
+      end
+
+      describe '#uri' do
+        context 'when fetching a class' do
+          it 'returns nil' do
+            allow(@provider).to receive(:ensure).and_return(:class)
+
+            expect(@provider.uri).to be nil
+          end
+        end
+      end
     end
   end
 
@@ -268,6 +380,26 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         allow(@provider).to receive(:all_options_is).and_return(current)
 
         expect(@provider.send(:specified_options_is, should)).to eq(expected)
+      end
+    end
+
+    describe '#all_options_is' do
+      it 'merges native and vendor options' do
+        native = { 'printer-error-policy' => 'retry-job' }
+        vendor = { 'Duplex' => 'None' }
+
+        allow(@provider).to receive(:native_options).and_return(native)
+        allow(@provider).to receive(:vendor_options).and_return(vendor)
+
+        expect(@provider.send(:all_options_is)).to eq('Duplex' => 'None', 'printer-error-policy' => 'retry-job')
+      end
+    end
+
+    describe '#native_options' do
+      it 'merges native and vendor options' do
+        allow(@provider).to receive(:query).and_return('dummy')
+
+        expect(@provider.send(:native_options)).to be_a Hash
       end
     end
 

@@ -13,28 +13,12 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   ### Static provider methods
 
-  def self.cups_classes
-    Cups::Facts::Classes.fact
-  end
-
-  def self.cups_classmembers
-    Cups::Facts::ClassMembers.fact
-  end
-
-  def self.cups_printers
-    Cups::Facts::Printers.fact
-  end
-
-  def self.cups_queues
-    Cups::Facts::Queues.fact
-  end
-
   def self.instances
     providers = []
-    cups_classmembers.each do |classname, membernames|
+    Cups::Facts::ClassMembers.fact.each do |classname, membernames|
       providers << new(name: classname, ensure: :class, members: membernames)
     end
-    cups_printers.each do |printername|
+    Cups::Facts::Printers.fact.each do |printername|
       providers << new(name: printername, ensure: :printer)
     end
     providers
@@ -51,15 +35,15 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   ### Existence
 
   def class_exists?
-    self.class.cups_classes.include? name
+    Cups::Facts::Classes.fact.include? name
   end
 
   def printer_exists?
-    self.class.cups_printers.include? name
+    Cups::Facts::Printers.fact.include? name
   end
 
   def queue_exists?
-    self.class.cups_queues.include? name
+    Cups::Facts::Queues.fact.include? name
   end
 
   ### Creation and destruction
@@ -69,9 +53,8 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     resource.should(:members).each { |member| lpadmin('-E', '-p', member, '-c', name) }
     [:description, :location, :shared,
      :enabled, :held, :accepting].each do |property|
-      setter = (property.to_s + '=').to_sym
       value = resource.should(property)
-      method(setter).call(value) if value
+      method(property.to_s + '=').call(value) if value
     end
   end
 
@@ -81,9 +64,8 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     [:interface, :model, :ppd, :uri,
      :description, :location, :shared,
      :enabled, :held, :accepting].each do |property|
-      setter = (property.to_s + '=').to_sym
       value = resource.value(property)
-      method(setter).call(value) if value
+      method(property.to_s + '=').call(value) if value
     end
   end
 
@@ -152,7 +134,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def make_and_model
-    query('printer-make-and-model')
+    query('printer-make-and-model') if self.ensure == :printer
   end
 
   def make_and_model=(_value)
