@@ -63,7 +63,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           specified.each do |name|
             resource_hash[name] = type.new(name: name, ensure: :printer)
           end
-          
+
           provider.prefetch(resource_hash)
 
           specified.each do |name|
@@ -272,7 +272,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         end
       end
     end
-    
+
     describe '#make_and_model' do
       context 'when fetching a class' do
         it 'returns nil' do

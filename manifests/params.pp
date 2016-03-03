@@ -14,7 +14,8 @@ class cups::params {
       $services = ['cups']
     }
     default: {
-      fail('This version of the CUPS module does not know how to install or manage the CUPS service on your operating system.')
+      $packages = undef
+      $services = undef
     }
   }
 

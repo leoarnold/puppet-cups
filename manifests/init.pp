@@ -1,28 +1,40 @@
 # Class: cups
 #
-# String     :: default_queue
-# Hiera_hash :: queues
-# boolean    :: webinterface
+# String       :: default_queue
+# String/Array :: packages
+# String/Array :: services
+# Hiera_hash   :: queues
+# boolean      :: webinterface
 #
 class cups (
   $default_queue = undef,
+  $packages = $::cups::params::packages,
+  $services = $::cups::params::services,
   $queues = undef,
   $webinterface = undef,
-) inherits ::cups::params {
+) inherits cups::params {
 
-  package { $::cups::packages :
-    ensure  => 'present',
+  if ($packages == undef) {
+    fail('Please provide the name(s) of the CUPS package(s) for your operating system to Class[::cups] or set `packages => []` to disable CUPS package management.')
+  } else {
+    package { $packages :
+      ensure  => 'present',
+    }
   }
 
-  service { $::cups::services :
-    ensure  => 'running',
-    enable  => true,
-    require => Package[$::cups::packages],
+  if ($services == undef) {
+    fail('Please provide the name(s) of the CUPS service(s) for your operating system to Class[::cups] or set `services => []` to disable CUPS service management.')
+  } else {
+    service { $services :
+      ensure  => 'running',
+      enable  => true,
+      require => Package[$packages],
+    }
   }
 
   file { $::cups::lpoptions_file :
     ensure  => 'absent',
-    require => Package[$::cups::packages],
+    require => Package[$packages],
   }
 
   unless ($queues == undef) {
@@ -32,7 +44,7 @@ class cups (
   unless ($default_queue == undef) {
     class { '::cups::default_queue' :
       queue   => $default_queue,
-      require => Service[$::cups::services],
+      require => Service[$services],
     }
   }
 
@@ -41,7 +53,7 @@ class cups (
 
     cups::directive { 'WebInterface' :
       value   => bool2str($webinterface, 'Yes', 'No'),
-      require => Service[$::cups::services],
+      require => Service[$services],
     }
   }
 

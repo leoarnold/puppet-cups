@@ -84,7 +84,7 @@ Puppet::Type.newtype(:cups_queue) do
   newproperty(:ensure) do
     desc '(mandatory) Specifies whether this queue should be a `class`, a `printer` or `absent`.'
 
-   newvalue(:class) do
+    newvalue(:class) do
       provider.create_class unless provider.class_exists?
     end
 

@@ -450,6 +450,8 @@ with the Hiera data
 
 * `cups::default_queue` (private)
 
+* `cups::params` (private)
+
 ### Defines
 
 * `cups::directive` (private)
@@ -475,6 +477,10 @@ Installs, configures, and manages the CUPS service.
 ##### Attributes (all optional)
 
 * `default_queue`: The name of the default destination for all print jobs. Requires the catalog to contain a `cups_queue` resource with the same name.
+
+* `packages`: An array with the names of all packages needed to install for CUPS and `ipptool`. Use `[]` to disable automatic package management. OS dependent defaults apply.
+
+* `services`: An array with the names of all CUPS services to be managed. Use `[]` to disable automatic service management. OS dependent defaults apply.
 
 * `queues`: This attribute should only be used for [Hiera lookup](#using-hiera).
 
