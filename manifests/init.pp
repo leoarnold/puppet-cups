@@ -53,8 +53,8 @@ class cups (
   unless ($webinterface == undef) {
     validate_bool($webinterface)
 
-    cups::directive { 'WebInterface' :
-      value   => bool2str($webinterface, 'Yes', 'No'),
+    cups::ctl { 'WebInterface' :
+      ensure  => bool2str($webinterface, 'Yes', 'No'),
       require => Service[$services],
     }
   }

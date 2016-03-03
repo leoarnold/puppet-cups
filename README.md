@@ -454,7 +454,7 @@ with the Hiera data
 
 ### Defines
 
-* `cups::directive` (private)
+* [`cups::ctl`](#define-cupsctl)
 
 ### Types
 
@@ -487,6 +487,16 @@ Installs, configures, and manages the CUPS service.
 * `queues`: This attribute should only be used for [Hiera lookup](#using-hiera).
 
 * `webinterface`: Boolean value to enable or disable the CUPS web interface at [`http://localhost:631`](http://localhost:631).
+
+#### Define: `cups::ctl`
+
+A convenience wrapper for the `cupsctl` command used to configure the CUPS daemon.
+
+##### Attributes
+
+* `title`: *mandatory* - The name of the parameter to be managed.
+
+* `ensure`: *mandatory* - The value to be ensured.
 
 #### Type: `cups_queue`
 

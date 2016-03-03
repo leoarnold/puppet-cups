@@ -238,23 +238,23 @@ describe 'cups' do
 
     describe 'webinterface' do
       context 'not provided' do
-        it { should_not contain_cups__directive('WebInterface') }
+        it { should_not contain_cups__ctl('WebInterface') }
       end
 
       context '= true' do
         let(:params) { { webinterface: true } }
 
-        it { is_expected.to contain_cups__directive('WebInterface').with(value: 'Yes') }
+        it { is_expected.to contain_cups__ctl('WebInterface').with(ensure: 'Yes') }
 
-        it { is_expected.to contain_exec('cupsctl-WebInterface').with(command: '/usr/sbin/cupsctl WebInterface=Yes') }
+        it { is_expected.to contain_exec('cupsctl-WebInterface').with(command: '/usr/sbin/cupsctl -E WebInterface=Yes') }
       end
 
       context '= false' do
         let(:params) { { webinterface: false } }
 
-        it { is_expected.to contain_cups__directive('WebInterface').with(value: 'No') }
+        it { is_expected.to contain_cups__ctl('WebInterface').with(ensure: 'No') }
 
-        it { is_expected.to contain_exec('cupsctl-WebInterface').with(command: '/usr/sbin/cupsctl WebInterface=No') }
+        it { is_expected.to contain_exec('cupsctl-WebInterface').with(command: '/usr/sbin/cupsctl -E WebInterface=No') }
       end
     end
   end
