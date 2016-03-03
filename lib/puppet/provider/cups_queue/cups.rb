@@ -51,7 +51,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   def create_class
     destroy
     resource.should(:members).each { |member| lpadmin('-E', '-p', member, '-c', name) }
-    [:description, :location, :shared,
+    [:access, :description, :location, :options, :shared,
      :enabled, :held, :accepting].each do |property|
       value = resource.should(property)
       method(property.to_s + '=').call(value) if value
@@ -62,7 +62,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     destroy
     lpadmin('-E', '-p', name, '-v', '/dev/null')
     [:interface, :model, :ppd, :uri,
-     :description, :location, :shared,
+     :access, :description, :location, :options, :shared,
      :enabled, :held, :accepting].each do |property|
       value = resource.value(property)
       method(property.to_s + '=').call(value) if value

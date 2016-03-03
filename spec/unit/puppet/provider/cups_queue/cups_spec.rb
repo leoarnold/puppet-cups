@@ -152,7 +152,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       end
 
       describe '#create_printer' do
-        it 'installs the printer with default vaules' do
+        it 'installs the printer with default values' do
           switch = { interface: '-i', model: '-m', ppd: '-P' }
           method = (manifest.keys & switch.keys)[0]
 

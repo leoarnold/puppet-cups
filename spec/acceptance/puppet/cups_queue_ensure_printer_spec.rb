@@ -190,6 +190,39 @@ describe 'Custom type `cups_queue`' do
 
       include_examples 'modifying a printer', [manifest, 'Local System V Printer']
     end
+
+    context 'using a full-fledged manifest' do
+      context 'when the queue is absent' do
+        before(:all) do
+          purge_all_queues
+        end
+
+        manifest = <<-EOM
+          cups_queue { #{name}:
+            ensure         => 'printer',
+            model          => 'drv:///sample.drv/deskjet.ppd',
+            make_and_model => 'HP DeskJet Series',
+            uri            => 'lpd://192.168.2.105/binary_p1',
+            access         => { 'policy' => 'allow', 'users' => ['root'] },
+            accepting      => 'true',
+            description    => 'A full-fledged queue',
+            enabled        => 'true',
+            held           => 'true',
+            location       => 'Room 101',
+            options        => { 'job-quota-period' => '604800', 'job-page-limit' => '100' },
+            shared         => 'false'
+          }
+        EOM
+
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
+    end
   end
 
   context 'managing a printer' do
