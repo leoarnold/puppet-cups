@@ -62,20 +62,12 @@ Puppet::Type.newtype(:cups_queue) do
     'cups'
   end
 
-  autorequire(:package) do
-    ['cups', 'cups-ipptool']
-  end
-
-  autorequire(:service) do
-    'cups'
-  end
-
   autorequire(:cups_queue) do
     should(:members)
   end
 
   autorequire(:file) do
-    answer = ['lpoptions']
+    answer = []
     answer << value(:interface) if value(:interface)
     answer << value(:ppd) if value(:ppd)
     answer
