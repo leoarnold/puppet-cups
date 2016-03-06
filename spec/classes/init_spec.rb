@@ -15,7 +15,7 @@ describe 'cups' do
 
       it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
 
-      it { is_expected.to contain_file('lpoptions').with(ensure: 'absent') }
+      it { is_expected.to contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
     end
   end
 
@@ -35,7 +35,7 @@ describe 'cups' do
 
       it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
 
-      it { is_expected.to contain_file('lpoptions').with(ensure: 'absent') }
+      it { is_expected.to contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
     end
   end
 
@@ -53,7 +53,7 @@ describe 'cups' do
 
       it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
 
-      it { is_expected.to contain_file('lpoptions').with(ensure: 'absent') }
+      it { is_expected.to contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
     end
   end
 
@@ -140,9 +140,7 @@ describe 'cups' do
         end
         let(:params) { { default_queue: 'Office' } }
 
-        it { should contain_class('cups::default_queue').with(queue: 'Office') }
-
-        it { should contain_exec('lpadmin-d').that_requires('Cups_queue[Office]') }
+        it { should contain_exec('default_queue-Office').that_requires('Cups_queue[Office]') }
       end
     end
 
@@ -159,12 +157,6 @@ describe 'cups' do
         it { should_not contain_package('cups') }
       end
 
-      context "= 'custom-cups'" do
-        let(:params) { { packages: 'custom-cups' } }
-
-        it { is_expected.to contain_package('custom-cups').with(ensure: 'present') }
-      end
-
       context "= ['custom-cups', 'custom-ipptool']" do
         let(:params) { { packages: ['custom-cups', 'custom-ipptool'] } }
 
@@ -177,7 +169,7 @@ describe 'cups' do
     describe 'services' do
       context '= undef' do
         let(:facts) { { osfamily: 'Unknown' } }
-        let(:params) { { packages: 'cupsd' } }
+        let(:params) { { packages: ['cupsd'] } }
 
         it { expect { should compile }.to raise_error(/services/) }
       end
@@ -186,19 +178,6 @@ describe 'cups' do
         let(:params) { { services: [] } }
 
         it { should_not contain_service('cups') }
-      end
-
-      context "= 'cupsd' and packages = 'cupsd'" do
-        let(:params) do
-          {
-            packages: 'custom-cups',
-            services: 'cupsd'
-          }
-        end
-
-        it { is_expected.to contain_service('cupsd').with(ensure: 'running', enable: 'true') }
-
-        it { is_expected.to contain_service('cupsd').that_requires('Package[custom-cups]') }
       end
 
       context "= ['cupsd', 'cups-browsed'] and packages = ['custom-cups', 'custom-ipptool']" do
@@ -220,19 +199,6 @@ describe 'cups' do
         it { is_expected.to contain_service('cups-browsed').that_requires('Package[custom-cups]') }
 
         it { is_expected.to contain_service('cups-browsed').that_requires('Package[custom-ipptool]') }
-      end
-
-      context "when packages = 'undef' and services = 'cupsd'" do
-        let(:params) do
-          {
-            packages: 'undef',
-            services: 'cupsd'
-          }
-        end
-
-        it { is_expected.to contain_service('cupsd').with(ensure: 'running', enable: 'true') }
-
-        it { is_expected.not_to contain_service('cupsd').that_requires('Package[cups]') }
       end
     end
 

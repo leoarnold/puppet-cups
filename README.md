@@ -399,7 +399,7 @@ Now that you have created manifest for all your queues, you may want to set the 
 
   ```puppet
   class { '::cups'
-    default_destination => 'Office',
+    default_queue => 'Office',
   }
   ```
 
@@ -448,10 +448,6 @@ with the Hiera data
 ### Classes
 
 * [`cups`](#class-cups)
-
-* `cups::default_queue` (private)
-
-* `cups::params` (private)
 
 ### Defines
 

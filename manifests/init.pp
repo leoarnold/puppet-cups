@@ -19,6 +19,8 @@ class cups (
   if ($packages == undef) {
     fail('Please provide the name(s) of the CUPS package(s) for your operating system to Class[::cups] or set `packages => []` to disable CUPS package management.')
   } else {
+    validate_array($packages)
+
     package { $packages :
       ensure  => 'present',
     }
@@ -27,6 +29,8 @@ class cups (
   if ($services == undef) {
     fail('Please provide the name(s) of the CUPS service(s) for your operating system to Class[::cups] or set `services => []` to disable CUPS service management.')
   } else {
+    validate_array($services)
+
     service { $services :
       ensure  => 'running',
       enable  => true,
@@ -34,13 +38,18 @@ class cups (
     }
   }
 
-  file { 'lpoptions' :
-    ensure  => 'absent',
-    path    => "${confdir}/lpoptions",
-    require => Package[$packages],
+  unless ($confdir == undef) {
+    validate_absolute_path($confdir)
+
+    file { "${confdir}/lpoptions" :
+      ensure  => 'absent',
+      require => Package[$packages],
+    }
   }
 
   unless ($hiera == undef) {
+    validate_string($hiera)
+
     case $hiera {
       'priority': { create_resources('cups_queue', hiera('cups_queue')) }
       'merge': { create_resources('cups_queue', hiera_hash('cups_queue')) }
@@ -49,9 +58,13 @@ class cups (
   }
 
   unless ($default_queue == undef) {
-    class { '::cups::default_queue' :
-      queue   => $default_queue,
-      require => Service[$services],
+    validate_string($default_queue)
+
+    exec { "default_queue-${default_queue}":
+      command => "lpadmin -E -d ${default_queue}",
+      unless  => "lpstat -d | grep -w ${default_queue}",
+      path    => ['/usr/local/sbin/', '/usr/local/bin/', '/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
+      require => Cups_queue[$default_queue]
     }
   }
 
