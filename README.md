@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/leoarnold/puppet-cups.svg)](https://travis-ci.org/leoarnold/puppet-cups)
 [![Coverage Status](https://coveralls.io/repos/github/leoarnold/puppet-cups/badge.svg?branch=master)](https://coveralls.io/github/leoarnold/puppet-cups?branch=master)
 [![Gemnasium](https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg)](https://gemnasium.com/leoarnold/puppet-cups)
+[![Puppet Forge Version](http://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppetlabs.com/leoarnold/cups)
+[![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppetlabs.com/leoarnold/cups)
 [![MIT License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 #### Table of Contents
