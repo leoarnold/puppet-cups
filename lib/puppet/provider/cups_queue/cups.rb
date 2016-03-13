@@ -245,16 +245,15 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def users_allowed
-    names = query('requesting-user-name-allowed')
-    user_array(names)
+    query_users('requesting-user-name-allowed')
   end
 
   def users_denied
-    names = query('requesting-user-name-denied')
-    user_array(names)
+    query_users('requesting-user-name-denied')
   end
 
-  def user_array(names)
+  def query_users(property)
+    names = query(property)
     names.gsub(/[\'\"]/, '').split(',').sort.uniq if names
   end
 

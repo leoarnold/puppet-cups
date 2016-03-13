@@ -1,0 +1,15 @@
+---
+ControlParameter:
+  enabled: false
+DuplicateMethodCall:
+  max_calls: 2
+NestedIterators:
+  exclude:
+  - self.prefetch
+NilCheck:
+  enabled: false
+TooManyStatements:
+  enabled: false
+UncommunicativeMethodName:
+  exclude:
+  - cups_str_4781
