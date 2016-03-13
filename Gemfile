@@ -19,7 +19,7 @@ group :development do
   gem 'rubocop', '~> 0.37', require: false
   gem 'puppet-lint', '~> 1.0', require: false
   gem 'metadata-json-lint', '~> 0.0', require: false
-  gem 'coveralls', '~> 0.8', require: false
+  gem 'codeclimate-test-reporter', '~> 0.5', require: false
 end
 
 group :acceptance_testing do

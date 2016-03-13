@@ -1,7 +1,8 @@
 # The CUPS module
 
 [![Build Status](https://travis-ci.org/leoarnold/puppet-cups.svg)](https://travis-ci.org/leoarnold/puppet-cups)
-[![Coverage Status](https://coveralls.io/repos/github/leoarnold/puppet-cups/badge.svg?branch=master)](https://coveralls.io/github/leoarnold/puppet-cups?branch=master)
+[![Test Coverage](https://codeclimate.com/github/leoarnold/puppet-cups/badges/coverage.svg)](https://codeclimate.com/github/leoarnold/puppet-cups/coverage)
+[![Code Climate](https://codeclimate.com/github/leoarnold/puppet-cups/badges/gpa.svg)](https://codeclimate.com/github/leoarnold/puppet-cups)
 [![Gemnasium](https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg)](https://gemnasium.com/leoarnold/puppet-cups)
 [![Puppet Forge Version](http://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppetlabs.com/leoarnold/cups)
 [![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppetlabs.com/leoarnold/cups)

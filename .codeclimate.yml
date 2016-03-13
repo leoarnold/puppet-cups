@@ -1,0 +1,21 @@
+---
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - ruby
+    exclude_fingerprints:
+    # Parameter definitions of `interface` and `ppd` are very similar by nature
+    - e02c2c360b159a82123763c94f1720b3
+    exclude_paths:
+    - spec/
+  fixme:
+    enabled: true
+  reek:
+    enabled: true
+  rubocop:
+    enabled: true
+ratings:
+  paths:
+  - "lib/**/*.rb"
