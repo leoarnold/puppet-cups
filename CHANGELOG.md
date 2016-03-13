@@ -1,3 +1,6 @@
+### Bugfixes
+- A workaround for [CUPS STR 4781](http://cups.org/str.php?L4781)
+
 ## 2016-03-07 - Release 1.0.0
 
 Published at [PuppetForge](https://forge.puppetlabs.com/leoarnold/cups/1.0.0) and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/1.0.0).
@@ -8,7 +11,7 @@ This module was written from scratch, taking divergent architectural decisions a
 to provide all features required in an office network setting.
 
 ### Key features
-- Locale independence (tested on english and spanish VMs)
+- Locale independence (tested on English and Spanish VMs)
 - Support for a wide range of Linux distributions
 - Unified support for printer queues and class queues
 - Default queue management

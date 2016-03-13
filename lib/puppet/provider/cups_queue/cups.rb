@@ -110,7 +110,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def enabled=(value)
-    value == :true ? cupsenable('-E', name) : cupsdisable('-E', name)
+    value == :true ? cups_str_4781 { cupsenable('-E', name) } : cupsdisable('-E', name)
   end
 
   def held
@@ -256,5 +256,13 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def user_array(names)
     names.gsub(/[\'\"]/, '').split(',').sort.uniq if names
+  end
+
+  def cups_str_4781
+    debug("Circumventing CUPS STR #4781 by temporarily allowing access for 'root'")
+    acl = (resource.should(:access) ? resource.should(:access) : access)
+    self.access = { 'policy' => 'allow', 'users' => ['root'] }
+    yield
+    self.access = acl
   end
 end
