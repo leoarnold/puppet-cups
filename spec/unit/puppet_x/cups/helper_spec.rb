@@ -1,8 +1,8 @@
 # encoding: UTF-8
 require 'spec_helper'
-require 'lib/cups_helper'
+require 'lib/puppet_x/cups/helper'
 
-describe Cups::Server::IppResult do
+describe PuppetX::Cups::Server::IppResult do
   describe '#query' do
     context 'when command execution fails' do
       it 'raises an error' do
@@ -51,7 +51,7 @@ describe Cups::Server::IppResult do
   end
 end
 
-describe Cups::Queue::Attribute do
+describe PuppetX::Cups::Queue::Attribute do
   describe '#query' do
     it "uses url encoding and returns the second line of ipptool's output to stdout" do
       request = described_class.request('device-uri')

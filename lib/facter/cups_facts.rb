@@ -1,3 +1,3 @@
-require_relative '../cups_helper'
+require_relative '../puppet_x/cups/helper'
 
-Cups::Facts.add_facts
+PuppetX::Cups::Facts.add_facts

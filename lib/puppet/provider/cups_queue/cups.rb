@@ -1,4 +1,4 @@
-require_relative '../../../cups_helper.rb'
+require_relative '../../../puppet_x/cups/helper'
 
 Puppet::Type.type(:cups_queue).provide(:cups) do
   @doc = 'Installs and manages CUPS printer queues.'
@@ -15,10 +15,10 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def self.instances
     providers = []
-    Cups::Facts::ClassMembers.fact.each do |classname, membernames|
+    PuppetX::Cups::Facts::ClassMembers.fact.each do |classname, membernames|
       providers << new(name: classname, ensure: :class, members: membernames)
     end
-    Cups::Facts::Printers.fact.each do |printername|
+    PuppetX::Cups::Facts::Printers.fact.each do |printername|
       providers << new(name: printername, ensure: :printer)
     end
     providers
@@ -35,15 +35,15 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   ### Existence
 
   def class_exists?
-    Cups::Facts::Classes.fact.include? name
+    PuppetX::Cups::Facts::Classes.fact.include? name
   end
 
   def printer_exists?
-    Cups::Facts::Printers.fact.include? name
+    PuppetX::Cups::Facts::Printers.fact.include? name
   end
 
   def queue_exists?
-    Cups::Facts::Queues.fact.include? name
+    PuppetX::Cups::Facts::Queues.fact.include? name
   end
 
   ### Creation and destruction
@@ -188,7 +188,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   private
 
   def query(property)
-    Cups::Queue::Attribute.query(name, property)
+    PuppetX::Cups::Queue::Attribute.query(name, property)
   end
 
   def specified_options_is(options_should)

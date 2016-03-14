@@ -8,8 +8,8 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     describe '#instances' do
       shared_examples 'correct instances' do |classmembers, printers|
         it 'returns the correct array of provider instances' do
-          allow(Cups::Facts::ClassMembers).to receive(:fact).and_return(classmembers)
-          allow(Cups::Facts::Printers).to receive(:fact).and_return(printers)
+          allow(PuppetX::Cups::Facts::ClassMembers).to receive(:fact).and_return(classmembers)
+          allow(PuppetX::Cups::Facts::Printers).to receive(:fact).and_return(printers)
 
           instances = provider.instances
           instance = nil
@@ -100,12 +100,12 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
     describe '#class_exists?' do
       it 'returns true if a class by that name exists' do
-        expect(Cups::Facts::Classes).to receive(:fact).and_return(%w(GroundFloor UpperFloor))
+        expect(PuppetX::Cups::Facts::Classes).to receive(:fact).and_return(%w(GroundFloor UpperFloor))
         expect(@provider.class_exists?).to be true
       end
 
       it 'returns false if no class by that name exists' do
-        expect(Cups::Facts::Classes).to receive(:fact).and_return(%w(UpperFloor))
+        expect(PuppetX::Cups::Facts::Classes).to receive(:fact).and_return(%w(UpperFloor))
         expect(@provider.class_exists?).to be false
       end
     end
@@ -141,12 +141,12 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
       describe '#printer_exists?' do
         it 'returns true if a printer by that name exists' do
-          expect(Cups::Facts::Printers).to receive(:fact).and_return(%w(BackOffice Office Warehouse))
+          expect(PuppetX::Cups::Facts::Printers).to receive(:fact).and_return(%w(BackOffice Office Warehouse))
           expect(@provider.printer_exists?).to be true
         end
 
         it 'returns false if no printer by that name exists' do
-          expect(Cups::Facts::Printers).to receive(:fact).and_return(%w(BackOffice Warehouse))
+          expect(PuppetX::Cups::Facts::Printers).to receive(:fact).and_return(%w(BackOffice Warehouse))
           expect(@provider.printer_exists?).to be false
         end
       end

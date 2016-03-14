@@ -2,15 +2,15 @@ require 'spec_helper'
 require 'lib/facter/cups_facts'
 
 def mock_queues_lines(printers, classmembers)
-  queues_result = instance_double(Cups::Server::IppResult)
+  queues_result = instance_double(PuppetX::Cups::Server::IppResult)
   allow(queues_result).to receive(:lines).and_return(printers + classmembers.keys)
-  allow(Cups::Server::IppResult).to receive(:new).with(Cups::Facts::Queues.request).and_return(queues_result)
+  allow(PuppetX::Cups::Server::IppResult).to receive(:new).with(PuppetX::Cups::Facts::Queues.request).and_return(queues_result)
 end
 
 def mock_classmembers_lines(classmembers)
-  classmembers_result = instance_double(Cups::Server::IppResult)
+  classmembers_result = instance_double(PuppetX::Cups::Server::IppResult)
   allow(classmembers_result).to receive(:lines).and_return(classmembers_lines(classmembers))
-  allow(Cups::Server::IppResult).to receive(:new).and_return(classmembers_result)
+  allow(PuppetX::Cups::Server::IppResult).to receive(:new).and_return(classmembers_result)
 end
 
 def classmembers_lines(classmembers)
@@ -23,7 +23,7 @@ def classmembers_lines(classmembers)
   response
 end
 
-describe Cups::Facts do
+describe PuppetX::Cups::Facts do
   before(:each) do
     described_class.add_facts
   end
