@@ -4,6 +4,8 @@
 [![Test Coverage](https://codeclimate.com/github/leoarnold/puppet-cups/badges/coverage.svg)](https://codeclimate.com/github/leoarnold/puppet-cups/coverage)
 [![Code Climate](https://codeclimate.com/github/leoarnold/puppet-cups/badges/gpa.svg)](https://codeclimate.com/github/leoarnold/puppet-cups)
 [![Gemnasium](https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg)](https://gemnasium.com/leoarnold/puppet-cups)
+[![Gitter](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 [![Puppet Forge Version](http://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppetlabs.com/leoarnold/cups)
 [![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppetlabs.com/leoarnold/cups)
 [![MIT License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)

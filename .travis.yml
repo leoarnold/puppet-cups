@@ -16,3 +16,9 @@ matrix:
     env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
 notifications:
   email: false
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/3402fe31d5b814c57316
+    on_success: always
+    on_failure: always
+    on_start: never
