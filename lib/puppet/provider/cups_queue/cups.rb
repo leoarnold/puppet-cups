@@ -1,4 +1,5 @@
-require_relative '../../../puppet_x/cups/helper'
+require_relative '../../../puppet_x/cups/facts'
+require_relative '../../../puppet_x/cups/queue'
 
 Puppet::Type.type(:cups_queue).provide(:cups) do
   @doc = 'Installs and manages CUPS printer queues.'

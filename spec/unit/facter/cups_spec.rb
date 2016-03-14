@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'lib/facter/cups_facts'
+require 'lib/facter/cups'
 
 def mock_queues_lines(printers, classmembers)
   queues_result = instance_double(PuppetX::Cups::Server::IppResult)
