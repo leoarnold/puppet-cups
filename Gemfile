@@ -16,11 +16,14 @@ end
 
 group :development do
   gem 'puppetlabs_spec_helper', '~> 1.1', require: false
-  gem 'reek', '~> 3.11', require: false if RUBY_VERSION.to_f >= 2.0
   gem 'rubocop', '~> 0.37', require: false
   gem 'puppet-lint', '~> 1.0', require: false
   gem 'metadata-json-lint', '~> 0.0', require: false
   gem 'codeclimate-test-reporter', '~> 0.5', require: false
+  if RUBY_VERSION.to_f >= 2.0
+    gem 'github-linguist', '~> 4.7', require: false
+    gem 'reek', '~> 3.11', require: false
+  end
 end
 
 group :acceptance_testing do
