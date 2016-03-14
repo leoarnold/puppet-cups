@@ -1,5 +1,7 @@
 # The CUPS module
 
+[![Join the chat at https://gitter.im/leoarnold/puppet-cups](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/leoarnold/puppet-cups.svg)](https://travis-ci.org/leoarnold/puppet-cups)
 [![Test Coverage](https://codeclimate.com/github/leoarnold/puppet-cups/badges/coverage.svg)](https://codeclimate.com/github/leoarnold/puppet-cups/coverage)
 [![Code Climate](https://codeclimate.com/github/leoarnold/puppet-cups/badges/gpa.svg)](https://codeclimate.com/github/leoarnold/puppet-cups)
