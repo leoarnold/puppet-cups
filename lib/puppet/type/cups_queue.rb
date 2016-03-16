@@ -1,3 +1,4 @@
+require 'pathname'
 require 'uri'
 
 Puppet::Type.newtype(:cups_queue) do
@@ -167,7 +168,7 @@ Puppet::Type.newtype(:cups_queue) do
       ' If the catalog contains a `file` resource with this path as title, it will automatically be required.'
 
     validate do |value|
-      raise("The absolute local file path '#{value}' seems malformed.") unless URI(value).path == value
+      raise("The absolute local file path '#{value}' seems malformed.") unless Pathname(value).absolute?
     end
   end
 
@@ -239,7 +240,7 @@ Puppet::Type.newtype(:cups_queue) do
       ' The recommended location for your PPD files is `/usr/share/cups/model/` or `/usr/local/share/cups/model/`.'
 
     validate do |value|
-      raise("The absolute local file path '#{value}' seems malformed.") unless URI(value).path == value
+      raise("The absolute local file path '#{value}' seems malformed.") unless Pathname(value).absolute?
     end
   end
 
@@ -254,7 +255,7 @@ Puppet::Type.newtype(:cups_queue) do
     desc '(printer-only) The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.'
 
     validate do |value|
-      raise ArgumentError, "The URI '#{value}' seems malformed." unless (value =~ URI.regexp) || (value == URI(value).path)
+      raise ArgumentError, "The URI '#{value}' seems malformed." unless (value =~ URI.regexp) || Pathname(value).absolute?
     end
   end
 end
