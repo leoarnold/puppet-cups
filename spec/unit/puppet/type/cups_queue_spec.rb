@@ -359,11 +359,6 @@ describe Puppet::Type.type(:cups_queue) do
         expect(type.attrclass(:ensure).doc.length).to be > 20
       end
 
-      it "defaults to 'unspecified'" do
-        resource = type.new(name: 'Office')
-        expect(resource[:ensure]).to eq(:unspecified)
-      end
-
       describe 'should accept the value' do
         it 'class' do
           @resource[:ensure] = 'class'
@@ -378,11 +373,6 @@ describe Puppet::Type.type(:cups_queue) do
         it 'absent' do
           @resource[:ensure] = 'absent'
           expect(@resource[:ensure]).to eq(:absent)
-        end
-
-        it 'unspecified' do
-          @resource[:ensure] = 'unspecified'
-          expect(@resource[:ensure]).to eq(:unspecified)
         end
       end
     end

@@ -89,12 +89,6 @@ Puppet::Type.newtype(:cups_queue) do
       provider.destroy
     end
 
-    newvalue(:unspecified) do
-      raise("Please specify a value for 'ensure'.")
-    end
-
-    defaultto(:unspecified)
-
     def change_to_s(currentvalue, newvalue)
       return "created a #{should_to_s(newvalue)}" if currentvalue == :absent || currentvalue.nil?
       return "removed a #{is_to_s(currentvalue)}" if newvalue == :absent
