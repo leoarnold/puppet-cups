@@ -22,7 +22,6 @@ group :development do
   gem 'codeclimate-test-reporter', '~> 0.5', require: false
   if RUBY_VERSION.to_f >= 2.0
     gem 'github-linguist', '~> 4.7', require: false
-    gem 'reek', '~> 3.11', require: false
   end
 end
 
