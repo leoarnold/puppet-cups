@@ -36,15 +36,15 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   ### Existence
 
   def class_exists?
-    PuppetX::Cups::Facts::Classes.fact.include? name
+    @property_hash[:ensure] == :class
   end
 
   def printer_exists?
-    PuppetX::Cups::Facts::Printers.fact.include? name
+    @property_hash[:ensure] == :printer
   end
 
   def queue_exists?
-    PuppetX::Cups::Facts::Queues.fact.include? name
+    [:class, :printer].include? @property_hash[:ensure]
   end
 
   ### Creation and destruction

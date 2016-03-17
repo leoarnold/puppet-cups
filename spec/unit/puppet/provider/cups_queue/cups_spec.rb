@@ -98,18 +98,6 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       @provider = provider.new(@resource)
     end
 
-    describe '#class_exists?' do
-      it 'returns true if a class by that name exists' do
-        expect(PuppetX::Cups::Facts::Classes).to receive(:fact).and_return(%w(GroundFloor UpperFloor))
-        expect(@provider.class_exists?).to be true
-      end
-
-      it 'returns false if no class by that name exists' do
-        expect(PuppetX::Cups::Facts::Classes).to receive(:fact).and_return(%w(UpperFloor))
-        expect(@provider.class_exists?).to be false
-      end
-    end
-
     describe '#create_class' do
       context 'using the minimal manifest' do
         it 'installs the class with default values' do
@@ -137,18 +125,6 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       before(:each) do
         @resource = type.new(manifest)
         @provider = provider.new(@resource)
-      end
-
-      describe '#printer_exists?' do
-        it 'returns true if a printer by that name exists' do
-          expect(PuppetX::Cups::Facts::Printers).to receive(:fact).and_return(%w(BackOffice Office Warehouse))
-          expect(@provider.printer_exists?).to be true
-        end
-
-        it 'returns false if no printer by that name exists' do
-          expect(PuppetX::Cups::Facts::Printers).to receive(:fact).and_return(%w(BackOffice Warehouse))
-          expect(@provider.printer_exists?).to be false
-        end
       end
 
       describe '#create_printer' do
