@@ -4,7 +4,7 @@
 
 ### Bugfixes
 
-- A workaround for [CUPS STR 4781](http://cups.org/str.php?L4781)
+- A workaround for https://github.com/apple/cups/issues/4781
 - Using `puppet resource cups_queue` to modify an already installed queue
   is now possible without specifying `ensure`
 

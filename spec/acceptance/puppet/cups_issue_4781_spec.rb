@@ -9,8 +9,7 @@ def manifest(access)
   }"
 end
 
-# http://cups.org/str.php?L4781
-describe 'Circumventing CUPS STR #4781' do
+describe 'Circumventing CUPS issue #4781' do
   before(:all) do
     ensure_cups_is_running
   end

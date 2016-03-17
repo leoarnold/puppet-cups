@@ -4,7 +4,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
   let(:type) { Puppet::Type.type(:cups_queue) }
   let(:provider) { described_class }
 
-  describe '#cups_str_4781' do
+  describe '#while_root_allowed' do
     context 'when `access` is NOT specified' do
       before(:each) do
         manifest = {
