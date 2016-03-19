@@ -1,4 +1,12 @@
+# CUPS class example manifest
+#
+# In order to install printer queues you first need to make sure
+# CUPS is installed and the service is running. This is achieved by:
+
 include '::cups'
+
+# To install a printer queue, any of the following methods will suffice.
+# See README.md for a full list of all customizable attributes.
 
 cups_queue { 'MinimalRaw':
   ensure => 'printer',
