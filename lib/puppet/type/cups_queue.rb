@@ -4,11 +4,11 @@ require 'uri'
 Puppet::Type.newtype(:cups_queue) do
   @doc = "Installs and manages CUPS queues.
 
-    Printers: Using a minimal manifest
+    Printers: Minimal manifest examples
 
         cups_queue { 'MinimalRaw':
           ensure => 'printer',
-          uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+          uri    => 'lpd://192.168.2.105/binary_p1'
         }
 
       OR
@@ -16,7 +16,7 @@ Puppet::Type.newtype(:cups_queue) do
         cups_queue { 'MinimalModel':
           ensure => 'printer',
           model  => 'drv:///sample.drv/generic.ppd',
-          uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+          uri    => 'lpd://192.168.2.105/binary_p1'
         }
 
         The command `lpinfo -m` lists all models available on the node.
@@ -26,7 +26,7 @@ Puppet::Type.newtype(:cups_queue) do
         cups_queue { 'MinimalPPD':
           ensure => 'printer',
           ppd    => '/usr/share/cups/model/myprinter.ppd',
-          uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+          uri    => 'lpd://192.168.2.105/binary_p1'
         }
 
       OR
@@ -34,7 +34,7 @@ Puppet::Type.newtype(:cups_queue) do
         cups_queue { 'MinimalInterface':
           ensure    => 'printer',
           interface => '/usr/share/cups/model/myprinter.sh',
-          uri       => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+          uri       => 'lpd://192.168.2.105/binary_p1'
         }
 
     Classes: Providing only the mandatory attributes
@@ -53,7 +53,7 @@ Puppet::Type.newtype(:cups_queue) do
       raise('Classes do NOT support the following attributes: `model`, `ppd`, `interface`, `make_and_model`, `uri`') \
         if value(:model) || value(:ppd) || value(:interface) || should(:make_and_model) || should(:uri)
     when :printer
-      raise("The attributes 'interface', 'model' and 'ppd' are mutually exclusive. Please specify at most one of them.") \
+      raise('The attributes `interface`, `model` and `ppd` are mutually exclusive. Please specify at most one of them.') \
         if [value(:interface).nil?, value(:model).nil?, value(:ppd).nil?].count(false) > 1
       raise('Printers do not support the attribute `members`.') if should(:members)
     end

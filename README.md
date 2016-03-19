@@ -4,11 +4,11 @@
 [![Test Coverage](https://codeclimate.com/github/leoarnold/puppet-cups/badges/coverage.svg)](https://codeclimate.com/github/leoarnold/puppet-cups/coverage)
 [![Code Climate](https://codeclimate.com/github/leoarnold/puppet-cups/badges/gpa.svg)](https://codeclimate.com/github/leoarnold/puppet-cups)
 [![Gemnasium](https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg)](https://gemnasium.com/leoarnold/puppet-cups)
-[![Gitter](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 [![Puppet Forge Version](http://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppetlabs.com/leoarnold/cups)
 [![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppetlabs.com/leoarnold/cups)
 [![MIT License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
+[![Gitter](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 #### Table of Contents
 
@@ -86,7 +86,7 @@ Adding printer or class resources is described in the section on [usage](#usage)
 In this section, you will learn the straightforward way to set up CUPS queues from scratch.
 If the queues are already installed on the node, you can easily obtain a manifest with their current configuration by running
 
-  ```Shell
+  ```Text
   puppet resource cups_queue
   ```
 
@@ -211,7 +211,7 @@ and you would like to
 
   * use a different model
 
-    ```Shell
+    ```Text
     $ lpinfo -m | grep 4730mfp
     ...
     drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3
@@ -232,7 +232,7 @@ and you would like to
 
   * use a custom PPD file instead which contains the line
 
-    ```
+    ```Text
     *NickName: "HP Color LaserJet 4730mfp Postscript (MyCompany v2)"
     ```
 
@@ -345,7 +345,7 @@ e.g. to enable Duplex to save trees or because you use A4 paper instead of US Le
 
 To see all vendor options and their possible values for the queue `Office`, you can use `lpoptions`:
 
-  ```Shell
+  ```Text
   $ lpoptions -p Office -l
   PageSize/Media Size: *Letter Legal Executive Tabloid A3 A4 A5 B5 EnvISOB5 Env10 EnvC5 EnvDL EnvMonarch
   InputSlot/Media Source: *Default Upper Manual
@@ -555,8 +555,8 @@ Installs and manages CUPS print queues.
 
 * `ensure`: *mandatory* - Specifies whether this queue should be a `class`, a `printer` or `absent`.
 
-* `access`:  Manages queue access control. Takes a hash with keys `policy` and `users`.
-The `allow` policy restricts access to the `users` provided, while the `deny` policy lets everybody except the specified `users` submit jobs.
+* `access`: Manages queue access control. Takes a hash with keys `policy` and `users`.
+The `allow` policy restricts access to the `users` provided, while the `deny` policy lets everybody submit jobs except the specified `users`.
 The `users` are provided as a non-empty array of Unix group names (prefixed with an `@`) and Unix user names.
 
 * `accepting`: Boolean value specifying whether the queue should accept print jobs or reject them.

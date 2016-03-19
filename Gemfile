@@ -20,9 +20,7 @@ group :development do
   gem 'puppet-lint', '~> 1.0', require: false
   gem 'metadata-json-lint', '~> 0.0', require: false
   gem 'codeclimate-test-reporter', '~> 0.5', require: false
-  if RUBY_VERSION.to_f >= 2.0
-    gem 'github-linguist', '~> 4.7', require: false
-  end
+  gem 'github-linguist', '~> 4.7', require: false if RUBY_VERSION.to_f >= 2.0
 end
 
 group :acceptance_testing do

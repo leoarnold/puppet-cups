@@ -2,13 +2,13 @@ require_relative '../../../puppet_x/cups/facts'
 require_relative '../../../puppet_x/cups/queue'
 
 Puppet::Type.type(:cups_queue).provide(:cups) do
-  @doc = 'Installs and manages CUPS printer queues.'
+  @doc = 'Installs and manages CUPS queues.'
 
   commands(cupsaccept: 'cupsaccept')
   commands(cupsdisable: 'cupsdisable')
   commands(cupsenable: 'cupsenable')
   commands(cupsreject: 'cupsreject')
-  commands(ipptool: 'ipptool') # Used in cups_helper. Declared here for Puppet's provider suitability mechanism
+  commands(ipptool: 'ipptool') # Used in PuppetX::Cups::Facts module. Declared here for Puppet's provider suitability mechanism
   commands(lpadmin: 'lpadmin')
   commands(lpoptions: 'lpoptions')
 
@@ -135,11 +135,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def make_and_model
-    query('printer-make-and-model') if self.ensure == :printer
+    query('printer-make-and-model') if printer_exists?
   end
 
   def make_and_model=(_value)
-    create_printer if self.ensure == :printer
+    create_printer
   end
 
   def model=(value)
@@ -179,7 +179,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def uri
-    query('device-uri') if self.ensure == :printer
+    query('device-uri') if printer_exists?
   end
 
   def uri=(value)
