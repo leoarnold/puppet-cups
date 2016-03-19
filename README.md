@@ -450,7 +450,7 @@ by default generates the dependencies
                     /                 \
 Cups_queue['Office']                   Cups_queue['Warehouse']
                     \                 /                       \
-                 Cups_queue['GroundFloor']                     Cups::Default_queue['Warehouse']
+                 Cups_queue['GroundFloor']                     Class['cups::default_queue']
 ```
 
 ### Using Hiera
