@@ -22,6 +22,7 @@
     * [Managing classes](#managing-classes)
     * [Configuring queues](#configuring-queues)
     * [Configuring CUPS](#configuring-cups)
+    * [Automatic dependencies](#automatic-dependencies)
     * [Using Hiera](#using-hiera)
 1. [Reference - The documentation of all features available](#reference)
     * [Classes](#classes)
@@ -412,6 +413,46 @@ This will require the resource `Cups_queue['Office']` to be defined in the catal
 
 To find out about all options available for `Class['::cups']` see the [section below](#class-cups).
 
+### Automatic dependencies
+
+For your convenience, this module establishes many resource dependencies automatically.
+For example, on a Debian system the manifest
+
+```puppet
+class { '::cups':
+  default_queue => 'Warehouse'
+}
+
+cups_queue { 'GroundFloor':
+  ensure  => 'class',
+  members => ['Office', 'Warehouse']
+}
+
+cups_queue { 'Office':
+  ensure => 'printer',
+  ...
+}
+
+cups_queue { 'Warehouse':
+  ensure => 'printer',
+  ...
+}
+```
+
+by default generates the dependencies
+
+```Text
+                      Package['cups']
+                             |
+                      Service['cups']
+                             |
+                     File['lpoptions']
+                    /                 \
+Cups_queue['Office']                   Cups_queue['Warehouse']
+                    \                 /                       \
+                 Cups_queue['GroundFloor']                     Cups::Default_queue['Warehouse']
+```
+
 ### Using Hiera
 
 You can also create `cups_queue` resources using Hiera.
@@ -453,6 +494,10 @@ with the Hiera data
 ### Classes
 
 * [`cups`](#class-cups)
+
+* `cups::default_queue` (private)
+
+* `cups::params` (private)
 
 ### Defines
 

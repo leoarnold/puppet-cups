@@ -7,6 +7,7 @@
 - A workaround for https://github.com/apple/cups/issues/4781
 - Using `puppet resource cups_queue` to modify an already installed queue
   is now possible without specifying `ensure`
+- Automatic resource relations were adjusted to show up correctly in the dependency graph
 
 ## 2016-03-07 - Release 1.0.0
 

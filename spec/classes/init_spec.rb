@@ -7,6 +7,8 @@ describe 'cups' do
     context 'with defaults for all parameters' do
       it { should contain_class('cups').with(confdir: '/etc/cups') }
 
+      it { should contain_class('cups::params') }
+
       it { should_not contain_class('cups::default_queue') }
 
       it { is_expected.to contain_package('cups').with(ensure: 'present') }
@@ -15,7 +17,7 @@ describe 'cups' do
 
       it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
 
-      it { is_expected.to contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
+      it { is_expected.to contain_file('lpoptions').that_requires('Service[cups]') }
     end
   end
 
@@ -24,6 +26,8 @@ describe 'cups' do
 
     context 'with defaults for all parameters' do
       it { should contain_class('cups').with(confdir: '/etc/cups') }
+
+      it { should contain_class('cups::params') }
 
       it { should_not contain_class('cups::default_queue') }
 
@@ -35,7 +39,7 @@ describe 'cups' do
 
       it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
 
-      it { is_expected.to contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
+      it { is_expected.to contain_file('lpoptions').that_requires('Service[cups]') }
     end
   end
 
@@ -45,6 +49,8 @@ describe 'cups' do
     context 'with defaults for all parameters' do
       it { should contain_class('cups').with(confdir: '/etc/cups') }
 
+      it { should contain_class('cups::params') }
+
       it { should_not contain_class('cups::default_queue') }
 
       it { is_expected.to contain_package('cups').with(ensure: 'present') }
@@ -53,7 +59,7 @@ describe 'cups' do
 
       it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
 
-      it { is_expected.to contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
+      it { is_expected.to contain_file('lpoptions').that_requires('Service[cups]') }
     end
   end
 
@@ -123,6 +129,18 @@ describe 'cups' do
   context 'OS independent attribute' do
     let(:facts) { { osfamily: 'Debian' } }
 
+    describe 'confdir' do
+      context 'not provided' do
+        it { is_expected.to contain_file('lpoptions').with(ensure: 'absent', path: '/etc/cups/lpoptions') }
+      end
+
+      context '= /usr/local/etc/cups' do
+        let(:params) { { confdir: '/usr/local/etc/cups' } }
+
+        it { is_expected.to contain_file('lpoptions').with(ensure: 'absent', path: '/usr/local/etc/cups/lpoptions') }
+      end
+    end
+
     describe 'default_queue' do
       context 'not provided' do
         it { should_not contain_class('cups::default_queue') }
@@ -140,7 +158,7 @@ describe 'cups' do
         end
         let(:params) { { default_queue: 'Office' } }
 
-        it { should contain_exec('default_queue-Office').that_requires('Cups_queue[Office]') }
+        it { should contain_class('cups::default_queue').that_requires('File[lpoptions]') }
       end
     end
 

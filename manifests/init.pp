@@ -41,9 +41,10 @@ class cups (
   unless ($confdir == undef) {
     validate_absolute_path($confdir)
 
-    file { "${confdir}/lpoptions" :
+    file { 'lpoptions' :
       ensure  => 'absent',
-      require => Package[$packages],
+      path    => "${confdir}/lpoptions",
+      require => Service[$services],
     }
   }
 
@@ -58,13 +59,9 @@ class cups (
   }
 
   unless ($default_queue == undef) {
-    validate_string($default_queue)
-
-    exec { "default_queue-${default_queue}":
-      command => "lpadmin -E -d ${default_queue}",
-      unless  => "lpstat -d | grep -w ${default_queue}",
-      path    => ['/usr/local/sbin/', '/usr/local/bin/', '/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
-      require => Cups_queue[$default_queue]
+    class { '::cups::default_queue' :
+      queue   => $default_queue,
+      require => File['lpoptions'],
     }
   }
 

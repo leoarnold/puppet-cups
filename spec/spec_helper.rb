@@ -28,6 +28,7 @@ end
 # http://rspec-puppet.com/setup/
 fixture_path = File.expand_path(File.join(__FILE__, '..', 'fixtures'))
 RSpec.configure do |c|
+  c.after(:suite) { RSpec::Puppet::Coverage.report! }
   c.manifest_dir = File.join(fixture_path, 'manifests')
   c.module_path = File.join(fixture_path, 'modules')
 end

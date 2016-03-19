@@ -59,16 +59,12 @@ Puppet::Type.newtype(:cups_queue) do
     end
   end
 
-  autorequire(:class) do
-    'cups'
-  end
-
   autorequire(:cups_queue) do
     should(:members)
   end
 
   autorequire(:file) do
-    answer = []
+    answer = ['lpoptions']
     answer << value(:interface) if value(:interface)
     answer << value(:ppd) if value(:ppd)
     answer
