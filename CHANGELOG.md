@@ -1,3 +1,15 @@
+# Changelog
+
+## 2016-03-19 - Maintenance release 1.0.2
+
+Published at [PuppetForge](https://forge.puppetlabs.com/leoarnold/cups/1.0.2)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/1.0.2).
+
+### Summary
+
+This maintenance release overcomes an unintuitive 3rd-party behavior
+and improves the internal structure of the module.
+
 ### Changes in default behavior
 
 - The default value for `ensure` was removed.
@@ -8,6 +20,10 @@
 - Using `puppet resource cups_queue` to modify an already installed queue
   is now possible without specifying `ensure`
 - Automatic resource relations were adjusted to show up correctly in the dependency graph
+
+## 2016-03-19 - Maintenance release 1.0.1
+
+_retracted_
 
 ## 2016-03-07 - Release 1.0.0
 
