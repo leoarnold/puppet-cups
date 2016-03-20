@@ -1,7 +1,9 @@
+require 'codacy-coverage'
 require 'codeclimate-test-reporter'
 
 SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,
+  Codacy::Formatter,
   CodeClimate::TestReporter::Formatter
 ]
 
