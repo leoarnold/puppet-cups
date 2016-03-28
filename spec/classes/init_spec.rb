@@ -18,6 +18,8 @@ describe 'cups' do
       it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
 
       it { is_expected.to contain_file('lpoptions').that_requires('Service[cups]') }
+
+      it { is_expected.to contain_resources('cups_queue').with(purge: 'false') }
     end
   end
 
@@ -40,6 +42,8 @@ describe 'cups' do
       it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
 
       it { is_expected.to contain_file('lpoptions').that_requires('Service[cups]') }
+
+      it { is_expected.to contain_resources('cups_queue').with(purge: 'false') }
     end
   end
 
@@ -60,6 +64,8 @@ describe 'cups' do
       it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
 
       it { is_expected.to contain_file('lpoptions').that_requires('Service[cups]') }
+
+      it { is_expected.to contain_resources('cups_queue').with(purge: 'false') }
     end
   end
 
@@ -181,6 +187,18 @@ describe 'cups' do
         it { is_expected.to contain_package('custom-cups').with(ensure: 'present') }
 
         it { is_expected.to contain_package('custom-ipptool').with(ensure: 'present') }
+      end
+    end
+
+    describe 'purge_unmanaged_queues' do
+      context '= false' do
+        it { is_expected.to contain_resources('cups_queue').with(purge: 'false') }
+      end
+
+      context '= true' do
+        let(:params) { { purge_unmanaged_queues: true } }
+
+        it { is_expected.to contain_resources('cups_queue').with(purge: 'true') }
       end
     end
 

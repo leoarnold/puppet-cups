@@ -532,6 +532,8 @@ Installs, configures, and manages the CUPS service.
 
 * `packages`: An array with the names of all packages needed to install for CUPS and `ipptool`. Use `[]` to disable automatic package management. OS dependent defaults apply.
 
+* `purge_unmanaged_queues`: Setting `true` will remove all queues from the node which do not match a `cups_queue` resource in the current catalog. Defaults to `false`.
+
 * `services`: An array with the names of all CUPS services to be managed. Use `[]` to disable automatic service management. OS dependent defaults apply.
 
 * `webinterface`: Boolean value to enable or disable the CUPS web interface at [`http://localhost:631`](http://localhost:631).

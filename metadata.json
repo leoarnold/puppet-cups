@@ -1,6 +1,6 @@
 {
   "name": "leoarnold-cups",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "author": "Leo Arnold",
   "summary": "Puppet module for the Common Unix Printing System (CUPS)",
   "license": "MIT",

@@ -12,6 +12,7 @@ class cups (
   $default_queue = undef,
   $hiera = undef,
   $packages = $::cups::params::packages,
+  $purge_unmanaged_queues = false,
   $services = $::cups::params::services,
   $webinterface = undef,
 ) inherits cups::params {
@@ -74,4 +75,8 @@ class cups (
     }
   }
 
+  validate_bool($purge_unmanaged_queues)
+  resources { 'cups_queue':
+    purge => $purge_unmanaged_queues,
+  }
 }

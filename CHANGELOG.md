@@ -1,5 +1,9 @@
 # Changelog
 
+### Features
+
+- All unmanaged CUPS queues can now be removed automatically
+
 ## 2016-03-19 - Maintenance release 1.0.2
 
 Published at [PuppetForge](https://forge.puppetlabs.com/leoarnold/cups/1.0.2)
