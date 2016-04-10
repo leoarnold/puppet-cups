@@ -2,7 +2,9 @@
 sudo: false
 language: ruby
 bundler_args: --without acceptance_testing
-script: bundle exec rake release_checks
+script:
+- bundle exec rake release_checks
+- bundle exec rake mdl
 matrix:
   fast_finish: true
   include:

@@ -11,7 +11,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 [![Gitter](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-#### Table of Contents
+## Table of Contents
 
 1. [Description](#description)
 1. [Setup](#setup)
@@ -45,21 +45,21 @@ Key design goals include *locale independence* and *test driven development*.
 
 ### What cups affects
 
-  * The CUPS packages will be installed.
+* The CUPS packages will be installed.
 
-  * The CUPS service will be enabled and launched.
+* The CUPS service will be enabled and launched.
 
-  * The files in `/etc/cups/` will be modified using CUPS command line utilities.
+* The files in `/etc/cups/` will be modified using CUPS command line utilities.
 
-  * The file `/etc/cups/lpoptions` will be deleted. See the section on [limitations](#option-defaults) for details.
+* The file `/etc/cups/lpoptions` will be deleted. See the section on [limitations](#option-defaults) for details.
 
 ### Setup Requirements
 
 This module is written in Ruby 1.9 syntax and tested on systems using
 
-  * Ruby 1.9+ or 2.x
+* Ruby 1.9+ or 2.x
 
-  * CUPS 1.5+ or 2.x
+* CUPS 1.5+ or 2.x
 
 It might also work with CUPS versions prior to 1.5 after [manually installing](http://www.cups.org/software.php?VERSION=ipptool)
 the `ipptool` command line utility. It will however **not** work with Ruby versions prior to 1.9.
@@ -108,95 +108,99 @@ then take the corresponding PPD file from `/etc/cups/ppd/` and use the `ppd` met
 
 Minimal printer manifests:
 
-  * Creating a local raw printer:
+* Creating a local raw printer:
 
-    ```puppet
-    include '::cups'
+  ```puppet
+  include '::cups'
 
-    cups_queue { 'MinimalRaw':
-      ensure => 'printer',
-      uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
-    }
-    ```
+  cups_queue { 'MinimalRaw':
+    ensure => 'printer',
+    uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+  }
+  ```
 
-    To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
+  To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
 
-  * Using a suitable model from the output of the command `lpinfo -m` on the node:
+* Using a suitable model from the output of the command `lpinfo -m` on the node:
 
-    ```puppet
-    include '::cups'
+  ```puppet
+  include '::cups'
 
-    cups_queue { 'MinimalModel':
-      ensure => 'printer',
-      model  => 'drv:///sample.drv/generic.ppd',
-      uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
-    }
-    ```
+  cups_queue { 'MinimalModel':
+    ensure => 'printer',
+    model  => 'drv:///sample.drv/generic.ppd',
+    uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+  }
+  ```
 
-    To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
+  To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
 
-  * Using a custom PPD file:
+* Using a custom PPD file:
 
-    ```puppet
-    include '::cups'
+  ```puppet
+  include '::cups'
 
-    cups_queue { 'MinimalPPD':
-      ensure => 'printer',
-      ppd    => '/usr/share/cups/model/myprinter.ppd',
-      uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
-    }
-    ```
+  cups_queue { 'MinimalPPD':
+    ensure => 'printer',
+    ppd    => '/usr/share/cups/model/myprinter.ppd',
+    uri    => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+  }
+  ```
 
-    To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
+  To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
 
-    In a master-agent setting, you could transfer the PPD file to the client using a `file` resource
+  In a master-agent setting, you could transfer the PPD file to the client using a `file` resource
 
-    ```puppet
-    file { '/usr/share/cups/model/myprinter.ppd':
-      ensure => 'file',
-      source => 'puppet:///modules/myModule/myprinter.ppd'
-    }
-    ```
+  ```puppet
+  file { '/usr/share/cups/model/myprinter.ppd':
+    ensure => 'file',
+    source => 'puppet:///modules/myModule/myprinter.ppd'
+  }
+  ```
 
-    which will be autorequired by `Cups_queue['MinimalPrinter']`.
+  which will be autorequired by `Cups_queue['MinimalPrinter']`.
 
-  * Using a System V interface script:
+* Using a System V interface script:
 
-    ```puppet
-    include '::cups'
+  ```puppet
+  include '::cups'
 
-    cups_queue { 'MinimalInterface':
-      ensure    => 'printer',
-      interface => '/usr/share/cups/model/myprinter.sh',
-      uri       => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
-    }
-    ```
+  cups_queue { 'MinimalInterface':
+    ensure    => 'printer',
+    interface => '/usr/share/cups/model/myprinter.sh',
+    uri       => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
+  }
+  ```
 
-    To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
+  To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
 
-    In a master-agent setting, you could transfer the interface script to the client using a `file` resource
+  In a master-agent setting, you could transfer the interface script to the client using a `file` resource
 
-    ```puppet
-    file { '/usr/share/cups/model/myprinter.sh':
-      ensure => 'file',
-      source => 'puppet:///modules/myModule/myprinter.sh'
-    }
-    ```
+  ```puppet
+  file { '/usr/share/cups/model/myprinter.sh':
+    ensure => 'file',
+    source => 'puppet:///modules/myModule/myprinter.sh'
+  }
+  ```
 
-    which will be autorequired by `Cups_queue['MinimalPrinter']`.
+  which will be autorequired by `Cups_queue['MinimalPrinter']`.
 
 #### Changing the driver
 
-When a printer queue is already present and managed using a PPD file, it is generally hard to tell which model or PPD file was used to install the queue.
-Nevertheless it might become necessary to change the model or update the PPD file *without* changing the queue name, e.g. because the PPD file contains some login credentials.
+When a printer queue is already present and managed using a PPD file,
+it is generally hard to tell which model or PPD file was used to install the queue.
+Nevertheless it might become necessary to change the model or update the PPD file
+*without* changing the queue name, e.g. because the PPD file contains some login credentials.
 
-This module introduces a way to update the driver (i.e. force a reinstall) through syncing the `make_and_model` property, which defaults to
+This module introduces a way to update the driver (i.e. force a reinstall)
+through syncing the `make_and_model` property, which defaults to
 
-  * the `NickName` (fallback `ModelName`) value from the printer's PPD file in `/etc/cups/ppd/` if the printer was installed using a PPD file or a model.
+* the `NickName` (fallback `ModelName`) value from the printer's PPD file in `/etc/cups/ppd/`
+  if the printer was installed using a PPD file or a model.
 
-  * `Local System V Printer` if the printer uses a System V interface script.
+* `Local System V Printer` if the printer uses a System V interface script.
 
-  * `Local Raw Printer` for raw print queues.
+* `Local Raw Printer` for raw print queues.
 
 **Example:** On the node, running `puppet resource cups_queue Office` returns
 
@@ -210,85 +214,86 @@ This module introduces a way to update the driver (i.e. force a reinstall) throu
 
 and you would like to
 
-  * use a different model
+* use a different model
 
-    ```Text
-    $ lpinfo -m | grep 4730mfp
+  ```Text
+  $ lpinfo -m | grep 4730mfp
+  ...
+  drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3
+  postscript-hp:0/ppd/hplip/HP/hp-color_laserjet_4730mfp-ps.ppd HP Color LaserJet 4730mfp Postscript (recommended)
+  ...
+  ```
+
+  then you just need to adapt the manifest from above to
+
+  ```puppet
+  cups_queue { 'Office':
+    ensure         => 'printer',
+    model          => 'drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd',
+    make_and_model => 'HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3',
     ...
-    drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3
-    postscript-hp:0/ppd/hplip/HP/hp-color_laserjet_4730mfp-ps.ppd HP Color LaserJet 4730mfp Postscript (recommended)
+  }
+  ```
+
+* use a custom PPD file instead which contains the line
+
+  ```Text
+  *NickName: "HP Color LaserJet 4730mfp Postscript (MyCompany v2)"
+  ```
+
+  then you just need to adapt the manifest from above to
+
+  ```puppet
+  cups_queue { 'Office':
+    ensure         => 'printer',
+    ppd            => '/usr/share/cups/model/hp4730v2.ppd',
+    make_and_model => 'HP Color LaserJet 4730mfp Postscript (MyCompany v2)',
     ...
-    ```
+  }
+  ```
 
-    then you just need to adapt the manifest from above to
+* use a System V interface script, then you just need to adapt the manifest from above to
 
-    ```puppet
-    cups_queue { 'Office':
-      ensure         => 'printer',
-      model          => 'drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd',
-      make_and_model => 'HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3',
-      ...
-    }
-    ```
+  ```puppet
+  cups_queue { 'Office':
+    ensure         => 'printer',
+    interface      => '/usr/share/cups/model/myprinter.sh',
+    make_and_model => 'Local System V Printer',
+    ...
+  }
+  ```
 
-  * use a custom PPD file instead which contains the line
+  This will, however, **not** work if the printer was already using a System V interface script
+  (and hence the `make_and_model` would not change).
+  Instead, you can just sync the script right to the place where CUPS expects it:
 
-    ```Text
-    *NickName: "HP Color LaserJet 4730mfp Postscript (MyCompany v2)"
-    ```
+  ```puppet
+  include '::cups'
 
-    then you just need to adapt the manifest from above to
+  file { '/etc/cups/interfaces/Office':
+    ensure => 'file',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+    source => 'puppet:///modules/myModule/myprinter.sh'
+  }
 
-    ```puppet
-    cups_queue { 'Office':
-      ensure         => 'printer',
-      ppd            => '/usr/share/cups/model/hp4730v2.ppd',
-      make_and_model => 'HP Color LaserJet 4730mfp Postscript (MyCompany v2)',
-      ...
-    }
-    ```
+  cups_queue { 'Office':
+    ensure    => 'printer',
+    interface => '/etc/cups/interfaces/Office',
+    ...
+  }
+  ```
 
-  * use a System V interface script, then you just need to adapt the manifest from above to
+* make it a raw queue. Then you just need to adapt the manifest from above to
 
-    ```puppet
-    cups_queue { 'Office':
-      ensure         => 'printer',
-      interface      => '/usr/share/cups/model/myprinter.sh',
-      make_and_model => 'Local System V Printer',
-      ...
-    }
-    ```
-
-    This will, however, **not** work if the printer was already using a System V interface script (and hence the `make_and_model` would not change).
-    Instead, you can just sync the script right to the place where CUPS expects it:
-
-    ```puppet
-    include '::cups'
-
-    file { '/etc/cups/interfaces/Office':
-      ensure => 'file',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0755',
-      source => 'puppet:///modules/myModule/myprinter.sh'
-    }
-
-    cups_queue { 'Office':
-      ensure    => 'printer',
-      interface => '/etc/cups/interfaces/Office',
-      ...
-    }
-    ```
-
-  * make it a raw queue. Then you just need to adapt the manifest from above to
-
-    ```puppet
-    cups_queue { 'Office':
-      ensure         => 'printer',
-      make_and_model => 'Local Raw Printer',
-      ...
-    }
-    ```
+  ```puppet
+  cups_queue { 'Office':
+    ensure         => 'printer',
+    make_and_model => 'Local Raw Printer',
+    ...
+  }
+  ```
 
 ### Managing Classes
 
@@ -317,15 +322,16 @@ The `Cups_queue['MinimalClass']` resource will autorequire its member resources 
 
 ### Configuring queues
 
-Once you have your minimal [printer](#managing-printers) or [class](#managing-classes) manifest, you will need to apply some configuration.
+Once you have your minimal [printer](#managing-printers) or [class](#managing-classes) manifest,
+you will need to apply some configuration.
 
 **Job handling:**
 In CUPS, newly installed queues are disabled and rejecting by default, which can lead to confusion at times.
 The corresponding `cups_queue` properties are:
 
-  * `accepting`: Should incoming jobs be enqueued or rejected?
+* `accepting`: Should incoming jobs be enqueued or rejected?
 
-  * `enabled`: Should pending jobs be sent to the device or kept pending?
+* `enabled`: Should pending jobs be sent to the device or kept pending?
 
 If you want your print queues to "just work", you should set both to `true` by default using
 
@@ -372,7 +378,8 @@ You only need to provide values for options you actually care about.
 Of course you want your boss Mr. Lumbergh, the secretary Nina and every member of the workers' council
 to be able to print to the office printer from every node. But all others should be denied to use this printer.
 
-Assuming they respectively have the user accounts `lumbergh`, `nina`, and the user group `council`, this can be achieved by:
+Assuming they respectively have the user accounts `lumbergh`, `nina`, and the user group `council`,
+this can be achieved by:
 
   ```puppet
   cups_queue { 'Office':
@@ -386,7 +393,8 @@ Assuming they respectively have the user accounts `lumbergh`, `nina`, and the us
 
 Note that group names must be prefixed with an `@` sign.
 
-Changing the policy to `deny` would deny all `users`, but allow everybody else. Furthermore, you can unset all restrictions by using
+Changing the policy to `deny` would deny all `users`, but allow everybody else.
+Furthermore, you can unset all restrictions by using
 
   ```puppet
   cups_queue { 'Office':
@@ -526,15 +534,20 @@ Installs, configures, and manages the CUPS service.
 
 * `confdir`: The fully qualified directory (without trailing slash) for the CUPS configuration files. Defaults to `/etc/cups`.
 
-* `default_queue`: The name of the default destination for all print jobs. Requires the catalog to contain a `cups_queue` resource with the same name.
+* `default_queue`: The name of the default destination for all print jobs.
+  Requires the catalog to contain a `cups_queue` resource with the same name.
 
-* `hiera`: When set to `priority` or `merge`, Puppet will look up the Hiera key `cups_queue` to manage `cups_queue` resources. See also the [example](#using-hiera) above. Disabled by default.
+* `hiera`: When set to `priority` or `merge`, Puppet will look up the Hiera key `cups_queue`
+  to manage `cups_queue` resources. See also the [example](#using-hiera) above. Disabled by default.
 
-* `packages`: An array with the names of all packages needed to install for CUPS and `ipptool`. Use `[]` to disable automatic package management. OS dependent defaults apply.
+* `packages`: An array with the names of all packages needed to install for CUPS and `ipptool`.
+  Use `[]` to disable automatic package management. OS dependent defaults apply.
 
-* `purge_unmanaged_queues`: Setting `true` will remove all queues from the node which do not match a `cups_queue` resource in the current catalog. Defaults to `false`.
+* `purge_unmanaged_queues`: Setting `true` will remove all queues from the node
+  which do not match a `cups_queue` resource in the current catalog. Defaults to `false`.
 
-* `services`: An array with the names of all CUPS services to be managed. Use `[]` to disable automatic service management. OS dependent defaults apply.
+* `services`: An array with the names of all CUPS services to be managed.
+  Use `[]` to disable automatic service management. OS dependent defaults apply.
 
 * `webinterface`: Boolean value to enable or disable the CUPS web interface at [`http://localhost:631`](http://localhost:631).
 
@@ -554,13 +567,15 @@ Installs and manages CUPS print queues.
 
 ##### Attributes
 
-* `name`: *mandatory* - CUPS queue names are case insensitive and may contain any printable character except SPACE, TAB, "/", or "#".
+* `name`: *mandatory* - CUPS queue names are case insensitive and may contain any printable character
+  except SPACE, TAB, "/", or "#".
 
 * `ensure`: *mandatory* - Specifies whether this queue should be a `class`, a `printer` or `absent`.
 
 * `access`: Manages queue access control. Takes a hash with keys `policy` and `users`.
-The `allow` policy restricts access to the `users` provided, while the `deny` policy lets everybody submit jobs except the specified `users`.
-The `users` are provided as a non-empty array of Unix group names (prefixed with an `@`) and Unix user names.
+  The `allow` policy restricts access to the `users` provided, while the `deny` policy
+  lets everybody submit jobs except the specified `users`.
+  The `users` are provided as a non-empty array of Unix group names (prefixed with an `@`) and Unix user names.
 
 * `accepting`: Boolean value specifying whether the queue should accept print jobs or reject them.
 
@@ -568,33 +583,37 @@ The `users` are provided as a non-empty array of Unix group names (prefixed with
 
 * `enabled`: Boolean value specifying whether the queue should be running or stopped.
 
-* `held`: A held queue will print all jobs in print or pending, but all new jobs will be held. Setting `false` will release them.
+* `held`: A held queue will print all jobs in print or pending, but all new jobs will be held.
+  Setting `false` will release them.
 
 * `location`: A short information where to find the hardcopies.
 
-* `options`: A hash of options (as keys) and their target value. Use `lpoptions -p [queue_name] -l` on the node for a list of all options available for the queue and their supported values.
+* `options`: A hash of options (as keys) and their target value. Use `lpoptions -p [queue_name] -l`
+  on the node for a list of all options available for the queue and their supported values.
 
 * `shared`: Boolean value specifying whether to share this queue on the network. Default is `false`.
 
 ##### Class-only attributes
 
-* `members`: *mandatory* - A non-empty array with the names of CUPS queues. The class will be synced to contain only these members in the given order. If the catalog contains `cups_queue` resources for these queues, they will be required automatically.
+* `members`: *mandatory* - A non-empty array with the names of CUPS queues.
+  The class will be synced to contain only these members in the given order.
+  If the catalog contains `cups_queue` resources for these queues, they will be required automatically.
 
 ##### Printers-only attributes
 
 * `interface`: The absolute path to a System V interface script on the node.
-If the catalog contains a `file` resource with this path as title, it will automatically be required.
+  If the catalog contains a `file` resource with this path as title, it will automatically be required.
 
 * `make_and_model`: This value is used for [driver updates and changes](#changing-the-driver).
-Matches the `NickName` (fallback `ModelName`) value from the printer's PPD file
-if the printer was installed using a PPD file or a model,
-and `Local System V Printer` or `Local Raw Printer` otherwise.
+  Matches the `NickName` (fallback `ModelName`) value from the printer's PPD file
+  if the printer was installed using a PPD file or a model,
+  and `Local System V Printer` or `Local Raw Printer` otherwise.
 
 * `model`: A supported printer model. Use `lpinfo -m` on the node to list all models available.
 
 * `ppd`: The absolute path to a PPD file on the node.
-If the catalog contains a `file` resource with this path as title, it will automatically be required.
-The recommended location for your PPD files is `/usr/share/cups/model/` or `/usr/local/share/cups/model/`.
+  If the catalog contains a `file` resource with this path as title, it will automatically be required.
+  The recommended location for your PPD files is `/usr/share/cups/model/` or `/usr/local/share/cups/model/`.
 
 * `uri`: The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.
 
@@ -607,10 +626,11 @@ e.g. to enable the use of an optional duplex unit.
 For historic reasons there are two ways to set default values for all users:
 
 * Daemon defaults are set using `sudo lpadmin` and will affect all jobs from both local and remote hosts.
-The CUPS daemon saves them frequently - but not immediately - to `/etc/cups/classes.conf`, `/etc/cups/printers.conf`, and the PPD files in `/etc/cups/ppd/`.
+  The CUPS daemon saves them frequently - but not immediately - to `/etc/cups/classes.conf`,
+  `/etc/cups/printers.conf`, and the PPD files in `/etc/cups/ppd/`.
 
-* Local defaults are set using `sudo lpoptions` and will only affect jobs from the local host, *overriding* the daemon defaults for these jobs.
-The values are saved to the file `/etc/cups/lpoptions`.
+* Local defaults are set using `sudo lpoptions` and will only affect jobs from the local host,
+  *overriding* the daemon defaults for these jobs. The values are saved to the file `/etc/cups/lpoptions`.
 
 Hence there is no robust way to determine the current daemon defaults when used in conjunction with local defaults.
 If local defaults aren't used, the command `lpoptions -p [queue_name] -l` will return the daemon defaults.
@@ -623,16 +643,16 @@ this module will *disable* the use of local defaults by deleting the file `/etc/
 There are several ways to contribute for both users and developers:
 
 * This module is striving for the ["Puppet approved"](https://forge.puppet.com/approved) badge.
-If you like this module, please show your appreciation by giving it a
-[positive rating](https://forge.puppet.com/leoarnold/cups) in the Puppet Forge
-and spreading the news in your favorite way.
+  If you like this module, please show your appreciation by giving it a
+  [positive rating](https://forge.puppet.com/leoarnold/cups) in the Puppet Forge
+  and spreading the news in your favorite way.
 
 * Want to suggesting a new feature, point out a flaw in the documentation or report a bug?
-Please open a [GitHub issue](https://github.com/leoarnold/puppet-cups/issues)
-using the suggested skeleton from the [contribution guidelines](CONTRIBUTING.md).
+  Please open a [GitHub issue](https://github.com/leoarnold/puppet-cups/issues)
+  using the suggested skeleton from the [contribution guidelines](CONTRIBUTING.md).
 
 * Developers might want to submit a [GitHub pull request](https://github.com/leoarnold/puppet-cups/pulls).
-It is highly recommended to open an **issue first** and discuss changes with the maintainer.
-See the [contribution guidelines](CONTRIBUTING.md) for our quality standards and legal requirements.
+  It is highly recommended to open an **issue first** and discuss changes with the maintainer.
+  See the [contribution guidelines](CONTRIBUTING.md) for our quality standards and legal requirements.
 
-_Thank you for your interest in the CUPS module._
+_Thank you for your interest in the CUPS module_.

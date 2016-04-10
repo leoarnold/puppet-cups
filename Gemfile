@@ -19,6 +19,7 @@ group :development do
   gem 'rubocop', '~> 0.37', require: false
   gem 'puppet-lint', '~> 1.0', require: false
   gem 'metadata-json-lint', '~> 0.0', require: false
+  gem 'mdl', '~> 0.3', require: false
   gem 'codacy-coverage', '~> 0.3', require: false
   gem 'codeclimate-test-reporter', '~> 0.5', require: false
   gem 'github-linguist', '~> 4.7', require: false if RUBY_VERSION.to_f >= 2.0

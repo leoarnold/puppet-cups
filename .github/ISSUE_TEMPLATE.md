@@ -1,4 +1,4 @@
-_Issue template: please fill in the gaps._
+_Issue template: Please fill in the gaps_.
 
 **Given** [Your operating system and Version] with Ruby [Your version], Puppet [Your version] and CUPS [Your version].
 

@@ -1,4 +1,4 @@
-_Pull Request template_
+_Pull Request template_.
 
 This Pull Request fixes/adds ... (about 2 sentences)
 

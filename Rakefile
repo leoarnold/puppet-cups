@@ -3,3 +3,10 @@ require 'rspec-puppet/rake_task'
 
 require 'rubocop/rake_task'
 RuboCop::RakeTask.new
+
+desc 'Check style of MarkDown documents'
+task :mdl do
+  Dir['.github/**/*.md', '**/*.md'].each do |document|
+    sh "mdl -s .mdl_style.rb #{document}"
+  end
+end
