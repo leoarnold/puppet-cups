@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'codacy-coverage'
 require 'codeclimate-test-reporter'
 

@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'spec_helper_acceptance'
 require 'json'
 

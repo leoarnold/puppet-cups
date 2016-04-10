@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'beaker-rspec'
 require 'beaker/puppet_install_helper'
 
