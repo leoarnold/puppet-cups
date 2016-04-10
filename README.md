@@ -1,13 +1,13 @@
 # The CUPS module
 
 [![Build Status](https://travis-ci.org/leoarnold/puppet-cups.svg)](https://travis-ci.org/leoarnold/puppet-cups)
-[![Test Coverage](https://codeclimate.com/github/leoarnold/puppet-cups/badges/coverage.svg)](https://codeclimate.com/github/leoarnold/puppet-cups/coverage)
 [![Code Climate](https://codeclimate.com/github/leoarnold/puppet-cups/badges/gpa.svg)](https://codeclimate.com/github/leoarnold/puppet-cups)
-[![Codacy Badge](https://img.shields.io/codacy/0404c3f7b7b345859d5eb9d2cbeecc39.svg)](https://www.codacy.com/app/leoarnold/puppet-cups)
-[![Gemnasium](https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg)](https://gemnasium.com/leoarnold/puppet-cups)
+[![Code Quality](https://img.shields.io/codacy/0404c3f7b7b345859d5eb9d2cbeecc39.svg)](https://www.codacy.com/app/leoarnold/puppet-cups)
+[![Coverage](https://codeclimate.com/github/leoarnold/puppet-cups/badges/coverage.svg)](https://codeclimate.com/github/leoarnold/puppet-cups/coverage)
+[![Dependencies](https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg)](https://gemnasium.com/leoarnold/puppet-cups)
 
-[![Puppet Forge Version](http://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppetlabs.com/leoarnold/cups)
-[![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppetlabs.com/leoarnold/cups)
+[![Puppet Forge Version](http://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
+[![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![MIT License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 [![Gitter](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
@@ -622,9 +622,9 @@ this module will *disable* the use of local defaults by deleting the file `/etc/
 
 There are several ways to contribute for both users and developers:
 
-* This module is striving for the ["Puppet approved"](https://forge.puppetlabs.com/approved) badge.
+* This module is striving for the ["Puppet approved"](https://forge.puppet.com/approved) badge.
 If you like this module, please show your appreciation by giving it a
-[positive rating](https://forge.puppetlabs.com/leoarnold/cups) in the PuppetForge
+[positive rating](https://forge.puppet.com/leoarnold/cups) in the Puppet Forge
 and spreading the news in your favorite way.
 
 * Want to suggesting a new feature, point out a flaw in the documentation or report a bug?

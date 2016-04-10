@@ -1,12 +1,21 @@
 # Changelog
 
+## 2016-04-10 - Release 1.1.0
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/1.1.0)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/1.1.0).
+
+### Summary
+
+This release introduces a new feature and adjusts to Puppet's brand refresh.
+
 ### Features
 
 - All unmanaged CUPS queues can now be removed automatically
 
 ## 2016-03-19 - Maintenance release 1.0.2
 
-Published at [PuppetForge](https://forge.puppetlabs.com/leoarnold/cups/1.0.2)
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/1.0.2)
 and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/1.0.2).
 
 ### Summary
@@ -31,12 +40,12 @@ _retracted_
 
 ## 2016-03-07 - Release 1.0.0
 
-Published at [PuppetForge](https://forge.puppetlabs.com/leoarnold/cups/1.0.0)
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/1.0.0)
 and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/1.0.0).
 
 ### Summary
 
-Existing CUPS modules in the [PuppetForge](https://forge.puppetlabs.com/) lacked some desirable functionality by design.
+Existing CUPS modules in the [Puppet Forge](https://forge.puppet.com/) lacked some desirable functionality by design.
 This module was written from scratch, taking divergent architectural decisions and employing test driven development
 to provide all features required in an office network setting.
 
