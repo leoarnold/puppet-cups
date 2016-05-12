@@ -23,6 +23,7 @@ group :development do
   gem 'codacy-coverage', '~> 1.0', require: false
   gem 'codeclimate-test-reporter', '~> 0.5', require: false
   gem 'github-linguist', '~> 4.7', require: false if RUBY_VERSION.to_f >= 2.0
+  gem 'travis', '~> 1.8', require: false
 end
 
 group :acceptance_testing do

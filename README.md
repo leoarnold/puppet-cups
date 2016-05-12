@@ -24,7 +24,10 @@
     * [Configuring queues](#configuring-queues)
     * [Configuring CUPS](#configuring-cups)
     * [Automatic dependencies](#automatic-dependencies)
+1. [Bricolage - Hackish ways of resource creation](#bricolage)
+    * [Using an External Node Classifier (ENC)](#using-an-external-node-classifier-enc)
     * [Using Hiera](#using-hiera)
+    * [Recommended refactor](#recommended-refactor)
 1. [Reference - The documentation of all features available](#reference)
     * [Classes](#classes)
     * [Defines](#defines)
@@ -462,7 +465,53 @@ Cups_queue['Office']                   Cups_queue['Warehouse']
                  Cups_queue['GroundFloor']                     Class['cups::default_queue']
 ```
 
+## Bricolage
+
+The module usage described in this section is considered *bad style*
+and we strongly encourage the reader to use the [recommended refactor](#recommended-refactor) instead.
+
+Nevertheless this module does support these methods to cover some corner cases.
+
+### Using an External Node Classifier (ENC)
+
+> The following usage example is considered *bad style*. Please consider the [recommended refactor](#recommended-refactor).
+
+You can also create `cups_queue` resources using an ENC.
+Make sure your setup includes the `::cups` class on the relevant nodes and replace a manifest like
+
+  ```puppet
+  class { '::cups':
+    default_queue => 'GroundFloor',
+  }
+
+  cups_queue { 'Office':
+    ensure => 'printer',
+    uri    => 'lpd://192.168.2.105/binary_p1',
+  }
+
+  cups_queue { 'GroundFloor':
+    ensure  => 'class',
+    members => ['Office', 'Warehouse'],
+  }
+  ```
+
+with the ENC output
+
+  ```YAML
+  ---
+  cups::default_queue: 'GroundFloor'
+  cups::resources:
+    'Office':
+      ensure: 'printer'
+      uri: 'lpd://192.168.2.105/binary_p1'
+    'GroundFloor':
+      ensure: 'class'
+      members: ['Office', 'Warehouse']
+  ```
+
 ### Using Hiera
+
+> The following usage example is considered *bad style*. Please consider the [recommended refactor](#recommended-refactor).
 
 You can also create `cups_queue` resources using Hiera.
 Make sure your setup includes the `::cups` class on the relevant nodes and replace a manifest like
@@ -496,6 +545,82 @@ with the Hiera data
     'GroundFloor':
       ensure: 'class'
       members: ['Office', 'Warehouse']
+  ```
+
+where the `cups::hiera` attribute must be set to `priority` or `merge` in order to enable Hiera lookups.
+
+### Recommended refactor
+
+If you considered using Hiera or an ENC to directly create `cups_queue` resources,
+you probably did this in order to have fine-grained control over which CUPS queues
+are available on which node.
+
+Instead of creating the resources directly, we strongly encourage you to
+encapsulate your `cups_queue` resource definitions in subclasses of a custom `myprinters` module
+and then have the ENC / Hiera decide, which of these subclasses to ensure or remove on the given node.
+
+Suppose you want to refactor the following manifest:
+
+  ```puppet
+  class { '::cups':
+    default_queue => 'GroundFloor',
+  }
+
+  cups_queue { 'Office':
+    ensure => 'printer',
+    uri    => 'lpd://192.168.2.105/binary_p1',
+  }
+
+  cups_queue { 'GroundFloor':
+    ensure  => 'class',
+    members => ['Office', 'Warehouse'],
+  }
+  ```
+
+Then your custom `myprinters` module could be organized like this:
+
+  ```puppet
+  # MODULEPATH/myprinters/manifests/init.pp
+  class myprinters {
+    # Mandatory file - content optional
+  }
+  ```
+
+  ```puppet
+  # MODULEPATH/myprinters/manifests/office.pp
+  class myprinters::office {
+    include cups
+
+    cups_queue { 'Office':
+      ensure => 'printer',
+      uri    => 'lpd://192.168.2.105/binary_p1',
+    }
+  }
+  ```
+
+  ```puppet
+  # MODULEPATH/myprinters/manifests/groundfloor.pp
+  class myprinters::groundfloor {
+    include cups
+    include myprinters::office
+    include myprinters::warehouse
+
+    cups_queue { 'GroundFloor':
+      ensure  => 'class',
+      members => ['Office', 'Warehouse'],
+    }
+  }
+  ```
+
+Now you that you have your resource parametes safely wrapped in subclasses,
+the ENC / Hiera just get to decide which classes get included on the node:
+
+  ```YAML
+  # Example ENC output
+  classes:
+      cups:
+          default_queue: GroundFloor
+      myprinters::groundfloor:
   ```
 
 ## Reference
@@ -545,6 +670,8 @@ Installs, configures, and manages the CUPS service.
 
 * `purge_unmanaged_queues`: Setting `true` will remove all queues from the node
   which do not match a `cups_queue` resource in the current catalog. Defaults to `false`.
+
+* `resources`: This attribute is intended for use with ENCs only (see [example above](#using-an-external-node-classifier-enc)).
 
 * `services`: An array with the names of all CUPS services to be managed.
   Use `[]` to disable automatic service management. OS dependent defaults apply.

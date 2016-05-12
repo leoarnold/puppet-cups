@@ -14,6 +14,7 @@ class cups (
   $packages = $::cups::params::packages,
   $purge_unmanaged_queues = false,
   $services = $::cups::params::services,
+  $resources = undef,
   $webinterface = undef,
 ) inherits cups::params {
 
@@ -57,6 +58,12 @@ class cups (
       'merge': { create_resources('cups_queue', hiera_hash('cups_queue')) }
       default: { fail("Unsupported value 'hiera => ${hiera}'.") }
     }
+  }
+
+  unless ($resources == undef) {
+    validate_hash($resources)
+
+    create_resources('cups_queue', $resources)
   }
 
   unless ($default_queue == undef) {
