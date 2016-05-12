@@ -191,6 +191,18 @@ describe 'cups' do
       end
     end
 
+    describe 'papersize' do
+      context '= undef' do
+        it { should_not contain_exec('papersize') }
+      end
+
+      context '= a4' do
+        let(:params) { { papersize: 'a4' } }
+
+        it { is_expected.to contain_exec('papersize').with(command: 'paperconfig -p a4') }
+      end
+    end
+
     describe 'purge_unmanaged_queues' do
       context '= false' do
         it { is_expected.to contain_resources('cups_queue').with(purge: 'false') }

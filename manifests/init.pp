@@ -4,6 +4,7 @@
 # String :: default_queue
 # String :: hiera
 # String/Array :: packages
+# String :: papersize
 # String/Array :: services
 # boolean :: webinterface
 #
@@ -12,6 +13,7 @@ class cups (
   $default_queue = undef,
   $hiera = undef,
   $packages = $::cups::params::packages,
+  $papersize = undef,
   $purge_unmanaged_queues = false,
   $services = $::cups::params::services,
   $resources = undef,
@@ -70,6 +72,17 @@ class cups (
     class { '::cups::default_queue' :
       queue   => $default_queue,
       require => File['lpoptions'],
+    }
+  }
+
+  unless ($papersize == undef) {
+    notice('Hello')
+    validate_string($papersize)
+
+    exec { 'papersize':
+      command => "paperconfig -p ${papersize}",
+      unless  => "cat /etc/papersize | grep -w ${papersize}",
+      path    => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
     }
   }
 
