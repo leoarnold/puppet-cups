@@ -1,5 +1,19 @@
 # Changelog
 
+## 2016-05-12 - Release 1.2.0
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/1.2.0)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/1.2.0).
+
+### Summary
+
+This release introduces some new functionality.
+
+### Features
+
+- Direct resource creation by an External Node Classifier (as requested in issue #2)
+- Managing `/etc/papersize`
+
 ## 2016-04-10 - Release 1.1.0
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/1.1.0)

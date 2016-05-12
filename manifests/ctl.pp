@@ -13,6 +13,6 @@ define cups::ctl (
   exec { "cupsctl-${title}":
     command => "cupsctl -E ${title}=${ensure}",
     unless  => "cupsctl -E | grep -iw '${title}=${ensure}'",
-    path    => ['/usr/local/sbin/', '/usr/local/bin/', '/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
+    path    => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
   }
 }

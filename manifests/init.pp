@@ -6,6 +6,7 @@
 # String/Array :: packages
 # String :: papersize
 # String/Array :: services
+# Hash :: resources
 # boolean :: webinterface
 #
 class cups (
