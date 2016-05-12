@@ -1,7 +1,7 @@
 ---
 sudo: false
 language: ruby
-bundler_args: --without acceptance_testing
+bundler_args: --without acceptance_testing metatools
 script:
 - bundle exec rake release_checks
 - bundle exec rake mdl

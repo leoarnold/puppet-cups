@@ -22,12 +22,15 @@ group :development do
   gem 'mdl', '~> 0.3', require: false
   gem 'codacy-coverage', '~> 1.0', require: false
   gem 'codeclimate-test-reporter', '~> 0.5', require: false
-  gem 'github-linguist', '~> 4.7', require: false if RUBY_VERSION.to_f >= 2.0
-  gem 'travis', '~> 1.8', require: false
 end
 
 group :acceptance_testing do
   gem 'beaker-rspec', '~> 5.3', require: false
   gem 'serverspec', '~> 2.26', require: false
   gem 'beaker-puppet_install_helper', '~> 0.4', require: false
+end
+
+group :metatools do
+  gem 'github-linguist', '~> 4.7', require: false if RUBY_VERSION.to_f >= 2.0
+  gem 'travis', '~> 1.8', require: false
 end
