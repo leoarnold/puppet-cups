@@ -1,5 +1,19 @@
 # Changelog
 
+## 2016-05-17 - Maintenance release 1.2.1
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/1.2.1)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/1.2.1).
+
+### Summary
+
+This release improves the module's log message output.
+
+### Changes
+
+- The private class `cups::default_queue` now logs which queue was set as daemon default
+- The new private class `cups::papersize` now logs which papersize was set
+
 ## 2016-05-12 - Release 1.2.0
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/1.2.0)

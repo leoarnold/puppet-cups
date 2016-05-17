@@ -11,6 +11,6 @@ describe 'cups::default_queue' do
 
     it { should contain_class('cups::default_queue').with(queue: 'Office') }
 
-    it { is_expected.to contain_exec('lpadmin-d') }
+    it { is_expected.to contain_exec('lpadmin-d-Office') }
   end
 end

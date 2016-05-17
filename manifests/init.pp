@@ -77,13 +77,10 @@ class cups (
   }
 
   unless ($papersize == undef) {
-    notice('Hello')
-    validate_string($papersize)
-
-    exec { 'papersize':
-      command => "paperconfig -p ${papersize}",
-      unless  => "cat /etc/papersize | grep -w ${papersize}",
-      path    => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
+    class { '::cups::papersize':
+      papersize => $papersize,
+      require   => Package[$packages],
+      notify    => Service[$services],
     }
   }
 

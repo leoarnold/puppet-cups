@@ -631,6 +631,8 @@ the ENC / Hiera just get to decide which classes get included on the node:
 
 * `cups::default_queue` (private)
 
+* `cups::papersize` (private)
+
 * `cups::params` (private)
 
 ### Defines

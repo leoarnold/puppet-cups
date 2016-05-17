@@ -193,13 +193,18 @@ describe 'cups' do
 
     describe 'papersize' do
       context '= undef' do
-        it { should_not contain_exec('papersize') }
+        it { should_not contain_class('cups::papersize') }
       end
 
       context '= a4' do
+        let(:facts) { { osfamily: 'Debian' } }
         let(:params) { { papersize: 'a4' } }
 
-        it { is_expected.to contain_exec('papersize').with(command: 'paperconfig -p a4') }
+        it { is_expected.to contain_class('cups::papersize').with(papersize: 'a4') }
+
+        it { is_expected.to contain_class('cups::papersize').that_requires('Package[cups]') }
+
+        it { is_expected.to contain_class('cups::papersize').that_notifies('Service[cups]') }
       end
     end
 

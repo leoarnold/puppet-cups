@@ -12,7 +12,7 @@ class cups::default_queue (
 ) {
   validate_string($queue)
 
-  exec { 'lpadmin-d':
+  exec { "lpadmin-d-${queue}":
     command => "lpadmin -E -d ${queue}",
     unless  => "lpstat -d | grep -w ${queue}",
     path    => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
