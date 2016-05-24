@@ -2,71 +2,111 @@
 require 'spec_helper'
 
 describe 'cups' do
-  context 'on an operating system from the Debian family' do
-    let(:facts) { { osfamily: 'Debian' } }
-
-    context 'with defaults for all parameters' do
+  context 'with defaults for all parameters' do
+    shared_examples 'OS independent defaults' do
       it { should contain_class('cups').with(confdir: '/etc/cups') }
 
       it { should contain_class('cups::params') }
 
       it { should_not contain_class('cups::default_queue') }
 
-      it { is_expected.to contain_package('cups').with(ensure: 'present') }
+      it { should contain_package('cups').with(ensure: 'present') }
 
-      it { is_expected.to contain_service('cups').that_requires('Package[cups]') }
+      it { should contain_service('cups').with(ensure: 'running', enable: 'true') }
 
-      it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
+      it { should contain_service('cups').that_requires('Package[cups]') }
 
-      it { is_expected.to contain_file('lpoptions').that_requires('Service[cups]') }
+      it { should contain_file('lpoptions').that_requires('Service[cups]') }
 
-      it { is_expected.to contain_resources('cups_queue').with(purge: 'false') }
+      it { should contain_resources('cups_queue').with(purge: 'false') }
     end
-  end
 
-  context 'on an operating system from the RedHat family' do
-    let(:facts) { { osfamily: 'RedHat' } }
+    context 'on an operating system from the Debian family' do
+      context 'with Debian 7' do
+        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Debian', lsbdistrelease: '7' } }
 
-    context 'with defaults for all parameters' do
-      it { should contain_class('cups').with(confdir: '/etc/cups') }
+        include_examples 'OS independent defaults'
 
-      it { should contain_class('cups::params') }
+        it { should_not contain_package('cups-ipp-utils') }
+      end
 
-      it { should_not contain_class('cups::default_queue') }
+      context 'with Debian 8' do
+        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Debian', lsbdistrelease: '8' } }
 
-      it { is_expected.to contain_package('cups').with(ensure: 'present') }
+        include_examples 'OS independent defaults'
 
-      it { is_expected.to contain_package('cups-ipptool').with(ensure: 'present') }
+        it { should_not contain_package('cups-ipp-utils') }
+      end
 
-      it { is_expected.to contain_service('cups').that_requires('Package[cups]') }
+      context 'with Debian 9' do
+        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Debian', lsbdistrelease: '9' } }
 
-      it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
+        include_examples 'OS independent defaults'
 
-      it { is_expected.to contain_file('lpoptions').that_requires('Service[cups]') }
+        it { should contain_package('cups-ipp-utils').with(ensure: 'present') }
 
-      it { is_expected.to contain_resources('cups_queue').with(purge: 'false') }
+        it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
+      end
+
+      context 'with Ubuntu 14.04' do
+        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Ubuntu', lsbdistrelease: '14.04' } }
+
+        include_examples 'OS independent defaults'
+
+        it { should_not contain_package('cups-ipp-utils') }
+      end
+
+      context 'with Ubuntu 15.04' do
+        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Ubuntu', lsbdistrelease: '15.04' } }
+
+        include_examples 'OS independent defaults'
+
+        it { should_not contain_package('cups-ipp-utils') }
+      end
+
+      context 'with Ubuntu 16.04' do
+        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Debian', lsbdistrelease: '16.04' } }
+
+        include_examples 'OS independent defaults'
+
+        it { should contain_package('cups-ipp-utils').with(ensure: 'present') }
+
+        it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
+      end
+
+      context 'with LinuxMint 17' do
+        let(:facts) { { osfamily: 'Debian', operatingsystem: 'LinuxMint', lsbdistrelease: '17' } }
+
+        include_examples 'OS independent defaults'
+
+        it { should_not contain_package('cups-ipp-utils') }
+      end
+
+      context 'with LinuxMint 18' do
+        let(:facts) { { osfamily: 'Debian', operatingsystem: 'LinuxMint', lsbdistrelease: '18' } }
+
+        include_examples 'OS independent defaults'
+
+        it { should contain_package('cups-ipp-utils').with(ensure: 'present') }
+
+        it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
+      end
     end
-  end
 
-  context 'on an operating system from the Suse family' do
-    let(:facts) { { osfamily: 'Suse' } }
+    context 'on an operating system from the RedHat family' do
+      let(:facts) { { osfamily: 'RedHat' } }
 
-    context 'with defaults for all parameters' do
-      it { should contain_class('cups').with(confdir: '/etc/cups') }
+      include_examples 'OS independent defaults'
 
-      it { should contain_class('cups::params') }
+      it { should contain_package('cups-ipptool').with(ensure: 'present') }
 
-      it { should_not contain_class('cups::default_queue') }
+      it { should contain_service('cups').that_requires('Package[cups-ipptool]') }
+    end
 
-      it { is_expected.to contain_package('cups').with(ensure: 'present') }
+    context 'on an operating system from the Suse family' do
+      let(:facts) { { osfamily: 'Suse' } }
 
-      it { is_expected.to contain_service('cups').that_requires('Package[cups]') }
-
-      it { is_expected.to contain_service('cups').with(ensure: 'running', enable: 'true') }
-
-      it { is_expected.to contain_file('lpoptions').that_requires('Service[cups]') }
-
-      it { is_expected.to contain_resources('cups_queue').with(purge: 'false') }
+      include_examples 'OS independent defaults'
     end
   end
 
@@ -102,9 +142,9 @@ describe 'cups' do
         }
       end
 
-      it { is_expected.to contain_package('custom-cups').with(ensure: 'present') }
+      it { should contain_package('custom-cups').with(ensure: 'present') }
 
-      it { is_expected.to contain_package('custom-ipptool').with(ensure: 'present') }
+      it { should contain_package('custom-ipptool').with(ensure: 'present') }
     end
 
     context "with packages = ['custom-cups', 'custom-ipptool'] and services = ['cupsd', 'cups-browsed']" do
@@ -115,36 +155,36 @@ describe 'cups' do
         }
       end
 
-      it { is_expected.to contain_package('custom-cups').with(ensure: 'present') }
+      it { should contain_package('custom-cups').with(ensure: 'present') }
 
-      it { is_expected.to contain_package('custom-ipptool').with(ensure: 'present') }
+      it { should contain_package('custom-ipptool').with(ensure: 'present') }
 
-      it { is_expected.to contain_service('cupsd').with(ensure: 'running', enable: 'true') }
+      it { should contain_service('cupsd').with(ensure: 'running', enable: 'true') }
 
-      it { is_expected.to contain_service('cupsd').that_requires('Package[custom-cups]') }
+      it { should contain_service('cupsd').that_requires('Package[custom-cups]') }
 
-      it { is_expected.to contain_service('cupsd').that_requires('Package[custom-ipptool]') }
+      it { should contain_service('cupsd').that_requires('Package[custom-ipptool]') }
 
-      it { is_expected.to contain_service('cups-browsed').with(ensure: 'running', enable: 'true') }
+      it { should contain_service('cups-browsed').with(ensure: 'running', enable: 'true') }
 
-      it { is_expected.to contain_service('cups-browsed').that_requires('Package[custom-cups]') }
+      it { should contain_service('cups-browsed').that_requires('Package[custom-cups]') }
 
-      it { is_expected.to contain_service('cups-browsed').that_requires('Package[custom-ipptool]') }
+      it { should contain_service('cups-browsed').that_requires('Package[custom-ipptool]') }
     end
   end
 
   context 'OS independent attribute' do
-    let(:facts) { { osfamily: 'Debian' } }
+    let(:facts) { { osfamily: 'Suse' } }
 
     describe 'confdir' do
       context 'not provided' do
-        it { is_expected.to contain_file('lpoptions').with(ensure: 'absent', path: '/etc/cups/lpoptions') }
+        it { should contain_file('lpoptions').with(ensure: 'absent', path: '/etc/cups/lpoptions') }
       end
 
       context '= /usr/local/etc/cups' do
         let(:params) { { confdir: '/usr/local/etc/cups' } }
 
-        it { is_expected.to contain_file('lpoptions').with(ensure: 'absent', path: '/usr/local/etc/cups/lpoptions') }
+        it { should contain_file('lpoptions').with(ensure: 'absent', path: '/usr/local/etc/cups/lpoptions') }
       end
     end
 
@@ -166,6 +206,8 @@ describe 'cups' do
         let(:params) { { default_queue: 'Office' } }
 
         it { should contain_class('cups::default_queue').that_requires('File[lpoptions]') }
+
+        it { should contain_exec('lpadmin-d-Office') }
       end
     end
 
@@ -185,9 +227,9 @@ describe 'cups' do
       context "= ['custom-cups', 'custom-ipptool']" do
         let(:params) { { packages: ['custom-cups', 'custom-ipptool'] } }
 
-        it { is_expected.to contain_package('custom-cups').with(ensure: 'present') }
+        it { should contain_package('custom-cups').with(ensure: 'present') }
 
-        it { is_expected.to contain_package('custom-ipptool').with(ensure: 'present') }
+        it { should contain_package('custom-ipptool').with(ensure: 'present') }
       end
     end
 
@@ -197,26 +239,28 @@ describe 'cups' do
       end
 
       context '= a4' do
-        let(:facts) { { osfamily: 'Debian' } }
+        let(:facts) { { osfamily: 'Suse' } }
         let(:params) { { papersize: 'a4' } }
 
-        it { is_expected.to contain_class('cups::papersize').with(papersize: 'a4') }
+        it { should contain_class('cups::papersize').with(papersize: 'a4') }
 
-        it { is_expected.to contain_class('cups::papersize').that_requires('Package[cups]') }
+        it { should contain_class('cups::papersize').that_requires('Package[cups]') }
 
-        it { is_expected.to contain_class('cups::papersize').that_notifies('Service[cups]') }
+        it { should contain_class('cups::papersize').that_notifies('Service[cups]') }
+
+        it { should contain_exec('paperconfig-p-a4').with(command: 'paperconfig -p a4') }
       end
     end
 
     describe 'purge_unmanaged_queues' do
       context '= false' do
-        it { is_expected.to contain_resources('cups_queue').with(purge: 'false') }
+        it { should contain_resources('cups_queue').with(purge: 'false') }
       end
 
       context '= true' do
         let(:params) { { purge_unmanaged_queues: true } }
 
-        it { is_expected.to contain_resources('cups_queue').with(purge: 'true') }
+        it { should contain_resources('cups_queue').with(purge: 'true') }
       end
     end
 
@@ -242,17 +286,17 @@ describe 'cups' do
           }
         end
 
-        it { is_expected.to contain_service('cupsd').with(ensure: 'running', enable: 'true') }
+        it { should contain_service('cupsd').with(ensure: 'running', enable: 'true') }
 
-        it { is_expected.to contain_service('cupsd').that_requires('Package[custom-cups]') }
+        it { should contain_service('cupsd').that_requires('Package[custom-cups]') }
 
-        it { is_expected.to contain_service('cupsd').that_requires('Package[custom-ipptool]') }
+        it { should contain_service('cupsd').that_requires('Package[custom-ipptool]') }
 
-        it { is_expected.to contain_service('cups-browsed').with(ensure: 'running', enable: 'true') }
+        it { should contain_service('cups-browsed').with(ensure: 'running', enable: 'true') }
 
-        it { is_expected.to contain_service('cups-browsed').that_requires('Package[custom-cups]') }
+        it { should contain_service('cups-browsed').that_requires('Package[custom-cups]') }
 
-        it { is_expected.to contain_service('cups-browsed').that_requires('Package[custom-ipptool]') }
+        it { should contain_service('cups-browsed').that_requires('Package[custom-ipptool]') }
       end
     end
 
@@ -264,17 +308,17 @@ describe 'cups' do
       context '= true' do
         let(:params) { { webinterface: true } }
 
-        it { is_expected.to contain_cups__ctl('WebInterface').with(ensure: 'Yes') }
+        it { should contain_cups__ctl('WebInterface').with(ensure: 'Yes') }
 
-        it { is_expected.to contain_exec('cupsctl-WebInterface').with(command: 'cupsctl -E WebInterface=Yes') }
+        it { should contain_exec('cupsctl-WebInterface').with(command: 'cupsctl -E WebInterface=Yes') }
       end
 
       context '= false' do
         let(:params) { { webinterface: false } }
 
-        it { is_expected.to contain_cups__ctl('WebInterface').with(ensure: 'No') }
+        it { should contain_cups__ctl('WebInterface').with(ensure: 'No') }
 
-        it { is_expected.to contain_exec('cupsctl-WebInterface').with(command: 'cupsctl -E WebInterface=No') }
+        it { should contain_exec('cupsctl-WebInterface').with(command: 'cupsctl -E WebInterface=No') }
       end
     end
   end
