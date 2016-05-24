@@ -82,7 +82,7 @@ describe 'Custom type `cups_queue`' do
 
     describe 'as raw queue' do
       manifest = <<-EOM
-        cups_queue { #{name}:
+        cups_queue { '#{name}':
           ensure => 'printer',
         }
       EOM
@@ -92,7 +92,7 @@ describe 'Custom type `cups_queue`' do
 
     describe 'using a model' do
       manifest = <<-EOM
-        cups_queue { #{name}:
+        cups_queue { '#{name}':
           ensure => 'printer',
           model  => 'drv:///sample.drv/deskjet.ppd',
         }
@@ -103,7 +103,7 @@ describe 'Custom type `cups_queue`' do
 
     describe 'using a PPD file' do
       manifest = <<-EOM
-        cups_queue { #{name}:
+        cups_queue { '#{name}':
           ensure => 'printer',
           ppd    => '/usr/share/ppd/cupsfilters/textonly.ppd',
         }
@@ -125,7 +125,7 @@ describe 'Custom type `cups_queue`' do
       end
 
       manifest = <<-EOM
-        cups_queue { #{name}:
+        cups_queue { '#{name}':
           ensure    => 'printer',
           interface => '/usr/share/cups/model/myprinter.sh',
         }
@@ -136,7 +136,7 @@ describe 'Custom type `cups_queue`' do
 
     describe 'as raw queue and specifying `make_and_model`' do
       manifest = <<-EOM
-        cups_queue { #{name}:
+        cups_queue { '#{name}':
           ensure         => 'printer',
           make_and_model => 'Local Raw Printer',
         }
@@ -147,7 +147,7 @@ describe 'Custom type `cups_queue`' do
 
     describe 'using a model and specifying `make_and_model`' do
       manifest = <<-EOM
-        cups_queue { #{name}:
+        cups_queue { '#{name}':
           ensure         => 'printer',
           model          => 'drv:///sample.drv/deskjet.ppd',
           make_and_model => 'HP DeskJet Series',
@@ -159,7 +159,7 @@ describe 'Custom type `cups_queue`' do
 
     describe 'using a PPD file and specifying `make_and_model`' do
       manifest = <<-EOM
-        cups_queue { #{name}:
+        cups_queue { '#{name}':
           ensure         => 'printer',
           ppd            => '/usr/share/ppd/cupsfilters/textonly.ppd',
           make_and_model => 'Generic text-only printer',
@@ -182,7 +182,7 @@ describe 'Custom type `cups_queue`' do
       end
 
       manifest = <<-EOM
-        cups_queue { #{name}:
+        cups_queue { '#{name}':
           ensure         => 'printer',
           interface      => '/usr/share/cups/model/myprinter.sh',
           make_and_model => 'Local System V Printer',
@@ -199,7 +199,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         manifest = <<-EOM
-          cups_queue { #{name}:
+          cups_queue { '#{name}':
             ensure         => 'printer',
             model          => 'drv:///sample.drv/deskjet.ppd',
             make_and_model => 'HP DeskJet Series',
@@ -231,7 +231,7 @@ describe 'Custom type `cups_queue`' do
       uri = 'lpd://192.168.2.105/binary_p1'
 
       manifest = <<-EOM
-        cups_queue { #{name}:
+        cups_queue { '#{name}':
           ensure => 'printer',
           model  => 'drv:///sample.drv/generic.ppd',
           uri    => '#{uri}',

@@ -1,11 +1,10 @@
 # encoding: UTF-8
 require 'spec_helper_acceptance'
-require 'json'
 
 def custom_fact(fact)
   output = shell('puppet apply --color=false -e \'notice("<fact>${::' + fact + '}</fact>")\'').stdout
   result = %r{<fact>(?<value>.*)</fact>}.match(output)
-  JSON.parse(result[:value].gsub('=>', ':')) if result
+  eval(result[:value].gsub(/\w+/) { |word| "'" + word + "'" }) if result
 end
 
 describe 'Custom Facts' do

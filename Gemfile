@@ -27,7 +27,6 @@ end
 group :acceptance_testing do
   gem 'beaker-rspec', '~> 5.3', require: false
   gem 'serverspec', '~> 2.26', require: false
-  gem 'beaker-puppet_install_helper', '~> 0.4', require: false
 end
 
 group :metatools do

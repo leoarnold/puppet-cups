@@ -1,10 +1,5 @@
 # encoding: UTF-8
 require 'beaker-rspec'
-require 'beaker/puppet_install_helper'
-
-# Install Puppet on the node
-# https://github.com/puppetlabs/beaker-puppet_install_helper
-run_puppet_install_helper
 
 # RSpec configuration
 # http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/Configuration
@@ -20,7 +15,8 @@ RSpec.configure do |c|
   project_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
   c.before(:suite) do
     hosts.each do |host|
-      shell("/bin/sed -i '/templatedir/d' #{default['puppetpath']}/puppet.conf")
+      install_puppet_agent_on(host)
+      shell("if [ -s #{default['puppetpath']}/puppet.conf ]; then /bin/sed -i '/templatedir/d' #{default['puppetpath']}/puppet.conf; fi")
       on(host, puppet('module install puppetlabs-stdlib --version 4.10.0'), acceptable_exit_codes: [0, 1])
       copy_module_to(host, source: project_root, module_name: 'cups')
 

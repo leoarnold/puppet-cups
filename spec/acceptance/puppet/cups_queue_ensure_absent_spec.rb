@@ -10,7 +10,7 @@ describe 'Custom type `cups_queue`' do
     queue = 'Office'
 
     manifest = <<-EOM
-      cups_queue { #{queue}:
+      cups_queue { '#{queue}':
         ensure => 'absent'
       }
     EOM
