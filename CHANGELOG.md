@@ -1,5 +1,19 @@
 # Changelog
 
+## 2016-05-24 - Maintenance release 1.2.2
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/1.2.2)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/1.2.2).
+
+### Summary
+
+This release fixes package installation on Debian derivatives shipping with CUPS 2.x.
+
+### Changes
+
+- On Debian derivatives shipping with CUPS 2.x, the package `cups-ipp-utils` will now be installed automatically
+- Acceptance tests were adapted to work on Ruby 2.x
+
 ## 2016-05-17 - Maintenance release 1.2.1
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/1.2.1)

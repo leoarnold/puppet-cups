@@ -336,17 +336,7 @@ The corresponding `cups_queue` properties are:
 
 * `enabled`: Should pending jobs be sent to the device or kept pending?
 
-If you want your print queues to "just work", you should set both to `true` by default using
-
-  ```puppet
-  # Default values for all 'cups_queue' resources in the current scope:
-  # Use 'Cups_queue' with upper case first letter and without resource name
-  Cups_queue {
-    accepting => 'true',
-    enabled   => 'true',
-  }
-  ```
-
+If you want your print queues to "just work", you should set both to `true`.
 This module does not set default values by itself, since it might be of disadvantage in a professional copy shop environment.
 
 **Option defaults:**
