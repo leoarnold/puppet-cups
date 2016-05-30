@@ -58,7 +58,7 @@ describe 'Circumventing CUPS issue #4781' do
           end
 
           it 'applies changes' do
-            apply_manifest(manifest(subject), catch_failure: true, expect_changes: true)
+            apply_manifest(manifest(subject), expect_changes: true)
           end
 
           it 'is idempotent' do

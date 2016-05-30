@@ -1,25 +1,24 @@
 # Class: cups
 #
-# String :: confdir
-# String :: default_queue
-# String :: hiera
-# String/Array :: packages
-# String :: papersize
-# String/Array :: services
-# Hash :: resources
-# boolean :: webinterface
-#
 class cups (
-  $confdir = $::cups::params::confdir,
-  $default_queue = undef,
-  $hiera = undef,
-  $packages = $::cups::params::packages,
-  $papersize = undef,
-  $purge_unmanaged_queues = false,
-  $services = $::cups::params::services,
-  $resources = undef,
-  $webinterface = undef,
+  $confdir = '/etc/cups',                # String
+  $debug_logging = undef,                # Boolean
+  $default_queue = undef,                # String
+  $filedevice = undef,                   # Boolean
+  $hiera = undef,                        # String
+  $packages = $::cups::params::packages, # String/Array
+  $papersize = undef,                    # String
+  $purge_unmanaged_queues = false,       # Boolean
+  $remote_admin = undef,                 # Boolean
+  $remote_any = undef,                   # Boolean
+  $resources = undef,                    # Hash
+  $services = $::cups::params::services, # String/Array
+  $share_printers = undef,               # Boolean
+  $user_cancel_any = undef,              # Boolean
+  $webinterface = undef,                 # Boolean
 ) inherits cups::params {
+
+  ## Package installation
 
   if ($packages == undef) {
     fail('Please provide the name(s) of the CUPS package(s) for your operating system to Class[::cups] or set `packages => []` to disable CUPS package management.')
@@ -30,6 +29,8 @@ class cups (
       ensure  => 'present',
     }
   }
+
+  ## Service installation and configuration
 
   if ($services == undef) {
     fail('Please provide the name(s) of the CUPS service(s) for your operating system to Class[::cups] or set `services => []` to disable CUPS service management.')
@@ -43,15 +44,90 @@ class cups (
     }
   }
 
-  unless ($confdir == undef) {
-    validate_absolute_path($confdir)
+  Cups::Ctl {
+    require => Service[$services],
+  }
 
-    file { 'lpoptions' :
-      ensure  => 'absent',
-      path    => "${confdir}/lpoptions",
-      require => Service[$services],
+  Cups::Directive {
+    require => Package[$services],
+    notify  => Service[$services],
+  }
+
+  unless ($debug_logging == undef) {
+    validate_bool($debug_logging)
+
+    cups::ctl { '_debug_logging':
+      ensure  => bool2str($debug_logging, '1', '0'),
     }
   }
+
+  unless ($filedevice == undef) {
+    validate_bool($filedevice)
+
+    cups::directive { 'FileDevice':
+      ensure => bool2str($filedevice, 'Yes', 'No'),
+      file   => 'cups-files.conf'
+    }
+  }
+
+  unless ($papersize == undef) {
+    class { '::cups::papersize':
+      papersize => $papersize,
+      require   => Package[$packages],
+      notify    => Service[$services],
+    }
+  }
+
+  unless ($remote_admin == undef) {
+    validate_bool($remote_admin)
+
+    cups::ctl { '_remote_admin':
+      ensure  => bool2str($remote_admin, '1', '0'),
+    }
+  }
+
+  unless ($remote_any == undef) {
+    validate_bool($remote_any)
+
+    cups::ctl { '_remote_any':
+      ensure  => bool2str($remote_any, '1', '0'),
+    }
+  }
+
+  unless ($share_printers == undef) {
+    validate_bool($share_printers)
+
+    cups::ctl { '_share_printers':
+      ensure  => bool2str($share_printers, '1', '0'),
+    }
+  }
+
+  unless ($user_cancel_any == undef) {
+    validate_bool($user_cancel_any)
+
+    cups::ctl { '_user_cancel_any':
+      ensure  => bool2str($user_cancel_any, '1', '0'),
+    }
+  }
+
+  unless ($webinterface == undef) {
+    validate_bool($webinterface)
+
+    cups::ctl { 'WebInterface' :
+      ensure  => bool2str($webinterface, 'Yes', 'No'),
+    }
+  }
+
+  ## Remove special file with default setting for localhost jobs
+
+  validate_absolute_path($confdir)
+  file { 'lpoptions' :
+    ensure  => 'absent',
+    path    => "${confdir}/lpoptions",
+    require => Service[$services],
+  }
+
+  ## Manage `cups_queue` resources
 
   unless ($hiera == undef) {
     validate_string($hiera)
@@ -76,25 +152,10 @@ class cups (
     }
   }
 
-  unless ($papersize == undef) {
-    class { '::cups::papersize':
-      papersize => $papersize,
-      require   => Package[$packages],
-      notify    => Service[$services],
-    }
-  }
-
-  unless ($webinterface == undef) {
-    validate_bool($webinterface)
-
-    cups::ctl { 'WebInterface' :
-      ensure  => bool2str($webinterface, 'Yes', 'No'),
-      require => Service[$services],
-    }
-  }
-
   validate_bool($purge_unmanaged_queues)
   resources { 'cups_queue':
-    purge => $purge_unmanaged_queues,
+    purge   => $purge_unmanaged_queues,
+    require => Service[$services],
   }
+
 }

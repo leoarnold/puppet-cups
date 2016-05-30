@@ -26,4 +26,72 @@ describe 'Including class "cups"' do
       end
     end
   end
+
+  context 'with attribute' do
+    describe 'filedevice' do
+      context '= true' do
+        before(:all) do
+          purge_all_queues
+          shell("sed -i '/FileDevice/s/Yes/No/g' /etc/cups/cups-files.conf")
+        end
+
+        class_manifest = <<-EOM
+          class { '::cups':
+            filedevice => true,
+          }
+        EOM
+
+        printer_manifest = <<-EOM
+          cups_queue { 'Office':
+            ensure => 'printer',
+            uri    => 'file:///printout'
+          }
+        EOM
+
+        it 'applies changes' do
+          apply_manifest(class_manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(class_manifest, catch_changes: true)
+        end
+
+        it 'enabled file URIs' do
+          apply_manifest(printer_manifest, expect_changes: true)
+        end
+      end
+
+      context '= false' do
+        before(:all) do
+          purge_all_queues
+          shell("sed -i '/FileDevice/s/No/Yes/g' /etc/cups/cups-files.conf")
+        end
+
+        class_manifest = <<-EOM
+          class { '::cups':
+            filedevice => false,
+          }
+        EOM
+
+        printer_manifest = <<-EOM
+          cups_queue { 'Office':
+            ensure => 'printer',
+            uri    => 'file:///printout'
+          }
+        EOM
+
+        it 'applies changes' do
+          apply_manifest(class_manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(class_manifest, catch_changes: true)
+        end
+
+        it 'disabled file URIs' do
+          apply_manifest(printer_manifest, expect_failures: true)
+        end
+      end
+    end
+  end
 end

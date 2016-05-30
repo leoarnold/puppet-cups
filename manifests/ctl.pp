@@ -2,17 +2,13 @@
 #
 # Wrapper for the `cupsctl` command.
 #
-# String :: title
-# String :: ensure
-#
 define cups::ctl (
-  $ensure
+  $ensure # String
 ) {
   validate_string($ensure)
 
-  exec { "cupsctl-${title}":
-    command => "cupsctl -E ${title}=${ensure}",
-    unless  => "cupsctl -E | grep -iw '${title}=${ensure}'",
-    path    => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
+  exec { "cupsctl -E ${title}=${ensure}":
+    unless => "cupsctl -E | grep -iw '${title}=${ensure}'",
+    path   => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
   }
 }

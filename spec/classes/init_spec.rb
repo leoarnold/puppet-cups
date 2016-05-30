@@ -188,6 +188,32 @@ describe 'cups' do
       end
     end
 
+    describe 'debug_logging' do
+      context 'not provided' do
+        it { should_not contain_cups__ctl('_debug_logging') }
+      end
+
+      context '= true' do
+        let(:params) { { debug_logging: true } }
+
+        it { should contain_cups__ctl('_debug_logging').with(ensure: '1') }
+
+        it { should contain_cups__ctl('_debug_logging').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E _debug_logging=1') }
+      end
+
+      context '= false' do
+        let(:params) { { debug_logging: false } }
+
+        it { should contain_cups__ctl('_debug_logging').with(ensure: '0') }
+
+        it { should contain_cups__ctl('_debug_logging').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E _debug_logging=0') }
+      end
+    end
+
     describe 'default_queue' do
       context 'not provided' do
         it { should_not contain_class('cups::default_queue') }
@@ -208,6 +234,46 @@ describe 'cups' do
         it { should contain_class('cups::default_queue').that_requires('File[lpoptions]') }
 
         it { should contain_exec('lpadmin-d-Office') }
+      end
+    end
+
+    describe 'filedevice' do
+      context 'not provided' do
+        it { should_not contain_cups__filesconf('FileDevice') }
+      end
+
+      context '= true' do
+        let(:params) { { filedevice: true } }
+
+        it { should contain_cups__directive('FileDevice').with(ensure: 'Yes') }
+
+        it { should contain_cups__directive('FileDevice').that_requires('Package[cups]') }
+
+        it { should contain_cups__directive('FileDevice').that_notifies('Service[cups]') }
+
+        it { should contain_augeas('cups-files.conf/FileDevice Yes').with(context: '/files/etc/cups/cups-files.conf') }
+
+        it do
+          should contain_augeas('cups-files.conf/FileDevice Yes')
+            .with(changes: ['set directive[ . = "FileDevice" ] "FileDevice"', 'set directive[ . = "FileDevice" ]/arg "Yes"'])
+        end
+      end
+
+      context '= false' do
+        let(:params) { { filedevice: false } }
+
+        it { should contain_cups__directive('FileDevice').with(ensure: 'No') }
+
+        it { should contain_cups__directive('FileDevice').that_requires('Package[cups]') }
+
+        it { should contain_cups__directive('FileDevice').that_notifies('Service[cups]') }
+
+        it { should contain_augeas('cups-files.conf/FileDevice No').with(context: '/files/etc/cups/cups-files.conf') }
+
+        it do
+          should contain_augeas('cups-files.conf/FileDevice No')
+            .with(changes: ['set directive[ . = "FileDevice" ] "FileDevice"', 'set directive[ . = "FileDevice" ]/arg "No"'])
+        end
       end
     end
 
@@ -248,7 +314,7 @@ describe 'cups' do
 
         it { should contain_class('cups::papersize').that_notifies('Service[cups]') }
 
-        it { should contain_exec('paperconfig-p-a4').with(command: 'paperconfig -p a4') }
+        it { should contain_exec('paperconfig -p a4') }
       end
     end
 
@@ -300,6 +366,110 @@ describe 'cups' do
       end
     end
 
+    describe 'remote_admin' do
+      context 'not provided' do
+        it { should_not contain_cups__ctl('_remote_admin') }
+      end
+
+      context '= true' do
+        let(:params) { { remote_admin: true } }
+
+        it { should contain_cups__ctl('_remote_admin').with(ensure: '1') }
+
+        it { should contain_cups__ctl('_remote_admin').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E _remote_admin=1') }
+      end
+
+      context '= false' do
+        let(:params) { { remote_admin: false } }
+
+        it { should contain_cups__ctl('_remote_admin').with(ensure: '0') }
+
+        it { should contain_cups__ctl('_remote_admin').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E _remote_admin=0') }
+      end
+    end
+
+    describe 'remote_any' do
+      context 'not provided' do
+        it { should_not contain_cups__ctl('_remote_any') }
+      end
+
+      context '= true' do
+        let(:params) { { remote_any: true } }
+
+        it { should contain_cups__ctl('_remote_any').with(ensure: '1') }
+
+        it { should contain_cups__ctl('_remote_any').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E _remote_any=1') }
+      end
+
+      context '= false' do
+        let(:params) { { remote_any: false } }
+
+        it { should contain_cups__ctl('_remote_any').with(ensure: '0') }
+
+        it { should contain_cups__ctl('_remote_any').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E _remote_any=0') }
+      end
+    end
+
+    describe 'share_printers' do
+      context 'not provided' do
+        it { should_not contain_cups__ctl('_share_printers') }
+      end
+
+      context '= true' do
+        let(:params) { { share_printers: true } }
+
+        it { should contain_cups__ctl('_share_printers').with(ensure: '1') }
+
+        it { should contain_cups__ctl('_share_printers').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E _share_printers=1') }
+      end
+
+      context '= false' do
+        let(:params) { { share_printers: false } }
+
+        it { should contain_cups__ctl('_share_printers').with(ensure: '0') }
+
+        it { should contain_cups__ctl('_share_printers').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E _share_printers=0') }
+      end
+    end
+
+    describe 'user_cancel_any' do
+      context 'not provided' do
+        it { should_not contain_cups__ctl('_user_cancel_any') }
+      end
+
+      context '= true' do
+        let(:params) { { user_cancel_any: true } }
+
+        it { should contain_cups__ctl('_user_cancel_any').with(ensure: '1') }
+
+        it { should contain_cups__ctl('_user_cancel_any').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E _user_cancel_any=1') }
+      end
+
+      context '= false' do
+        let(:params) { { user_cancel_any: false } }
+
+        it { should contain_cups__ctl('_user_cancel_any').with(ensure: '0') }
+
+        it { should contain_cups__ctl('_user_cancel_any').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E _user_cancel_any=0') }
+      end
+    end
+
     describe 'webinterface' do
       context 'not provided' do
         it { should_not contain_cups__ctl('WebInterface') }
@@ -310,7 +480,9 @@ describe 'cups' do
 
         it { should contain_cups__ctl('WebInterface').with(ensure: 'Yes') }
 
-        it { should contain_exec('cupsctl-WebInterface').with(command: 'cupsctl -E WebInterface=Yes') }
+        it { should contain_cups__ctl('WebInterface').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E WebInterface=Yes') }
       end
 
       context '= false' do
@@ -318,7 +490,9 @@ describe 'cups' do
 
         it { should contain_cups__ctl('WebInterface').with(ensure: 'No') }
 
-        it { should contain_exec('cupsctl-WebInterface').with(command: 'cupsctl -E WebInterface=No') }
+        it { should contain_cups__ctl('WebInterface').that_requires('Service[cups]') }
+
+        it { should contain_exec('cupsctl -E WebInterface=No') }
       end
     end
   end

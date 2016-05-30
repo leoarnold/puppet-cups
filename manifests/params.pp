@@ -61,6 +61,4 @@ class cups::params {
     }
   }
 
-  $confdir = '/etc/cups'
-
 }

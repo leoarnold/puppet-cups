@@ -22,6 +22,7 @@ group :development do
   gem 'mdl', '~> 0.3', require: false
   gem 'codacy-coverage', '~> 1.0', require: false
   gem 'codeclimate-test-reporter', '~> 0.5', require: false
+  gem 'coderay', '~> 1.1', require: false
 end
 
 group :acceptance_testing do
