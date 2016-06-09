@@ -11,8 +11,8 @@ module PuppetX
       module Attribute
         def self.query(queue, property)
           resource = '/printers/' + ERB::Util.url_encode(queue)
-          result = PuppetX::Cups::Server::IppResult.new(request(property), resource)
-          result.lines[0]
+          lines = PuppetX::Cups::Server.query(request(property), resource)
+          lines[0]
         end
 
         def self.request(property)

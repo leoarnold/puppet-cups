@@ -9,6 +9,10 @@ and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/1.3.0).
 
 This release provides more configuration options for the CUPS daemon.
 
+### Changes
+
+- Improved debug logging
+
 ### Features
 
 - Enable / disable debug logging

@@ -27,14 +27,15 @@ module PuppetX
       # `cups_classmembers`: A hash with the names of all classes (as keys) and their members (as array value).
       module ClassMembers
         def self.fact
-          result = PuppetX::Cups::Server::IppResult.new(request)
           classmembers = {}
-          result.lines.each do |line|
+          PuppetX::Cups::Server.query(request).each do |line|
             classname, members = line.split(',', 2)
             classmembers[classname] = members.gsub(/\A"|"\Z/, '').split(',') if members
           end
           classmembers
         rescue
+          Puppet.debug('Failed to query CUPS server for installed classes')
+
           {}
         end
 
@@ -63,10 +64,10 @@ module PuppetX
       # `cups_queues`: An array of the names of all installed print queues (*including* classes).
       module Queues
         def self.fact
-          result = PuppetX::Cups::Server::IppResult.new(request)
-          queues = result.lines
-          queues
+          PuppetX::Cups::Server.query(request)
         rescue
+          Puppet.debug('Failed to query CUPS server for installed queues')
+
           []
         end
 

@@ -3,15 +3,11 @@ require 'spec_helper'
 require 'lib/facter/cups'
 
 def mock_queues_lines(printers, classmembers)
-  queues_result = instance_double(PuppetX::Cups::Server::IppResult)
-  allow(queues_result).to receive(:lines).and_return(printers + classmembers.keys)
-  allow(PuppetX::Cups::Server::IppResult).to receive(:new).with(PuppetX::Cups::Facts::Queues.request).and_return(queues_result)
+  allow(PuppetX::Cups::Server).to receive(:query).with(PuppetX::Cups::Facts::Queues.request).and_return(printers + classmembers.keys)
 end
 
 def mock_classmembers_lines(classmembers)
-  classmembers_result = instance_double(PuppetX::Cups::Server::IppResult)
-  allow(classmembers_result).to receive(:lines).and_return(classmembers_lines(classmembers))
-  allow(PuppetX::Cups::Server::IppResult).to receive(:new).and_return(classmembers_result)
+  allow(PuppetX::Cups::Server).to receive(:query).with(PuppetX::Cups::Facts::ClassMembers.request).and_return(classmembers_lines(classmembers))
 end
 
 def classmembers_lines(classmembers)
