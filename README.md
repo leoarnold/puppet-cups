@@ -34,6 +34,8 @@
     * [Types](#types)
     * [Facts](#facts)
 1. [Limitations](#limitations)
+    * [Evince (aka Document Viewer)](#evince-aka-document-viewer)
+    * [Option defaults](#option-defaults)
 1. [Contributing - Guidelines for users and developers](#contributing)
 
 ## Description
@@ -765,6 +767,22 @@ Installs and manages CUPS print queues.
 * `uri`: The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.
 
 ## Limitations
+
+### Evince (aka Document Viewer)
+
+Setting `papersize => 'a4'` only modifies `/etc/papersize`,
+but [Evince](https://wiki.gnome.org/Apps/Evince) uses
+the environment variable `LC_PAPER` to determine your preferred paper size,
+as [Patrick Min](http://www.patrickmin.com/linux/tip.php?name=evince_default_paper_size) figured out.
+
+On Debian and Ubuntu, you can set a global default value for `LC_PAPER` using the manifest
+
+```puppet
+augeas { 'papersize':
+  context => '/files/etc/default/locale',
+  changes => 'set LC_PAPER \'"es_ES.UTF-8"\'' # Change to your locale
+}
+```
 
 ### Option defaults
 
