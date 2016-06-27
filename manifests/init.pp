@@ -21,7 +21,7 @@ class cups (
   ## Package installation
 
   if ($packages == undef) {
-    fail('Please provide the name(s) of the CUPS package(s) for your operating system to Class[::cups] or set `packages => []` to disable CUPS package management.')
+    fail('Please provide the name(s) of the CUPS package(s) for your operating system to Class[::cups] or set `packages => []` to disable CUPS package management.') # lint:ignore:140chars
   } else {
     validate_array($packages)
 
@@ -33,7 +33,7 @@ class cups (
   ## Service installation and configuration
 
   if ($services == undef) {
-    fail('Please provide the name(s) of the CUPS service(s) for your operating system to Class[::cups] or set `services => []` to disable CUPS service management.')
+    fail('Please provide the name(s) of the CUPS service(s) for your operating system to Class[::cups] or set `services => []` to disable CUPS service management.') # lint:ignore:140chars
   } else {
     validate_array($services)
 
@@ -118,7 +118,7 @@ class cups (
     }
   }
 
-  ## Remove special file with default setting for localhost jobs
+  ## Remove special file with default settings for localhost jobs
 
   validate_absolute_path($confdir)
   file { 'lpoptions' :
