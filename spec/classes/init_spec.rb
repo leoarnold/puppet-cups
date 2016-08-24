@@ -237,46 +237,6 @@ describe 'cups' do
       end
     end
 
-    describe 'filedevice' do
-      context 'not provided' do
-        it { should_not contain_cups__filesconf('FileDevice') }
-      end
-
-      context '= true' do
-        let(:params) { { filedevice: true } }
-
-        it { should contain_cups__directive('FileDevice').with(ensure: 'Yes') }
-
-        it { should contain_cups__directive('FileDevice').that_requires('Package[cups]') }
-
-        it { should contain_cups__directive('FileDevice').that_notifies('Service[cups]') }
-
-        it { should contain_augeas('cups-files.conf/FileDevice Yes').with(context: '/files/etc/cups/cups-files.conf') }
-
-        it do
-          should contain_augeas('cups-files.conf/FileDevice Yes')
-            .with(changes: ['set directive[ . = "FileDevice" ] "FileDevice"', 'set directive[ . = "FileDevice" ]/arg "Yes"'])
-        end
-      end
-
-      context '= false' do
-        let(:params) { { filedevice: false } }
-
-        it { should contain_cups__directive('FileDevice').with(ensure: 'No') }
-
-        it { should contain_cups__directive('FileDevice').that_requires('Package[cups]') }
-
-        it { should contain_cups__directive('FileDevice').that_notifies('Service[cups]') }
-
-        it { should contain_augeas('cups-files.conf/FileDevice No').with(context: '/files/etc/cups/cups-files.conf') }
-
-        it do
-          should contain_augeas('cups-files.conf/FileDevice No')
-            .with(changes: ['set directive[ . = "FileDevice" ] "FileDevice"', 'set directive[ . = "FileDevice" ]/arg "No"'])
-        end
-      end
-    end
-
     describe 'packages' do
       context '= undef' do
         let(:facts) { { osfamily: 'Unknown' } }

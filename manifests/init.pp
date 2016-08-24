@@ -1,21 +1,20 @@
-# Class: cups
+# Class 'cups'
 #
 class cups (
-  $confdir = '/etc/cups',                # String
-  $debug_logging = undef,                # Boolean
-  $default_queue = undef,                # String
-  $filedevice = undef,                   # Boolean
-  $hiera = undef,                        # String
-  $packages = $::cups::params::packages, # String/Array
-  $papersize = undef,                    # String
-  $purge_unmanaged_queues = false,       # Boolean
-  $remote_admin = undef,                 # Boolean
-  $remote_any = undef,                   # Boolean
-  $resources = undef,                    # Hash
-  $services = $::cups::params::services, # String/Array
-  $share_printers = undef,               # Boolean
-  $user_cancel_any = undef,              # Boolean
-  $webinterface = undef,                 # Boolean
+  $confdir                = '/etc/cups',
+  $debug_logging          = undef,
+  $default_queue          = undef,
+  $hiera                  = undef,
+  $packages               = $::cups::params::packages,
+  $papersize              = undef,
+  $purge_unmanaged_queues = false,
+  $remote_admin           = undef,
+  $remote_any             = undef,
+  $resources              = undef,
+  $services               = $::cups::params::services,
+  $share_printers         = undef,
+  $user_cancel_any        = undef,
+  $webinterface           = undef,
 ) inherits cups::params {
 
   ## Package installation
@@ -48,25 +47,11 @@ class cups (
     require => Service[$services],
   }
 
-  Cups::Directive {
-    require => Package[$services],
-    notify  => Service[$services],
-  }
-
   unless ($debug_logging == undef) {
     validate_bool($debug_logging)
 
     cups::ctl { '_debug_logging':
       ensure  => bool2str($debug_logging, '1', '0'),
-    }
-  }
-
-  unless ($filedevice == undef) {
-    validate_bool($filedevice)
-
-    cups::directive { 'FileDevice':
-      ensure => bool2str($filedevice, 'Yes', 'No'),
-      file   => 'cups-files.conf'
     }
   }
 

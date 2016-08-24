@@ -621,17 +621,9 @@ the ENC / Hiera just get to decide which classes get included on the node:
 
 * [`cups`](#class-cups)
 
-* `cups::default_queue` (private)
-
-* `cups::papersize` (private)
-
-* `cups::params` (private)
-
 ### Defines
 
 * [`cups::ctl`](#define-cupsctl)
-
-* [`cups::directive`](#define-directive)
 
 ### Types
 
@@ -695,20 +687,6 @@ A convenience wrapper for the `cupsctl` command used to configure the CUPS daemo
 * `title`: *mandatory* - The name of the parameter to be managed.
 
 * `ensure`: *mandatory* - The value to be ensured.
-
-#### Define: `cups::directive`
-
-Manages the CUPS directive by the same title in the configuration file specified.
-
-##### Attributes
-
-* `title`: *mandatory* - The name of the directive to be managed.
-
-* `ensure`: *mandatory* - The value to be ensured.
-
-* `file`: *mandatory* - The name of the CUPS configuration file to be modified.
-
-* `confdir`: he fully qualified directory (without trailing slash) for the CUPS configuration files. Defaults to `/etc/cups`.
 
 #### Type: `cups_queue`
 
