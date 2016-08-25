@@ -2,19 +2,13 @@
 #
 class cups (
   $confdir                = '/etc/cups',
-  $debug_logging          = undef,
   $default_queue          = undef,
   $hiera                  = undef,
   $packages               = $::cups::params::packages,
   $papersize              = undef,
   $purge_unmanaged_queues = false,
-  $remote_admin           = undef,
-  $remote_any             = undef,
   $resources              = undef,
   $services               = $::cups::params::services,
-  $share_printers         = undef,
-  $user_cancel_any        = undef,
-  $webinterface           = undef,
 ) inherits cups::params {
 
   ## Package installation
@@ -43,63 +37,11 @@ class cups (
     }
   }
 
-  Cups::Ctl {
-    require => Service[$services],
-  }
-
-  unless ($debug_logging == undef) {
-    validate_bool($debug_logging)
-
-    cups::ctl { '_debug_logging':
-      ensure  => bool2str($debug_logging, '1', '0'),
-    }
-  }
-
   unless ($papersize == undef) {
     class { '::cups::papersize':
       papersize => $papersize,
       require   => Package[$packages],
       notify    => Service[$services],
-    }
-  }
-
-  unless ($remote_admin == undef) {
-    validate_bool($remote_admin)
-
-    cups::ctl { '_remote_admin':
-      ensure  => bool2str($remote_admin, '1', '0'),
-    }
-  }
-
-  unless ($remote_any == undef) {
-    validate_bool($remote_any)
-
-    cups::ctl { '_remote_any':
-      ensure  => bool2str($remote_any, '1', '0'),
-    }
-  }
-
-  unless ($share_printers == undef) {
-    validate_bool($share_printers)
-
-    cups::ctl { '_share_printers':
-      ensure  => bool2str($share_printers, '1', '0'),
-    }
-  }
-
-  unless ($user_cancel_any == undef) {
-    validate_bool($user_cancel_any)
-
-    cups::ctl { '_user_cancel_any':
-      ensure  => bool2str($user_cancel_any, '1', '0'),
-    }
-  }
-
-  unless ($webinterface == undef) {
-    validate_bool($webinterface)
-
-    cups::ctl { 'WebInterface' :
-      ensure  => bool2str($webinterface, 'Yes', 'No'),
     }
   }
 

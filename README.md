@@ -623,8 +623,6 @@ the ENC / Hiera just get to decide which classes get included on the node:
 
 ### Defines
 
-* [`cups::ctl`](#define-cupsctl)
-
 ### Types
 
 * [`cups_queue`](#type-cups_queue)
@@ -643,11 +641,9 @@ the ENC / Hiera just get to decide which classes get included on the node:
 
 Installs, configures, and manages the CUPS service.
 
-##### Attributes (all optional)
+##### Attributes
 
 * `confdir`: The fully qualified directory (without trailing slash) for the CUPS configuration files. Defaults to `/etc/cups`.
-
-* `debug_logging`: Boolean value to enable or disable debug logging to the error log file.
 
 * `default_queue`: The name of the default destination for all print jobs.
   Requires the catalog to contain a `cups_queue` resource with the same name.
@@ -663,30 +659,10 @@ Installs, configures, and manages the CUPS service.
 * `purge_unmanaged_queues`: Setting `true` will remove all queues from the node
   which do not match a `cups_queue` resource in the current catalog. Defaults to `false`.
 
-* `remote_admin`: Boolean value to enable or disable remote administration of the CUPS daemon.
-
-* `remote_any`: Boolean value to enable or disable printing from any IP address.
-
 * `resources`: This attribute is intended for use with ENCs only (see [example above](#using-an-external-node-classifier-enc)).
 
 * `services`: An array with the names of all CUPS services to be managed.
   Use `[]` to disable automatic service management. OS dependent defaults apply.
-
-* `share_printers`: Boolean value to enable or disable sharing of local printers with other computers.
-
-* `user_cancel_any`: Boolean value to allow or deny users to cancel jobs owned by others.
-
-* `webinterface`: Boolean value to enable or disable the CUPS web interface at [`http://localhost:631`](http://localhost:631).
-
-#### Define: `cups::ctl`
-
-A convenience wrapper for the `cupsctl` command used to configure the CUPS daemon.
-
-##### Attributes
-
-* `title`: *mandatory* - The name of the parameter to be managed.
-
-* `ensure`: *mandatory* - The value to be ensured.
 
 #### Type: `cups_queue`
 

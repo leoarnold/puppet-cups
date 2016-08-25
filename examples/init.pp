@@ -10,7 +10,6 @@
 
 class { '::cups':
   default_queue => 'Office',
-  webinterface  => 'true',
 }
 
 # which does all of the above, using default values for packages and services.
