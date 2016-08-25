@@ -23,13 +23,15 @@ RSpec.configure do |c|
       case fact_on(host, 'osfamily')
       when 'Debian'
         manifest = <<-EOM
-          exec { 'locale-gen':
-            command => '/usr/sbin/locale-gen es_ES.UTF-8'
-          }
-
           file { '/etc/default/locale':
             ensure  => 'file',
-            content => 'LANG="es_ES.UTF-8"\nLANGUAGE="es_ES.UTF-8"'
+            content => 'LANG="es_ES.UTF-8"\nLANGUAGE="es"\nLC_ALL="es_ES.UTF-8"',
+            notify  => Exec['dpkg-reconfigure-locales'],
+          }
+
+          exec { 'dpkg-reconfigure-locales':
+            command     => '/usr/sbin/dpkg-reconfigure --frontend noninteractive locales',
+            refreshonly => true,
           }
         EOM
 
@@ -80,5 +82,5 @@ def purge_all_queues
           DISPLAY printer-name
         }'
   result = shell("echo '#{request}' | ipptool -c ipp://localhost/ /dev/stdin", acceptable_exit_codes: [0, 1])
-  remove_queues(result.stdout.split("\n")[1..-1]) if result.exit_code == 0
+  remove_queues(result.stdout.split("\n")[1..-1]) if result.exit_code.zero?
 end

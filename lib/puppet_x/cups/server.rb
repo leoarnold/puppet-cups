@@ -15,7 +15,7 @@ module PuppetX
 
       def self.ipptool(resource, request)
         output, _, process = Open3.capture3("ipptool -c ipp://localhost#{resource} /dev/stdin", stdin_data: request)
-        raise if process.exitstatus != 0
+        raise if process.exitstatus.nonzero?
         output
       end
     end

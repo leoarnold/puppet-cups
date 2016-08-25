@@ -21,8 +21,8 @@ cups_queue { 'Warehouse':
 include '::cups'
 
 cups_queue { 'MinimalClass':
-   ensure  => 'class',
-   members => ['Office', 'Warehouse']
+  ensure  => 'class',
+  members => ['Office', 'Warehouse']
 }
 
 # which will autorequire its `members` to ensure correct order of installation.
