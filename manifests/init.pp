@@ -1,7 +1,6 @@
 # Class 'cups'
 #
 class cups (
-  $confdir                = '/etc/cups',
   $default_queue          = undef,
   $hiera                  = undef,
   $packages               = $::cups::params::packages,
@@ -43,15 +42,6 @@ class cups (
       require   => Package[$packages],
       notify    => Service[$services],
     }
-  }
-
-  ## Remove special file with default settings for localhost jobs
-
-  validate_absolute_path($confdir)
-  file { 'lpoptions' :
-    ensure  => 'absent',
-    path    => "${confdir}/lpoptions",
-    require => Service[$services],
   }
 
   ## Manage `cups_queue` resources

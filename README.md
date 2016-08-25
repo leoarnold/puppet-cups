@@ -643,8 +643,6 @@ Installs, configures, and manages the CUPS service.
 
 ##### Attributes
 
-* `confdir`: The fully qualified directory (without trailing slash) for the CUPS configuration files. Defaults to `/etc/cups`.
-
 * `default_queue`: The name of the default destination for all print jobs.
   Requires the catalog to contain a `cups_queue` resource with the same name.
 

@@ -4,7 +4,7 @@ require 'spec_helper'
 describe 'cups' do
   context 'with defaults for all parameters' do
     shared_examples 'OS independent defaults' do
-      it { should contain_class('cups').with(confdir: '/etc/cups') }
+      it { should contain_class('cups').with(purge_unmanaged_queues: 'false') }
 
       it { should contain_class('cups::params') }
 
@@ -15,8 +15,6 @@ describe 'cups' do
       it { should contain_service('cups').with(ensure: 'running', enable: 'true') }
 
       it { should contain_service('cups').that_requires('Package[cups]') }
-
-      it { should contain_file('lpoptions').that_requires('Service[cups]') }
 
       it { should contain_resources('cups_queue').with(purge: 'false') }
     end
@@ -176,18 +174,6 @@ describe 'cups' do
   context 'OS independent attribute' do
     let(:facts) { { osfamily: 'Suse' } }
 
-    describe 'confdir' do
-      context 'not provided' do
-        it { should contain_file('lpoptions').with(ensure: 'absent', path: '/etc/cups/lpoptions') }
-      end
-
-      context '= /usr/local/etc/cups' do
-        let(:params) { { confdir: '/usr/local/etc/cups' } }
-
-        it { should contain_file('lpoptions').with(ensure: 'absent', path: '/usr/local/etc/cups/lpoptions') }
-      end
-    end
-
     describe 'default_queue' do
       context 'not provided' do
         it { should_not contain_class('cups::default_queue') }
@@ -204,8 +190,6 @@ describe 'cups' do
           EOM
         end
         let(:params) { { default_queue: 'Office' } }
-
-        it { should contain_class('cups::default_queue').that_requires('File[lpoptions]') }
 
         it { should contain_exec('lpadmin-d-Office') }
       end
