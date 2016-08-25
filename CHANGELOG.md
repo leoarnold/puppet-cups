@@ -1,26 +1,20 @@
 # Changelog
 
-## 2016-??-?? - Release 1.3.0
+## 2016-??-?? - Release 2.0.0
 
-Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/1.3.0)
-and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/1.3.0).
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.0.0)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.0.0).
 
 ### Summary
 
-This release provides more configuration options for the CUPS daemon.
+The CUPS server configuration can now be managed through the new class `cups::server`.
 
-### Changes
+### Breaking changes
 
-- Improved debug logging
+- Some attributes were removed from the `cups` class.
+- The defined type `cups::ctl` was removed.
 
-### Features
-
-- Enable / disable debug logging
-- Enable / disable file pseudo-devices other than `file:///dev/null`
-- Enable / disable remote administration
-- Enable / disable printing from any IP address
-- Enable / disable sharing of local printers with other computers
-- Allow / deny users to cancel jobs owned by others
+For more information, see the [upgrade instructions](UPGRADING.md).
 
 ## 2016-05-24 - Maintenance release 1.2.2
 

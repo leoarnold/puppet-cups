@@ -621,6 +621,8 @@ the ENC / Hiera just get to decide which classes get included on the node:
 
 * [`cups`](#class-cups)
 
+* [`cups::server`](#class-cupsserver)
+
 ### Defines
 
 ### Types
@@ -661,6 +663,29 @@ Installs, configures, and manages the CUPS service.
 
 * `services`: An array with the names of all CUPS services to be managed.
   Use `[]` to disable automatic service management. OS dependent defaults apply.
+
+#### Class: `cups::server`
+
+Manages the CUPS server configuration files.
+
+##### Attributes
+
+* `ensure`: Whether the server should be `present` or `absent`. Defaults to `present`.
+
+* `conf_directory`: The absolute path of the directory (without trailing slash) for the CUPS configuration files.
+  Defaults to `/etc/cups`.
+
+* `file_device`: Boolean value to allow or deny `file://` URIs other than `/dev/null`.
+
+* `listen`: An array of network addresses (e.g. `'localhost:631'`) and domain sockets (e.g. `'/var/run/cups/cups.sock'`)
+  the server should listen to.
+
+* `log_level`: Sets the verbosity of the `error_log`.
+  Valid values are `none`, `emerg`, `alert`, `crit`, `error`, `warn`, `notice`, `info`, `debug` and `debug2`.
+
+* `port`: An array of ports (e.g. `631`) the server should listen to.
+
+* `web_interface`:  Boolean value to enable or disable the server's web interface.
 
 #### Type: `cups_queue`
 

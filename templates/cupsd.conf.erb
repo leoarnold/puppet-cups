@@ -1,0 +1,19 @@
+# Which IP addresses and domain sockets should be listened to?
+<% unless @listen.nil? -%>
+<% [@listen].flatten.each do |l| -%>
+<%= "Listen #{l}" %>
+<% end -%>
+<% end -%>
+
+# How verbose should the CUPS error_log be?
+<%= '#' if @log_level.nil? -%>LogLevel <%= (@log_level ? @log_level : 'warn') %>
+
+# Which ports should be listened to? NOTE: 'Port 631' = 'Listen *:631'
+<% unless @port.nil? -%>
+<% [@port].flatten.each do |p| -%>
+<%= "Port #{p}" %>
+<% end -%>
+<% end -%>
+
+# Should the web interface be available at the 'Listen' addresses?
+<%= '#' if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>
