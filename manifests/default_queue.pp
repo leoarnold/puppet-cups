@@ -6,9 +6,8 @@
 # Therefore we implement it as class to generate a Puppet catalog singleton.
 #
 class cups::default_queue (
-  $queue # String
+  String $queue,
 ) {
-  validate_string($queue)
 
   exec { "lpadmin-d-${queue}":
     command => "lpadmin -E -d ${queue}",
@@ -16,4 +15,5 @@ class cups::default_queue (
     path    => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
     require => Cups_queue[$queue]
   }
+
 }

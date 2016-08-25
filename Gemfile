@@ -4,7 +4,7 @@ puppetversion = ENV['PUPPET_GEM_VERSION']
 if puppetversion
   gem 'puppet', puppetversion, require: false
 else
-  gem 'puppet', ['>= 3.3', '< 5.0'], require: false
+  gem 'puppet', '~> 4.0', require: false
 end
 
 facterversion = ENV['FACTER_GEM_VERSION']

@@ -60,14 +60,14 @@ Key design goals include *locale independence* and *test driven development*.
 
 ### Setup Requirements
 
-This module is written in Ruby 1.9 syntax and tested on systems using
+This module is written for and tested on systems using
 
-* Ruby 1.9+ or 2.x
+* Puppet Agent `~> 4.0`
 
-* CUPS 1.5+ or 2.x
+* CUPS `~> 1.5` or 2.x
 
 It might also work with CUPS versions prior to 1.5 after [manually installing](http://www.cups.org/software.php?VERSION=ipptool)
-the `ipptool` command line utility. It will however **not** work with Ruby versions prior to 1.9.
+the `ipptool` command line utility.
 
 ### Beginning with CUPS
 

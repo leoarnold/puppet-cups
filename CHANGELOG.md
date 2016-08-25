@@ -11,10 +11,12 @@ The CUPS server configuration can now be managed through the new class `cups::se
 
 ### Breaking changes
 
+- Puppet 3.x is no longer supported. All manifests now use Puppet 4 syntax.
+- Ruby 1.x is no longer supported since Puppet 4 comes with Ruby `~> 2.1`.
 - Some attributes were removed from the `cups` class.
 - The defined type `cups::ctl` was removed.
 
-For more information, see the [upgrade instructions](UPGRADING.md).
+Please adjust your manifests according to the [upgrade instructions](UPGRADING.md).
 
 ## 2016-05-24 - Maintenance release 1.2.2
 

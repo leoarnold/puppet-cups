@@ -112,13 +112,13 @@ describe 'cups' do
     let(:facts) { { osfamily: 'Unknown' } }
 
     context 'with defaults for all parameters' do
-      it { expect { should compile }.to raise_error(/operating system/) }
+      it { should_not compile }
     end
 
     context "with packages = ['custom-cups', 'custom-ipptool'] and services not specified" do
       let(:params) { { packages: ['custom-cups', 'custom-ipptool'] } }
 
-      it { expect { should compile }.to raise_error(/operating system/) }
+      it { should_not compile }
     end
 
     context 'with packages = [] and services = []' do
