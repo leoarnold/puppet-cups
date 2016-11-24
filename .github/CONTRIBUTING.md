@@ -304,9 +304,7 @@ This module is provided free of charge and open to everyone (see [LICENSE](LICEN
 To keep it this way and avoid legal trouble of any kind, we kindly ask every contributer to include
 the following statement verbatimly in their commit messages:
 
-  ```
-  By committing to this project I transfer the full copyright for my contributions
-  to the current project maintainer as per the project's LICENSE file.
-  ```
+> By committing to this project I transfer the full copyright for my contributions
+> to the current project maintainer as per the project's LICENSE file.
 
 _Thank you for your interest in contributing to this project_.

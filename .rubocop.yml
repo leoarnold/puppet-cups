@@ -13,3 +13,5 @@ Metrics/LineLength:
     - lpd
     - socket
     - puppet
+Metrics/BlockLength:
+  Enabled: false

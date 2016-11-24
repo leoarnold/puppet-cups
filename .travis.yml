@@ -3,13 +3,12 @@ sudo: required
 dist: trusty
 services: docker
 language: ruby
+cache: bundler
 bundler_args: --without $BUNDLE_WITHOUT
 script: bundle exec rake $RAKE_TASK
 matrix:
   fast_finish: true
   include:
-  - rvm: 2.1.0
-    env: BUNDLE_WITHOUT="acceptance_testing metatools" RAKE_TASK="static_checks" PUPPET_GEM_VERSION="4.0.0" STRICT_VARIABLES="yes"
   - rvm: 2.1.9
     env: BUNDLE_WITHOUT="acceptance_testing metatools" RAKE_TASK="static_checks" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
   - rvm: 2.2.6
@@ -30,7 +29,7 @@ notifications:
   email: false
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/3402fe31d5b814c57316
+    - https://webhooks.gitter.im/e/3402fe31d5b814c57316
     on_success: always
     on_failure: always
     on_start: never

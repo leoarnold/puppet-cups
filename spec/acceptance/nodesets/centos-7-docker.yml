@@ -7,3 +7,4 @@ HOSTS:
     docker_cmd: '["/sbin/init"]'
 CONFIG:
   trace_limit: 200
+  log_level: debug
