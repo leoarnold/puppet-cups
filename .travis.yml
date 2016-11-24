@@ -1,21 +1,31 @@
 ---
-sudo: false
+sudo: required
+dist: trusty
+services: docker
 language: ruby
-bundler_args: --without acceptance_testing metatools
-script:
-- bundle exec rake release_checks
-- bundle exec rake mdl
+bundler_args: --without $BUNDLE_WITHOUT
+script: bundle exec rake $RAKE_TASK
 matrix:
   fast_finish: true
   include:
   - rvm: 2.1.0
-    env: PUPPET_GEM_VERSION="4.0.0" STRICT_VARIABLES="yes"
+    env: BUNDLE_WITHOUT="acceptance_testing metatools" RAKE_TASK="static_checks" PUPPET_GEM_VERSION="4.0.0" STRICT_VARIABLES="yes"
   - rvm: 2.1.9
-    env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
-  - rvm: 2.2.5
-    env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
-  - rvm: 2.3.1
-    env: PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+    env: BUNDLE_WITHOUT="acceptance_testing metatools" RAKE_TASK="static_checks" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+  - rvm: 2.2.6
+    env: BUNDLE_WITHOUT="acceptance_testing metatools" RAKE_TASK="static_checks" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+  - rvm: 2.3.3
+    env: BUNDLE_WITHOUT="acceptance_testing metatools" RAKE_TASK="static_checks" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes"
+  - rvm: 2.3.3
+    env: BUNDLE_WITHOUT="metatools" RAKE_TASK="beaker" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes" PUPPET_INSTALL_TYPE="agent" BEAKER_set="centos-7-docker"
+  - rvm: 2.3.3
+    env: BUNDLE_WITHOUT="metatools" RAKE_TASK="beaker" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes" PUPPET_INSTALL_TYPE="agent" BEAKER_set="fedora-20-docker"
+  - rvm: 2.3.3
+    env: BUNDLE_WITHOUT="metatools" RAKE_TASK="beaker" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes" PUPPET_INSTALL_TYPE="agent" BEAKER_set="fedora-latest-docker"
+  - rvm: 2.3.3
+    env: BUNDLE_WITHOUT="metatools" RAKE_TASK="beaker" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes" PUPPET_INSTALL_TYPE="agent" BEAKER_set="ubuntu-14.04-docker"
+  - rvm: 2.3.3
+    env: BUNDLE_WITHOUT="metatools" RAKE_TASK="beaker" PUPPET_GEM_VERSION="~> 4.0" STRICT_VARIABLES="yes" PUPPET_INSTALL_TYPE="agent" BEAKER_set="ubuntu-16.04-docker"
 notifications:
   email: false
   webhooks:

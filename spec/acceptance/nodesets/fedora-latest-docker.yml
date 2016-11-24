@@ -1,0 +1,9 @@
+HOSTS:
+  fedora-latest-docker:
+    platform: fedora-latest-docker
+    hypervisor: docker
+    image: fedora:latest
+    docker_preserve_image: true
+    docker_cmd: '["/sbin/init"]'
+CONFIG:
+  trace_limit: 200

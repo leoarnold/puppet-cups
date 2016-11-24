@@ -1,0 +1,9 @@
+HOSTS:
+  ubuntu-14.04-docker:
+    platform: ubuntu-14.04-docker
+    hypervisor: docker
+    image: ubuntu:14.04
+    docker_preserve_image: true
+    docker_cmd: '["/sbin/init"]'
+CONFIG:
+  trace_limit: 200

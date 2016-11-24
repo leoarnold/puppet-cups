@@ -10,3 +10,6 @@ task :mdl do
     sh "mdl -s .mdl/style.rb #{document}"
   end
 end
+
+desc 'Perform all static code analysis checks'
+task static_checks: [:release_checks, :mdl]
