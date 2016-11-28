@@ -17,15 +17,15 @@ end
 group :development do
   gem 'puppetlabs_spec_helper', '~> 1.1', require: false
   gem 'rubocop', '~> 0.37', require: false
-  gem 'metadata-json-lint', '~> 0.0', require: false
+  gem 'metadata-json-lint', '~> 1.0', require: false
   gem 'mdl', '~> 0.3', require: false
   gem 'codacy-coverage', '~> 1.0', require: false
-  gem 'codeclimate-test-reporter', '~> 0.5', require: false
+  gem 'codeclimate-test-reporter', '~> 1.0', require: false
   gem 'coderay', '~> 1.1', require: false
 end
 
 group :acceptance_testing do
-  gem 'beaker-rspec', '~> 5.3', require: false
+  gem 'beaker-rspec', '~> 6.0', require: false
   gem 'serverspec', '~> 2.26', require: false
 end
 
