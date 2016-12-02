@@ -10,6 +10,7 @@ matrix:
   fast_finish: true
   include:
   - rvm: 2.1.9
+    env: RAKE_TASK='static_checks' BUNDLE_WITHOUT='acceptance_testing metatools' PUPPET_GEM_VERSION='~> 4.0' STRICT_VARIABLES='yes'
   - rvm: 2.2.6
     env: RAKE_TASK='static_checks' BUNDLE_WITHOUT='acceptance_testing metatools' PUPPET_GEM_VERSION='~> 4.0' STRICT_VARIABLES='yes'
   - rvm: 2.3.3
