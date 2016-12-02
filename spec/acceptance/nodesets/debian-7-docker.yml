@@ -1,0 +1,10 @@
+HOSTS:
+  debian-7-docker:
+    platform: debian-7-docker
+    hypervisor: docker
+    image: debian:7
+    docker_preserve_image: true
+    docker_cmd: '["/sbin/init"]'
+CONFIG:
+  trace_limit: 200
+  log_level: debug
