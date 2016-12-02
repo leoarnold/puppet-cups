@@ -1,8 +1,8 @@
 HOSTS:
-  ubuntu-14.04-docker:
-    platform: ubuntu-14.04-docker
+  debian-8-docker:
+    platform: debian-8-docker
     hypervisor: docker
-    image: ubuntu:14.04
+    image: debian:8
     docker_preserve_image: true
     docker_cmd: '["/sbin/init"]'
     docker_image_commands:

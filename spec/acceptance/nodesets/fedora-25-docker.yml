@@ -1,8 +1,8 @@
 HOSTS:
-  fedora-latest-docker:
-    platform: fedora-latest-docker
+  fedora-25-docker:
+    platform: fedora-25-docker
     hypervisor: docker
-    image: fedora:latest
+    image: fedora:25
     docker_preserve_image: true
     docker_cmd: '["/sbin/init"]'
 CONFIG:
