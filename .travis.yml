@@ -16,12 +16,6 @@ matrix:
   - rvm: 2.3.3
     env: RAKE_TASK='static_checks' BUNDLE_WITHOUT='acceptance_testing metatools' PUPPET_GEM_VERSION='~> 4.0' STRICT_VARIABLES='yes'
   - rvm: 2.3.3
-    env: RAKE_TASK='beaker' BEAKER_set='centos-7-docker' BUNDLE_WITHOUT='metatools'
-  - rvm: 2.3.3
-    env: RAKE_TASK='beaker' BEAKER_set='fedora-21-docker' BUNDLE_WITHOUT='metatools'
-  - rvm: 2.3.3
-    env: RAKE_TASK='beaker' BEAKER_set='fedora-25-docker' BUNDLE_WITHOUT='metatools'
-  - rvm: 2.3.3
     env: RAKE_TASK='beaker' BEAKER_set='debian-7-docker' BUNDLE_WITHOUT='metatools'
   - rvm: 2.3.3
     env: RAKE_TASK='beaker' BEAKER_set='debian-8-docker' BUNDLE_WITHOUT='metatools'

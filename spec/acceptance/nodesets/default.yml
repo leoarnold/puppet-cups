@@ -1,10 +1,12 @@
 HOSTS:
-  ubuntu-16.04-i386:
-    roles:
-      - master
-    platform: ubuntu-16.04-i386
-    box: bento/ubuntu-16.04-i386
-    hypervisor: vagrant
+  ubuntu-16.04-docker:
+    platform: ubuntu-16.04-docker
+    hypervisor: docker
+    image: ubuntu:16.04
+    docker_preserve_image: true
+    docker_image_commands:
+    - 'locale-gen es_ES.UTF-8'
+    - 'update-locale LANGUAGE="es" LANG="es_ES.UTF-8" LC_ALL="es_ES.UTF-8"'
 CONFIG:
-  type: foss
+  trace_limit: 200
   log_level: debug

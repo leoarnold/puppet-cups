@@ -16,27 +16,8 @@ RSpec.configure do |c|
   c.before(:suite) do
     hosts.each do |host|
       install_puppet_agent_on(host)
-      shell("if [ -s #{default['puppetpath']}/puppet.conf ]; then /bin/sed -i '/templatedir/d' #{default['puppetpath']}/puppet.conf; fi")
       on(host, puppet('module install puppetlabs-stdlib --version 4.10.0'), acceptable_exit_codes: [0, 1])
       copy_module_to(host, source: project_root, module_name: 'cups')
-
-      case fact_on(host, 'osfamily')
-      when 'Debian'
-        manifest = <<-EOM
-          file { '/etc/default/locale':
-            ensure  => 'file',
-            content => 'LANG="es_ES.UTF-8"\nLANGUAGE="es"\nLC_ALL="es_ES.UTF-8"',
-            notify  => Exec['dpkg-reconfigure-locales'],
-          }
-
-          exec { 'dpkg-reconfigure-locales':
-            command     => '/usr/sbin/dpkg-reconfigure --frontend noninteractive locales',
-            refreshonly => true,
-          }
-        EOM
-
-        apply_manifest_on(host, manifest)
-      end
     end
   end
 end
