@@ -1,0 +1,10 @@
+HOSTS:
+  fedora-20-docker:
+    platform: fedora-20-docker
+    hypervisor: docker
+    image: fedora:20
+    docker_preserve_image: true
+    docker_cmd: '["/sbin/init"]'
+CONFIG:
+  trace_limit: 200
+  log_level: debug
