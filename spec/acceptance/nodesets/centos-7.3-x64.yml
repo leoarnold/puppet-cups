@@ -1,9 +1,9 @@
 HOSTS:
-  ubuntu-16.04-i386:
+  centos-7.3-x64:
     roles:
       - master
-    platform: ubuntu-16.04-i386
-    box: bento/ubuntu-16.04-i386
+    platform: centos-7.3-x64
+    box: bento/centos-7.3
     hypervisor: vagrant
 CONFIG:
   type: foss

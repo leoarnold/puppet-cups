@@ -1,9 +1,9 @@
 HOSTS:
-  ubuntu-16.04-i386:
+  ubuntu-14.04-i386:
     roles:
       - master
-    platform: ubuntu-16.04-i386
-    box: bento/ubuntu-16.04-i386
+    platform: ubuntu-14.04-i386
+    box: bento/ubuntu-14.04-i386
     hypervisor: vagrant
 CONFIG:
   type: foss
