@@ -1,11 +1,11 @@
 source 'https://rubygems.org'
 
-facterversion = (ENV['FACTER_GEM_VERSION'].nil? ? '~> 2.0' : ENV['FACTER_GEM_VERSION'])
-puppetversion = (ENV['PUPPET_GEM_VERSION'].nil? ? '~> 4.0' : ENV['PUPPET_GEM_VERSION'])
+facterversion = ENV['FACTER_GEM_VERSION']
+puppetversion = ENV['PUPPET_GEM_VERSION']
 
 group :dependencies do
-  gem 'facter', facterversion, require: false
-  gem 'puppet', puppetversion, require: false
+  gem 'facter', (facterversion.nil? ? '~> 2.0' : facterversion), require: false
+  gem 'puppet', (puppetversion.nil? ? '~> 4.0' : puppetversion), require: false
 end
 
 group :development do
