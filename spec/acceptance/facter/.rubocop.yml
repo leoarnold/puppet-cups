@@ -1,5 +1,5 @@
 ---
 inherit_from:
   - ../../../.rubocop.yml
-Lint/Eval:
+Security/Eval:
   Enabled: false
