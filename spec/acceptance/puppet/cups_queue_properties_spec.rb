@@ -314,32 +314,58 @@ describe 'Custom type `cups_queue`' do
       end
 
       context 'options' do
-        before(:all) do
-          shell('lpadmin -E -p Office -o Duplex=None -o PageSize=Letter')
-        end
+        context 'using native options' do
+          before(:all) do
+            shell('lpadmin -E -p Office -o auth-info-required=negotiate -o printer-error-policy=retry-current-job')
+          end
 
-        manifest = <<-EOM
-          cups_queue { 'Office':
-            ensure  => 'printer',
-            options => {
-              'Duplex'   => 'DuplexNoTumble',
-              'PageSize' => 'A4'
+          manifest = <<-EOM
+            cups_queue { 'Office':
+              ensure  => 'printer',
+              options => {
+                'auth-info-required'   => 'none',
+                'printer-error-policy' => 'stop-printer'
+              }
             }
-          }
-        EOM
+          EOM
 
-        it 'applies changes' do
-          apply_manifest(manifest, expect_changes: true)
+          it 'applies changes' do
+            apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'is idempotent' do
+            apply_manifest(manifest, catch_changes: true)
+          end
         end
 
-        it 'sets the correct value' do
-          output = shell('lpoptions -p Office -l').stdout
-          expect(output).to match(%r{Duplex/.*\s\*DuplexNoTumble\s})
-          expect(output).to match(%r{PageSize/.*\s\*A4\s})
-        end
+        context 'using vendor options' do
+          before(:all) do
+            shell('lpadmin -E -p Office -o Duplex=None -o PageSize=Letter')
+          end
 
-        it 'is idempotent' do
-          apply_manifest(manifest, catch_changes: true)
+          manifest = <<-EOM
+            cups_queue { 'Office':
+              ensure  => 'printer',
+              options => {
+                'Duplex'   => 'DuplexNoTumble',
+                'PageSize' => 'A4'
+              }
+            }
+          EOM
+
+          it 'applies changes' do
+            apply_manifest(manifest, expect_changes: true)
+          end
+
+          it 'sets the correct values' do
+            output = shell('lpoptions -p Office -l').stdout
+            expect(output).to match(%r{Duplex/.*\s\*DuplexNoTumble\s})
+            expect(output).to match(%r{PageSize/.*\s\*A4\s})
+          end
+
+          it 'is idempotent' do
+            apply_manifest(manifest, catch_changes: true)
+          end
         end
       end
 

@@ -91,7 +91,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def access
-    policy = (users_denied.nil? ? 'allow' : 'deny')
+    policy = (users_denied_is.nil? ? 'allow' : 'deny')
     { 'policy' => policy, 'users' => users_is }
   end
 
@@ -206,19 +206,34 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def all_options_is
-    native_options.merge(vendor_options)
+    native_options_is.merge(vendor_options_is)
   end
 
-  def native_options
+  def native_options_is
     answer = {}
 
-    options = %w(job-k-limit job-page-limit job-quota-period job-sheets-default port-monitor printer-error-policy printer-op-policy)
-    options.each { |option| answer[option] = query(option) }
+    options = %w(
+      auth-info-required job-k-limit job-page-limit job-quota-period
+      job-sheets-default port-monitor printer-error-policy printer-op-policy
+    )
+
+    options.each { |option| answer[option] = query_native_option(option) }
 
     answer
   end
 
-  def vendor_options
+  def query_native_option(option)
+    value = query(option)
+
+    case option
+    when 'auth-info-required'
+      value.nil? ? 'none' : value
+    else
+      value
+    end
+  end
+
+  def vendor_options_is
     answer = {}
 
     lpoptions('-E', '-p', name, '-l').each_line do |line|
@@ -230,13 +245,13 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def users_is
-    allowed = users_allowed
-    denied = users_denied
+    users_allowed = users_allowed_is
+    users_denied = users_denied_is
 
-    if allowed
-      allowed
-    elsif denied
-      denied
+    if users_allowed
+      users_allowed
+    elsif users_denied
+      users_denied
     else
       ['all']
     end
@@ -246,11 +261,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     resource.should(:access).nil? ? [] : resource.should(:access)['users']
   end
 
-  def users_allowed
+  def users_allowed_is
     query_users('requesting-user-name-allowed')
   end
 
-  def users_denied
+  def users_denied_is
     query_users('requesting-user-name-denied')
   end
 

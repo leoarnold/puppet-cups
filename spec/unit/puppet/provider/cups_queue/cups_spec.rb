@@ -365,29 +365,29 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         native = { 'printer-error-policy' => 'retry-job' }
         vendor = { 'Duplex' => 'None' }
 
-        allow(@provider).to receive(:native_options).and_return(native)
-        allow(@provider).to receive(:vendor_options).and_return(vendor)
+        allow(@provider).to receive(:native_options_is).and_return(native)
+        allow(@provider).to receive(:vendor_options_is).and_return(vendor)
 
         expect(@provider.send(:all_options_is)).to eq('Duplex' => 'None', 'printer-error-policy' => 'retry-job')
       end
     end
 
-    describe '#native_options' do
-      it 'merges native and vendor options' do
+    describe '#native_options_is' do
+      it 'returns a hash' do
         allow(@provider).to receive(:query).and_return('dummy')
 
-        expect(@provider.send(:native_options)).to be_a Hash
+        expect(@provider.send(:native_options_is)).to be_a Hash
       end
     end
 
-    describe '#vendor_options' do
+    describe '#vendor_options_is' do
       context 'for a raw queue' do
         it 'should return an empty hash' do
           input = "lpoptions: Unable to get PPD file for Rawe: Not Found\n"
 
           allow(@provider).to receive(:lpoptions).with('-E', '-p', 'Office', '-l').and_return(input)
 
-          expect(@provider.send(:vendor_options)).to eq({})
+          expect(@provider.send(:vendor_options_is)).to eq({})
         end
       end
 
@@ -409,7 +409,7 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
 
           allow(@provider).to receive(:lpoptions).with('-E', '-p', 'Office', '-l').and_return(input)
 
-          expect(@provider.send(:vendor_options)).to eq(expected)
+          expect(@provider.send(:vendor_options_is)).to eq(expected)
         end
       end
     end
@@ -461,12 +461,12 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
       end
     end
 
-    describe '#users_allowed' do
+    describe '#users_allowed_is' do
       context 'when there are NO users on an allow policy' do
         it 'returns nil' do
           allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
 
-          expect(@provider.send(:users_allowed)).to be nil
+          expect(@provider.send(:users_allowed_is)).to be nil
         end
       end
 
@@ -474,17 +474,17 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
         it 'returns a sorted array without duplicates' do
           allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('nina,@council,nina,lumbergh')
 
-          expect(@provider.send(:users_allowed)).to eq(%w(@council lumbergh nina))
+          expect(@provider.send(:users_allowed_is)).to eq(%w(@council lumbergh nina))
         end
       end
     end
 
-    describe '#users_denied' do
+    describe '#users_denied_is' do
       context 'when there are NO users on a deny policy' do
         it 'returns nil' do
           allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
 
-          expect(@provider.send(:users_denied)).to be nil
+          expect(@provider.send(:users_denied_is)).to be nil
         end
       end
 
@@ -492,7 +492,7 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
         it 'returns a sorted array without duplicates' do
           allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('nina,@council,nina,lumbergh')
 
-          expect(@provider.send(:users_denied)).to eq(%w(@council lumbergh nina))
+          expect(@provider.send(:users_denied_is)).to eq(%w(@council lumbergh nina))
         end
       end
     end
