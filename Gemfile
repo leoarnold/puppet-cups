@@ -24,6 +24,6 @@ group :acceptance_testing do
 end
 
 group :metatools do
-  gem 'github-linguist', '~> 4.7', require: false
+  gem 'github-linguist', '~> 5.0', require: false
   gem 'travis', '~> 1.8', require: false
 end
