@@ -379,6 +379,30 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         expect(@provider.send(:native_options_is)).to be_a Hash
       end
     end
+    
+    describe '#query_native_option' do
+      context "'auth-info-required'" do
+        it "upon empty query result returns 'none'" do
+          allow(@provider).to receive(:query).with('auth-info-required').and_return(nil)
+          
+          expect(@provider.send(:query_native_option, 'auth-info-required')).to eq('none')
+        end
+
+        it 'returns nonempty query results unmodified' do
+          allow(@provider).to receive(:query).with('auth-info-required').and_return('username,password')
+          
+          expect(@provider.send(:query_native_option, 'auth-info-required')).to eq('username,password')
+        end
+      end
+      
+      context 'using any other option' do
+        it 'returns nonempty query results unmodified' do
+          allow(@provider).to receive(:query).with('printer-error-policy').and_return('abort-job')
+          
+          expect(@provider.send(:query_native_option, 'printer-error-policy')).to eq('abort-job')
+        end
+      end
+    end
 
     describe '#vendor_options_is' do
       context 'for a raw queue' do
