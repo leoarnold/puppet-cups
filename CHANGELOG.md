@@ -1,13 +1,15 @@
 # Changelog
 
-## 2016-??-?? - Release 2.0.0
+## 2017-??-?? - Release 2.0.0
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.0.0)
 and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.0.0).
 
 ### Summary
 
-The CUPS server configuration can now be managed through the new class `cups::server`.
+The new major release drops support for legacy Puppet installations
+and introduces some breaking changes in the API.
+Please adjust your manifests according to the [upgrade instructions](UPGRADING.md).
 
 ### Breaking changes
 
@@ -16,7 +18,10 @@ The CUPS server configuration can now be managed through the new class `cups::se
 - Some attributes were removed from the `cups` class.
 - The defined type `cups::ctl` was removed.
 
-Please adjust your manifests according to the [upgrade instructions](UPGRADING.md).
+### Features
+
+- The CUPS server can now be managed using the new defined type `cups::server`
+- `cups_queue` can now supports managing the option `'auth-info-required'`
 
 ## 2016-05-24 - Maintenance release 1.2.2
 
