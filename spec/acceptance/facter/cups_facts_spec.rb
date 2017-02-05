@@ -4,7 +4,9 @@ require 'spec_helper_acceptance'
 def custom_fact(fact)
   output = shell('puppet apply --color=false -e \'notice("<fact>${::' + fact + '}</fact>")\'').stdout
   result = %r{<fact>(?<value>.*)</fact>}.match(output)
+  # rubocop:disable Security/Eval
   eval(result[:value].gsub(/\w+/) { |word| "'" + word + "'" }) if result
+  # rubocop:enable Security/Eval
 end
 
 describe 'Custom Facts' do
