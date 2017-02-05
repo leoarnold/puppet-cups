@@ -1,18 +1,16 @@
 ---
+sudo: false
 language: ruby
 cache: bundler
 bundler_args: --without acceptance_testing metatools
+env:
+- PUPPET_GEM_VERSION='~> 4.0' STRICT_VARIABLES='yes'
+rvm:
+- 2.2.6
+- 2.3.3
+- 2.4.0
 script: bundle exec rake static_checks
-matrix:
-  fast_finish: true
-  include:
-  - rvm: 2.2.6
-    env: PUPPET_GEM_VERSION='~> 4.0' STRICT_VARIABLES='yes'
-  - rvm: 2.3.3
-    env: PUPPET_GEM_VERSION='~> 4.0' STRICT_VARIABLES='yes'
-  - rvm: 2.4.0
-    env: PUPPET_GEM_VERSION='~> 4.0' STRICT_VARIABLES='yes'
-after_success: bundle exec codeclimate-test-reporter
+after_script: bundle exec codeclimate-test-reporter
 notifications:
   email: false
   webhooks:
