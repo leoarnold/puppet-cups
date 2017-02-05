@@ -1,14 +1,17 @@
 # encoding: UTF-8
 require 'codacy-coverage'
+require 'simplecov-console'
 
 SimpleCov.formatters = [
+  SimpleCov::Formatter::Console,
   SimpleCov::Formatter::HTMLFormatter,
   Codacy::Formatter
 ]
 
 SimpleCov.start do
-  add_filter '/spec/'
+  add_filter '/.mdl/'
   add_filter '/.vendor/'
+  add_filter '/spec/'
 end
 
 require 'puppetlabs_spec_helper/module_spec_helper'
