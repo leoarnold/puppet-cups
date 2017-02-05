@@ -7,4 +7,5 @@
 /pkg/
 /spec/fixtures/manifests
 /spec/fixtures/modules
+.puppetforge.yml
 Gemfile.lock

@@ -13,6 +13,7 @@ group :development do
   gem 'coderay', '~> 1.1'
   gem 'mdl', '~> 0.3'
   gem 'metadata-json-lint', '~> 1.0'
+  gem 'puppet-blacksmith', '~> 3.3'
   gem 'puppetlabs_spec_helper', '~> 1.1'
   gem 'rubocop', '~> 0.37'
 end
