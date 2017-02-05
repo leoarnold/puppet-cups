@@ -1,4 +1,5 @@
+/.mdl/* linguist-vendored
+/bin/* linguist-vendored
+/spec/* linguist-vendored
 Gemfile linguist-vendored
 Rakefile linguist-vendored
-/.mdl/* linguist-vendored
-/spec/* linguist-vendored
