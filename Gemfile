@@ -3,22 +3,21 @@ source 'https://rubygems.org'
 facterversion = ENV['FACTER_GEM_VERSION']
 puppetversion = ENV['PUPPET_GEM_VERSION']
 
-group :runtime do
-  # Gemnasium.com does not understand ternary operators
-  #
-  # rubocop:disable Bundler/DuplicatedGem
-  if facterversion.nil?
-    gem 'facter', '~> 2.0'
-  else
-    gem 'facter', facterversion
-  end
-  if puppetversion.nil?
-    gem 'puppet', '~> 4.0'
-  else
-    gem 'puppet', puppetversion
-  end
-  # rubocop:enable Bundler/DuplicatedGem
+# Gemnasium.com does not understand ternary operators
+#
+# rubocop:disable Bundler/DuplicatedGem
+if facterversion.nil?
+  gem 'facter', '~> 2.0'
+else
+  gem 'facter', facterversion
 end
+
+if puppetversion.nil?
+  gem 'puppet', '~> 4.0'
+else
+  gem 'puppet', puppetversion
+end
+# rubocop:enable Bundler/DuplicatedGem
 
 group :development do
   gem 'codacy-coverage', '~> 1.0'
