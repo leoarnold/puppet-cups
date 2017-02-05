@@ -4,8 +4,20 @@ facterversion = ENV['FACTER_GEM_VERSION']
 puppetversion = ENV['PUPPET_GEM_VERSION']
 
 group :runtime do
-  gem 'facter', (facterversion.nil? ? '~> 2.0' : facterversion)
-  gem 'puppet', (puppetversion.nil? ? '~> 4.0' : puppetversion)
+  # Gemnasium.com does not understand ternary operators
+  #
+  # rubocop:disable Bundler/DuplicatedGem
+  if facterversion.nil?
+    gem 'facter', '~> 2.0'
+  else
+    gem 'facter', facterversion
+  end
+  if puppetversion.nil?
+    gem 'puppet', '~> 4.0'
+  else
+    gem 'puppet', puppetversion
+  end
+  # rubocop:enable Bundler/DuplicatedGem
 end
 
 group :development do
