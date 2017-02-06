@@ -17,6 +17,9 @@ end
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec-puppet/spec_helper'
 
+require 'rspec-puppet-facts'
+include RspecPuppetFacts
+
 # Make all files in this module available to #require
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../'))
 

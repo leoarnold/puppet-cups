@@ -3,108 +3,58 @@ require 'spec_helper'
 
 describe 'cups' do
   context 'with defaults for all parameters' do
-    shared_examples 'OS independent defaults' do
-      it { should contain_class('cups').with(purge_unmanaged_queues: 'false') }
+    on_supported_os.each do |os, facts|
+      context "on #{os}" do
+        let(:facts) { facts }
 
-      it { should contain_class('cups::params') }
+        it { should contain_class('cups').with(purge_unmanaged_queues: 'false') }
 
-      it { should_not contain_class('cups::default_queue') }
+        it { should contain_class('cups::params') }
 
-      it { should contain_package('cups').with(ensure: 'present') }
+        it { should_not contain_class('cups::default_queue') }
 
-      it { should contain_service('cups').with(ensure: 'running', enable: 'true') }
+        it { should contain_package('cups').with(ensure: 'present') }
 
-      it { should contain_service('cups').that_requires('Package[cups]') }
+        it { should contain_service('cups').with(ensure: 'running', enable: 'true') }
 
-      it { should contain_resources('cups_queue').with(purge: 'false') }
-    end
+        it { should contain_service('cups').that_requires('Package[cups]') }
 
-    context 'on an operating system from the Debian family' do
-      context 'with Debian 7' do
-        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Debian', lsbdistrelease: '7' } }
+        it { should contain_resources('cups_queue').with(purge: 'false') }
 
-        include_examples 'OS independent defaults'
+        case facts[:osfamily]
+        when 'Debian'
+          case facts[:operatingsystem]
+          when 'Debian'
+            if facts[:operatingsystemmajrelease].to_f < 9
+              it { should_not contain_package('cups-ipp-utils') }
+            else
+              it { should contain_package('cups-ipp-utils') }
 
-        it { should_not contain_package('cups-ipp-utils') }
+              it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
+            end
+          when 'Ubuntu'
+            if facts[:operatingsystemmajrelease].to_f < 15.10
+              it { should_not contain_package('cups-ipp-utils') }
+            else
+              it { should contain_package('cups-ipp-utils') }
+
+              it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
+            end
+          when 'LinuxMint'
+            if facts[:operatingsystemmajrelease].to_f < 18
+              it { should_not contain_package('cups-ipp-utils') }
+            else
+              it { should contain_package('cups-ipp-utils') }
+
+              it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
+            end
+          end
+        when 'RedHat'
+          it { should contain_package('cups-ipptool').with(ensure: 'present') }
+
+          it { should contain_service('cups').that_requires('Package[cups-ipptool]') }
+        end
       end
-
-      context 'with Debian 8' do
-        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Debian', lsbdistrelease: '8' } }
-
-        include_examples 'OS independent defaults'
-
-        it { should_not contain_package('cups-ipp-utils') }
-      end
-
-      context 'with Debian 9' do
-        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Debian', lsbdistrelease: '9' } }
-
-        include_examples 'OS independent defaults'
-
-        it { should contain_package('cups-ipp-utils').with(ensure: 'present') }
-
-        it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
-      end
-
-      context 'with Ubuntu 14.04' do
-        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Ubuntu', lsbdistrelease: '14.04' } }
-
-        include_examples 'OS independent defaults'
-
-        it { should_not contain_package('cups-ipp-utils') }
-      end
-
-      context 'with Ubuntu 15.04' do
-        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Ubuntu', lsbdistrelease: '15.04' } }
-
-        include_examples 'OS independent defaults'
-
-        it { should_not contain_package('cups-ipp-utils') }
-      end
-
-      context 'with Ubuntu 16.04' do
-        let(:facts) { { osfamily: 'Debian', operatingsystem: 'Debian', lsbdistrelease: '16.04' } }
-
-        include_examples 'OS independent defaults'
-
-        it { should contain_package('cups-ipp-utils').with(ensure: 'present') }
-
-        it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
-      end
-
-      context 'with LinuxMint 17' do
-        let(:facts) { { osfamily: 'Debian', operatingsystem: 'LinuxMint', lsbdistrelease: '17' } }
-
-        include_examples 'OS independent defaults'
-
-        it { should_not contain_package('cups-ipp-utils') }
-      end
-
-      context 'with LinuxMint 18' do
-        let(:facts) { { osfamily: 'Debian', operatingsystem: 'LinuxMint', lsbdistrelease: '18' } }
-
-        include_examples 'OS independent defaults'
-
-        it { should contain_package('cups-ipp-utils').with(ensure: 'present') }
-
-        it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
-      end
-    end
-
-    context 'on an operating system from the RedHat family' do
-      let(:facts) { { osfamily: 'RedHat' } }
-
-      include_examples 'OS independent defaults'
-
-      it { should contain_package('cups-ipptool').with(ensure: 'present') }
-
-      it { should contain_service('cups').that_requires('Package[cups-ipptool]') }
-    end
-
-    context 'on an operating system from the Suse family' do
-      let(:facts) { { osfamily: 'Suse' } }
-
-      include_examples 'OS independent defaults'
     end
   end
 
