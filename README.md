@@ -651,7 +651,11 @@ Installs, configures, and manages the CUPS service.
 * `hiera`: When set to `priority` or `merge`, Puppet will look up the Hiera key `cups_queue`
   to manage `cups_queue` resources. See also the [example](#using-hiera) above. Disabled by default.
 
-* `packages`: An array with the names of all packages needed to install for CUPS and `ipptool`.
+* `package_ensure`: Whether CUPS packages should be `present` or `absent`. Defaults to `present`.
+
+* `package_manage`: Whether to manage package installation at all. Defaults to `true`.
+
+* `package_names`: An array with the names of all packages needed to install for CUPS and `ipptool`.
   Use `[]` to disable automatic package management. OS dependent defaults apply.
 
 * `papersize`: Sets the system's default `/etc/papersize`. See `man papersize` for supported values.

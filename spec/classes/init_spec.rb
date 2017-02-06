@@ -65,16 +65,16 @@ describe 'cups' do
       it { should_not compile }
     end
 
-    context "with packages = ['custom-cups', 'custom-ipptool'] and services not specified" do
-      let(:params) { { packages: ['custom-cups', 'custom-ipptool'] } }
+    context "with package_names = ['custom-cups', 'custom-ipptool'] and services not specified" do
+      let(:params) { { package_names: ['custom-cups', 'custom-ipptool'] } }
 
       it { should_not compile }
     end
 
-    context 'with packages = [] and services = []' do
+    context 'with package_names = [] and services = []' do
       let(:params) do
         {
-          packages: [],
+          package_names: [],
           services: []
         }
       end
@@ -82,10 +82,10 @@ describe 'cups' do
       it { should compile }
     end
 
-    context "with packages = ['custom-cups', 'custom-ipptool'] and services = []" do
+    context "with package_names = ['custom-cups', 'custom-ipptool'] and services = []" do
       let(:params) do
         {
-          packages: ['custom-cups', 'custom-ipptool'],
+          package_names: ['custom-cups', 'custom-ipptool'],
           services: []
         }
       end
@@ -95,10 +95,10 @@ describe 'cups' do
       it { should contain_package('custom-ipptool').with(ensure: 'present') }
     end
 
-    context "with packages = ['custom-cups', 'custom-ipptool'] and services = ['cupsd', 'cups-browsed']" do
+    context "with package_names = ['custom-cups', 'custom-ipptool'] and services = ['cupsd', 'cups-browsed']" do
       let(:params) do
         {
-          packages: ['custom-cups', 'custom-ipptool'],
+          package_names: ['custom-cups', 'custom-ipptool'],
           services: ['cupsd', 'cups-browsed']
         }
       end
@@ -145,21 +145,89 @@ describe 'cups' do
       end
     end
 
-    describe 'packages' do
+    describe 'package_ensure' do
+      context 'by default' do
+        it { should contain_class('cups').with(package_ensure: 'present') }
+      end
+
+      context '= present' do
+        let(:params) do
+          {
+            package_ensure: 'present',
+            package_names: %w(cups ipptool)
+          }
+        end
+
+        it 'ensures presence of all specified packages' do
+          should contain_package('cups').with(ensure: 'present')
+          should contain_package('ipptool').with(ensure: 'present')
+        end
+      end
+
+      context '= absent' do
+        let(:params) do
+          {
+            package_ensure: 'absent',
+            package_names: %w(cups ipptool)
+          }
+        end
+
+        it 'ensures absence of all specified packages' do
+          should contain_package('cups').with(ensure: 'absent')
+          should contain_package('ipptool').with(ensure: 'absent')
+        end
+      end
+    end
+
+    describe 'package_manage' do
+      context 'by default' do
+        it { should contain_class('cups').with(package_manage: true) }
+      end
+
+      context '= true' do
+        let(:params) do
+          {
+            package_manage: true,
+            package_names: %w(cups ipptool)
+          }
+        end
+
+        it 'manages of all specified packages' do
+          should contain_package('cups')
+          should contain_package('ipptool')
+        end
+      end
+
+      context '= false' do
+        let(:params) do
+          {
+            package_manage: false,
+            package_names: %w(cups ipptool)
+          }
+        end
+
+        it 'does not manage any of the specified packages' do
+          should_not contain_package('cups')
+          should_not contain_package('ipptool')
+        end
+      end
+    end
+
+    describe 'package_names' do
       context '= undef' do
         let(:facts) { { osfamily: 'Unknown' } }
 
-        it { expect { should compile }.to raise_error(/packages/) }
+        it { expect { should compile }.to raise_error(/package_names/) }
       end
 
       context '= []' do
-        let(:params) { { packages: [] } }
+        let(:params) { { package_names: [] } }
 
         it { should_not contain_package('cups') }
       end
 
       context "= ['custom-cups', 'custom-ipptool']" do
-        let(:params) { { packages: ['custom-cups', 'custom-ipptool'] } }
+        let(:params) { { package_names: ['custom-cups', 'custom-ipptool'] } }
 
         it { should contain_package('custom-cups').with(ensure: 'present') }
 
@@ -201,7 +269,7 @@ describe 'cups' do
     describe 'services' do
       context '= undef' do
         let(:facts) { { osfamily: 'Unknown' } }
-        let(:params) { { packages: ['cupsd'] } }
+        let(:params) { { package_names: ['cupsd'] } }
 
         it { expect { should compile }.to raise_error(/services/) }
       end
@@ -212,10 +280,10 @@ describe 'cups' do
         it { should_not contain_service('cups') }
       end
 
-      context "= ['cupsd', 'cups-browsed'] and packages = ['custom-cups', 'custom-ipptool']" do
+      context "= ['cupsd', 'cups-browsed'] and package_names = ['custom-cups', 'custom-ipptool']" do
         let(:params) do
           {
-            packages: ['custom-cups', 'custom-ipptool'],
+            package_names: ['custom-cups', 'custom-ipptool'],
             services: ['cupsd', 'cups-browsed']
           }
         end

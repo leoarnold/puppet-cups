@@ -1,7 +1,9 @@
 # Class 'cups'
 #
 class cups (
-  Array[String] $packages               = $::cups::params::packages,
+  String        $package_ensure = 'present',
+  Boolean       $package_manage = true,
+  Array[String] $package_names          = $::cups::params::package_names,
   Boolean       $purge_unmanaged_queues = false,
   Array[String] $services               = $::cups::params::services,
   Optional[String]                    $default_queue = undef,
@@ -10,20 +12,22 @@ class cups (
   Optional[Hash]                      $resources     = undef,
 ) inherits cups::params {
 
-  package { $packages :
-    ensure  => 'present',
+  if ($package_manage) {
+    package { $package_names :
+      ensure  => $package_ensure,
+    }
   }
 
   service { $services :
     ensure  => 'running',
     enable  => true,
-    require => Package[$packages],
+    require => Package[$package_names],
   }
 
   unless ($papersize == undef) {
     class { '::cups::papersize':
       papersize => $papersize,
-      require   => Package[$packages],
+      require   => Package[$package_names],
       notify    => Service[$services],
     }
   }
