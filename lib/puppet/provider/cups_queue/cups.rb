@@ -228,6 +228,8 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     case option
     when 'auth-info-required'
       value.nil? ? 'none' : value
+    when 'job-sheets-default'
+      value.gsub(/\A"|"\Z/, '')
     else
       value
     end

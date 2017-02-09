@@ -316,7 +316,10 @@ describe 'Custom type `cups_queue`' do
       context 'options' do
         context 'using native options' do
           before(:all) do
-            shell('lpadmin -E -p Office -o auth-info-required=negotiate -o printer-error-policy=retry-current-job')
+            shell('lpadmin -E -p Office' \
+              '-o auth-info-required=negotiate' \
+              '-o job-sheets-default=banner,banner' \
+              '-o printer-error-policy=retry-current-job')
           end
 
           manifest = <<-EOM
@@ -324,7 +327,8 @@ describe 'Custom type `cups_queue`' do
               ensure  => 'printer',
               options => {
                 'auth-info-required'   => 'none',
-                'printer-error-policy' => 'stop-printer'
+                'printer-error-policy' => 'stop-printer',
+                'job-sheets-default'   => 'none,none'
               }
             }
           EOM

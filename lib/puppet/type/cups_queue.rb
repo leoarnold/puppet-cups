@@ -223,6 +223,16 @@ Puppet::Type.newtype(:cups_queue) do
         end
       end
     end
+
+    # rubocop:disable Style/PredicateName
+    def is_to_s(currentvalue)
+      currentvalue.to_s
+    end
+    # rubocop:enable Style/PredicateName
+
+    def should_to_s(newvalue)
+      newvalue.sort.to_h.to_s
+    end
   end
 
   newparam(:ppd) do
