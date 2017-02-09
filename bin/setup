@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-ModuleDirectory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+ProjectRoot="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
 set -euo pipefail
 IFS=$'\n\t'
 set -vx
 
-bundle install --path ${ModuleDirectory}/.vendor/bundle --without ci
+bundle install --path ${ProjectRoot}/.vendor/bundle --without ci
