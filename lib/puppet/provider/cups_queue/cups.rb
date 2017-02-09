@@ -17,9 +17,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def self.instances
     providers = []
+    # Discover class instances
     PuppetX::Cups::Facts::ClassMembers.fact.each do |classname, membernames|
       providers << new(name: classname, ensure: :class, members: membernames)
     end
+    # Discover printer instances
     PuppetX::Cups::Facts::Printers.fact.each do |printername|
       providers << new(name: printername, ensure: :printer)
     end
@@ -62,7 +64,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def create_printer
     destroy
-    lpadmin('-E', '-p', name, '-v', '/dev/null')
+    lpadmin('-E', '-p', name, '-v', '/dev/null') # Creates a minimal raw queue
     [:interface, :model, :ppd, :uri,
      :access, :description, :location, :options, :shared,
      :enabled, :held, :accepting].each do |property|
@@ -193,6 +195,8 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     PuppetX::Cups::Queue::Attribute.query(name, property)
   end
 
+  ### Helper functions for #options
+
   def specified_options_is(options_should)
     answer = {}
     supported_options_is = all_options_is
@@ -222,11 +226,13 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     answer
   end
 
+  # Adapt query result where necessary
   def query_native_option(option)
     value = query(option)
 
     case option
     when 'auth-info-required'
+      # Related issue: https://github.com/apple/cups/issues/4958
       value.nil? ? 'none' : value
     when 'job-sheets-default'
       value.gsub(/\A"|"\Z/, '')
@@ -245,6 +251,8 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
     answer
   end
+
+  ### Helper functions for #access
 
   def users_is
     users_allowed = users_allowed_is
@@ -276,11 +284,17 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     names.gsub(/[\'\"]/, '').split(',').sort.uniq if names
   end
 
+  # Sometimes the `root` user is not considered a privileged user in CUPS
+  # This shim temporarily grants `root` access to the given queue
+  # and then (re)establishes the desired access control.
+  #
+  # Related issue: https://github.com/apple/cups/issues/4781
   def while_root_allowed
-    debug("Circumventing CUPS issue #4781 by temporarily allowing access for 'root'")
     acl = (resource.should(:access) ? resource.should(:access) : access)
+    debug("CUPS #4781: Temporarily allowing 'root' user to access the queue.")
     self.access = { 'policy' => 'allow', 'users' => ['root'] }
     yield
+    debug('CUPS #4781: (Re)establishing desired access control.')
     self.access = acl
   end
 end

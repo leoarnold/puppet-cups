@@ -9,7 +9,7 @@
 [![Puppet Forge Version](http://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![MIT License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
-[![Gitter](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Gitter](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups)
 
 ## Table of Contents
 
@@ -656,7 +656,7 @@ Installs, configures, and manages the CUPS service.
 * `package_manage`: Whether to manage package installation at all. Defaults to `true`.
 
 * `package_names`: An array with the names of all packages needed to install for CUPS and `ipptool`.
-  Use `[]` to disable automatic package management. OS dependent defaults apply.
+  OS dependent defaults apply.
 
 * `papersize`: Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
 

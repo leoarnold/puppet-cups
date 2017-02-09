@@ -20,8 +20,9 @@ Please adjust your manifests according to the [upgrade instructions](UPGRADING.m
 
 ### Features
 
+- `Class[cups]` now supports removing all CUPS packages
 - The CUPS server can now be managed using the new defined type `cups::server`
-- `cups_queue` can now supports managing the option `'auth-info-required'`
+- `cups_queue` now supports managing the option `'auth-info-required'`
 
 ## 2016-05-24 - Maintenance release 1.2.2
 
