@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'beaker-rspec'
 
 # RSpec configuration

@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'spec_helper'
 
 describe Puppet::Type.type(:cups_queue).provider(:cups) do

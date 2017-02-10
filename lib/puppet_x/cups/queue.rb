@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'erb'
 
 require_relative 'server'

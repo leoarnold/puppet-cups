@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'spec_helper_acceptance'
 
 describe 'Custom type `cups_queue`' do

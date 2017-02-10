@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'codacy-coverage'
 require 'simplecov-console'
 

@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require_relative '../../../puppet_x/cups/facts'
 require_relative '../../../puppet_x/cups/queue'
 

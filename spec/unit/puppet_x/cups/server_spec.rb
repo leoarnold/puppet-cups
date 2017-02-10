@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'spec_helper'
 require 'lib/puppet_x/cups/server'
 
