@@ -84,7 +84,7 @@ describe PuppetX::Cups::Ipp do
         end
       end
 
-      context "when stdout = 'Microphone check\\n" do
+      context "when stdout = 'Microphone check\\n'" do
         it 'returns []' do
           response = described_class.new("Microphone check\n")
           expect(response.rows).to match_array([])
@@ -107,7 +107,7 @@ describe PuppetX::Cups::Ipp do
         end
       end
 
-      context "when stdout = 'Microphone check\\n" do
+      context "when stdout = 'Microphone check\\n'" do
         it 'returns nil' do
           response = described_class.new("Microphone check\n")
           expect(response.first_row).to be nil

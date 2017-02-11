@@ -19,12 +19,14 @@ describe PuppetX::Cups::Instances::Classes do
   describe '#to_a' do
     context 'without printers or classes installed' do
       it 'returns an empty array' do
-        cups_get_classes do <<-EOT
+        cups_get_classes do
+          <<-EOT
 printer-name,member-names
           EOT
         end
 
-        cups_get_printers do <<-EOT
+        cups_get_printers do
+          <<-EOT
 printer-name
           EOT
         end
@@ -37,12 +39,14 @@ printer-name
 
     context 'with printers, but without classes installed' do
       it 'returns an array with the names of all installed printers' do
-        cups_get_classes do <<-EOT
+        cups_get_classes do
+          <<-EOT
 printer-name,member-names
           EOT
         end
 
-        cups_get_printers do <<-EOT
+        cups_get_printers do
+          <<-EOT
 printer-name
 BackOffice
 Office
@@ -58,7 +62,8 @@ Warehouse
 
     context 'with printers and classes installed' do
       it 'returns an array with the names of all installed printers, including classes' do
-        cups_get_classes do <<-EOT
+        cups_get_classes do
+          <<-EOT
 printer-name,member-names
 CrawlSpace,
 GroundFloor,"Office,Warehouse"
@@ -66,7 +71,8 @@ UpperFloor,BackOffice
           EOT
         end
 
-        cups_get_printers do <<-EOT
+        cups_get_printers do
+          <<-EOT
 printer-name
 BackOffice
 CrawlSpace
@@ -89,12 +95,14 @@ describe PuppetX::Cups::Instances::ClassMembers do
   describe '#to_h' do
     context 'with no classes installed' do
       it 'returns an empty hash' do
-        cups_get_classes do <<-EOT
+        cups_get_classes do
+          <<-EOT
 printer-name,member-names
           EOT
         end
 
-        cups_get_printers do <<-EOT
+        cups_get_printers do
+          <<-EOT
 printer-name
 BackOffice
 Office
@@ -110,7 +118,8 @@ Warehouse
 
     context 'with classes installed' do
       it 'returns the correct hash' do
-        cups_get_classes do <<-EOT
+        cups_get_classes do
+          <<-EOT
 printer-name,member-names
 CrawlSpace,
 GroundFloor,"Office,Warehouse"
@@ -118,7 +127,8 @@ UpperFloor,BackOffice
           EOT
         end
 
-        cups_get_printers do <<-EOT
+        cups_get_printers do
+          <<-EOT
 printer-name
 BackOffice
 CrawlSpace
@@ -145,12 +155,14 @@ describe PuppetX::Cups::Instances::Printers do
   describe '#to_a' do
     context 'without printers or classes installed' do
       it 'returns an empty array' do
-        cups_get_classes do <<-EOT
+        cups_get_classes do
+          <<-EOT
 printer-name,member-names
           EOT
         end
 
-        cups_get_printers do <<-EOT
+        cups_get_printers do
+          <<-EOT
 printer-name
           EOT
         end
@@ -163,12 +175,14 @@ printer-name
 
     context 'with printers, but without classes installed' do
       it 'returns an array with the names of all installed printers' do
-        cups_get_classes do <<-EOT
+        cups_get_classes do
+          <<-EOT
 printer-name,member-names
           EOT
         end
 
-        cups_get_printers do <<-EOT
+        cups_get_printers do
+          <<-EOT
 printer-name
 BackOffice
 Office
@@ -184,7 +198,8 @@ Warehouse
 
     context 'with printers and classes installed' do
       it 'returns an array with the names of all installed printers, including classes' do
-        cups_get_classes do <<-EOT
+        cups_get_classes do
+          <<-EOT
 printer-name,member-names
 CrawlSpace,
 GroundFloor,"Office,Warehouse"
@@ -192,7 +207,8 @@ UpperFloor,BackOffice
           EOT
         end
 
-        cups_get_printers do <<-EOT
+        cups_get_printers do
+          <<-EOT
 printer-name
 BackOffice
 CrawlSpace
@@ -215,12 +231,14 @@ describe PuppetX::Cups::Instances::Queues do
   describe '#to_a' do
     context 'without queues installed' do
       it 'returns an empty array' do
-        cups_get_classes do <<-EOT
+        cups_get_classes do
+          <<-EOT
 printer-name,member-names
           EOT
         end
 
-        cups_get_printers do <<-EOT
+        cups_get_printers do
+          <<-EOT
 printer-name
           EOT
         end
@@ -233,7 +251,8 @@ printer-name
 
     context 'with queues installed' do
       it 'returns an array with the names of all installed queues' do
-        cups_get_classes do <<-EOT
+        cups_get_classes do
+          <<-EOT
 printer-name,member-names
 CrawlSpace,
 GroundFloor,"Office,Warehouse"
@@ -241,7 +260,8 @@ UpperFloor,BackOffice
           EOT
         end
 
-        cups_get_printers do <<-EOT
+        cups_get_printers do
+          <<-EOT
 printer-name
 BackOffice
 CrawlSpace
