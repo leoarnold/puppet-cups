@@ -17,7 +17,7 @@ module PuppetX
 
         def self.request(property)
           "{
-            OPERATION get-printer-attributes
+            OPERATION Get-Printer-Attributes
             GROUP operation
             ATTR charset attributes-charset utf-8
             ATTR language attributes-natural-language en

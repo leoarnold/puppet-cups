@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+ProjectRoot="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
+set -euo pipefail
+IFS=$'\n\t'
+set -vx
+
+ipptool -c ipp://localhost/printers/$1 ${ProjectRoot}/.ipp/Get-Printers-Attributes.ipp
