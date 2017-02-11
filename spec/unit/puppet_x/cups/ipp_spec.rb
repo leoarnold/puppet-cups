@@ -3,17 +3,59 @@ require 'lib/puppet_x/cups/ipp'
 
 describe PuppetX::Cups::Ipp do
   describe '#query' do
-    it '' do
-      request = '{ [IPP request] }'
+    it 'correctly handles the output of #ipptool' do
+      stdout = "printer-name\nOffice\nWarehouse\n"
 
-      status_mock = instance_double(Process::Status)
-      allow(status_mock).to receive(:exitstatus).and_return(0)
-      allow(Open3).to receive(:capture3)
-        .with('ipptool -c ipp://localhost/ /dev/stdin', stdin_data: request)
-        .and_return(["printer-name\nOffice\nWarehouse\n", '', status_mock])
+      allow(described_class).to receive(:ipptool).and_return(stdout)
 
-      response = described_class.query(request)
-      expect(response.rows).to match(%w(Office Warehouse))
+      response = described_class.query('{ [IPP request] }')
+      expect(response.stdout).to match(stdout)
+    end
+  end
+
+  describe '#ipptool' do
+    let(:query_class) { described_class::Query }
+    let(:error_class) { described_class::Error }
+
+    context 'when execution was successful' do
+      context 'and returned output' do
+        it "provides the command's stdout" do
+          query = query_class.new('/printers/Office', '{ [IPP request] }')
+          stdout = "printer-location\nRoom 101\n"
+
+          status_mock = instance_double(Process::Status)
+          allow(status_mock).to receive(:exitstatus).and_return(0)
+          allow(Open3).to receive(:capture3).and_return([stdout, '', status_mock])
+
+          expect(described_class.ipptool(query)).to eq(stdout)
+        end
+      end
+
+      context 'and stdout was empty' do
+        # Related issue: https://github.com/leoarnold/puppet-cups/issues/12
+        it 'raises an error' do
+          query = query_class.new('/printers/Office', '{ [IPP request] }')
+          stdout = ''
+
+          status_mock = instance_double(Process::Status)
+          allow(status_mock).to receive(:exitstatus).and_return(0)
+          allow(Open3).to receive(:capture3).and_return([stdout, '', status_mock])
+
+          expect { described_class.ipptool(query) }.to raise_error(error_class)
+        end
+      end
+    end
+
+    context 'when execution fails' do
+      it 'raises an error' do
+        query = query_class.new('', '{ [IPP request] }')
+
+        status_mock = instance_double(Process::Status)
+        allow(status_mock).to receive(:exitstatus).and_return(1)
+        allow(Open3).to receive(:capture3).and_return(['', '', status_mock])
+
+        expect { described_class.ipptool(query) }.to raise_error(error_class)
+      end
     end
   end
 
@@ -77,53 +119,6 @@ describe PuppetX::Cups::Ipp do
           response = described_class.new("Microphone check\nOne\nTwo\n")
           expect(response.first_row).to eq('One')
         end
-      end
-    end
-  end
-
-  describe described_class::Execution do
-    let(:query_class) { PuppetX::Cups::Ipp::Query }
-    let(:error_class) { PuppetX::Cups::Ipp::Error }
-
-    context 'when execution was successful' do
-      context 'and returned output' do
-        it "provides the command's stdout" do
-          query = query_class.new('/printers/Office', '{ [IPP request] }')
-          stdout = "printer-location\nRoom 101\n"
-
-          status_mock = instance_double(Process::Status)
-          allow(status_mock).to receive(:exitstatus).and_return(0)
-          allow(Open3).to receive(:capture3).and_return([stdout, '', status_mock])
-
-          execution = described_class.new(query)
-          expect(execution.stdout).to eq(stdout)
-        end
-      end
-
-      context 'and stdout was empty' do
-        # Related issue: https://github.com/leoarnold/puppet-cups/issues/12
-        it 'raises an error' do
-          query = query_class.new('/printers/Office', '{ [IPP request] }')
-          stdout = ''
-
-          status_mock = instance_double(Process::Status)
-          allow(status_mock).to receive(:exitstatus).and_return(0)
-          allow(Open3).to receive(:capture3).and_return([stdout, '', status_mock])
-
-          expect { described_class.new(query) }.to raise_error(error_class)
-        end
-      end
-    end
-
-    context 'when execution fails' do
-      it 'raises an error' do
-        query = query_class.new('', '{ [IPP request] }')
-
-        status_mock = instance_double(Process::Status)
-        allow(status_mock).to receive(:exitstatus).and_return(1)
-        allow(Open3).to receive(:capture3).and_return(['', '', status_mock])
-
-        expect { described_class.new(query) }.to raise_error(error_class)
       end
     end
   end

@@ -7,8 +7,18 @@ module PuppetX
     module Ipp
       def self.query(request, resource = '/')
         query = Query.new(resource, request)
-        execution = Execution.new(query)
-        Response.new(execution.stdout)
+        stdout = ipptool(query)
+        Response.new(stdout)
+      end
+
+      def self.ipptool(query)
+        command = "ipptool -c #{query.uri} /dev/stdin"
+
+        stdout, stderr, process_status = Open3.capture3(command, stdin_data: query.request)
+
+        raise Error.new(query, stdout, stderr) if process_status.exitstatus.nonzero? || stdout.empty?
+
+        stdout
       end
 
       # A value object to encapsulate all query data
@@ -24,6 +34,8 @@ module PuppetX
       # A value object containing a query to the CUPS server
       # and all of its metadata.
       class Response
+        attr_reader :stdout
+
         def initialize(stdout)
           @stdout = stdout
         end
@@ -38,19 +50,6 @@ module PuppetX
 
         def first_row
           rows.is_a?(Array) ? rows[0] : nil
-        end
-      end
-
-      # Encapsulates the actual execution of an Ipp::Request
-      class Execution
-        attr_reader :stdout
-
-        def initialize(query)
-          command = "ipptool -c #{query.uri} /dev/stdin"
-
-          @stdout, stderr, process_status = Open3.capture3(command, stdin_data: query.request)
-
-          raise Error.new(query, @stdout, stderr) if process_status.exitstatus.nonzero? || @stdout.empty?
         end
       end
 
