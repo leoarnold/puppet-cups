@@ -225,7 +225,7 @@ Puppet::Type.newtype(:cups_queue) do
 
     # rubocop:disable Style/PredicateName
     def is_to_s(currentvalue)
-      currentvalue.to_s
+      currentvalue.sort.to_h.to_s
     end
     # rubocop:enable Style/PredicateName
 
