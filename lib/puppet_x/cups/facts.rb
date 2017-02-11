@@ -1,4 +1,4 @@
-require_relative 'server'
+require_relative 'ipp'
 
 module PuppetX
   module Cups
@@ -18,8 +18,6 @@ module PuppetX
       module Classes
         def self.fact
           PuppetX::Cups::Facts::ClassMembers.fact.keys
-        rescue
-          []
         end
       end
 
@@ -27,15 +25,14 @@ module PuppetX
       module ClassMembers
         def self.fact
           classmembers = {}
-          PuppetX::Cups::Server.query(request).each do |line|
+
+          response = PuppetX::Cups::Ipp.query(request)
+          response.rows.each do |line|
             classname, members = line.split(',', 2)
             classmembers[classname] = members.gsub(/\A"|"\Z/, '').split(',') if members
           end
-          classmembers
-        rescue
-          Puppet.debug('Failed to query CUPS server for installed classes')
 
-          {}
+          classmembers
         end
 
         def self.request
@@ -55,19 +52,15 @@ module PuppetX
       module Printers
         def self.fact
           PuppetX::Cups::Facts::Queues.fact - Cups::Facts::Classes.fact
-        rescue
-          []
         end
       end
 
       # `cups_queues`: An array of the names of all installed print queues (*including* classes).
       module Queues
         def self.fact
-          PuppetX::Cups::Server.query(request)
-        rescue
-          Puppet.debug('Failed to query CUPS server for installed queues')
+          response = PuppetX::Cups::Ipp.query(request)
 
-          []
+          response.rows
         end
 
         def self.request

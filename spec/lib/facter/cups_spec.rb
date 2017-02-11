@@ -1,15 +1,19 @@
 require 'spec_helper'
 require 'lib/facter/cups'
 
-def mock_queues_lines(printers, classmembers)
-  allow(PuppetX::Cups::Server).to receive(:query).with(PuppetX::Cups::Facts::Queues.request).and_return(printers + classmembers.keys)
+def mock_queues_rows(printers, classmembers)
+  response_mock = instance_double(PuppetX::Cups::Ipp::Response)
+  allow(response_mock).to receive(:rows).and_return(printers + classmembers.keys)
+  allow(PuppetX::Cups::Ipp).to receive(:query).with(PuppetX::Cups::Facts::Queues.request).and_return(response_mock)
 end
 
-def mock_classmembers_lines(classmembers)
-  allow(PuppetX::Cups::Server).to receive(:query).with(PuppetX::Cups::Facts::ClassMembers.request).and_return(classmembers_lines(classmembers))
+def mock_classmembers_rows(classmembers)
+  response_mock = instance_double(PuppetX::Cups::Ipp::Response)
+  allow(response_mock).to receive(:rows).and_return(classmembers_rows(classmembers))
+  allow(PuppetX::Cups::Ipp).to receive(:query).with(PuppetX::Cups::Facts::ClassMembers.request).and_return(response_mock)
 end
 
-def classmembers_lines(classmembers)
+def classmembers_rows(classmembers)
   response = []
   classmembers.keys.each do |queue|
     members = classmembers[queue].join(',')
@@ -32,22 +36,14 @@ describe PuppetX::Cups::Facts do
   describe '$::cups_classes' do
     let(:fact) { Facter.value(:cups_classes) }
 
-    context 'upon failure' do
-      it 'defaults to an empty array' do
-        allow(Open3).to receive(:capture3).and_raise('failure')
-
-        expect(fact).to eq([])
-      end
-    end
-
     context 'without printers or classes installed' do
       it 'returns an empty array' do
         classmembers = {}
         printers = []
         expected = []
 
-        mock_classmembers_lines(classmembers)
-        mock_queues_lines(printers, classmembers)
+        mock_classmembers_rows(classmembers)
+        mock_queues_rows(printers, classmembers)
         expect(fact).to match_array(expected)
       end
     end
@@ -58,8 +54,8 @@ describe PuppetX::Cups::Facts do
         printers = %w(BackOffice Office Warehouse)
         expected = []
 
-        mock_classmembers_lines(classmembers)
-        mock_queues_lines(printers, classmembers)
+        mock_classmembers_rows(classmembers)
+        mock_queues_rows(printers, classmembers)
         expect(fact).to match_array(expected)
       end
     end
@@ -74,8 +70,8 @@ describe PuppetX::Cups::Facts do
         printers = %w(BackOffice Office Warehouse)
         expected = %w(CrawlSpace GroundFloor UpperFloor)
 
-        mock_classmembers_lines(classmembers)
-        mock_queues_lines(printers, classmembers)
+        mock_classmembers_rows(classmembers)
+        mock_queues_rows(printers, classmembers)
         expect(fact).to match_array(expected)
       end
     end
@@ -84,22 +80,14 @@ describe PuppetX::Cups::Facts do
   describe '$::cups_classmembers' do
     let(:fact) { Facter.value(:cups_classmembers) }
 
-    context 'upon failure' do
-      it 'defaults to an empty hash' do
-        allow(Open3).to receive(:capture3).and_raise('failure')
-
-        expect(fact).to eq({})
-      end
-    end
-
     context 'with no classes installed' do
       it 'returns an empty hash' do
         classmembers = {}
         printers = %w(BackOffice Office Warehouse)
         expected = {}
 
-        mock_classmembers_lines(classmembers)
-        mock_queues_lines(printers, classmembers)
+        mock_classmembers_rows(classmembers)
+        mock_queues_rows(printers, classmembers)
         expect(fact).to match_array(expected)
       end
     end
@@ -118,8 +106,8 @@ describe PuppetX::Cups::Facts do
           'UpperFloor'  => %w(BackOffice)
         }
 
-        mock_classmembers_lines(classmembers)
-        mock_queues_lines(printers, classmembers)
+        mock_classmembers_rows(classmembers)
+        mock_queues_rows(printers, classmembers)
         expect(fact).to match_array(expected)
       end
     end
@@ -128,22 +116,14 @@ describe PuppetX::Cups::Facts do
   describe '$::cups_printers' do
     let(:fact) { Facter.value(:cups_printers) }
 
-    context 'upon failure' do
-      it 'defaults to an empty array' do
-        allow(Open3).to receive(:capture3).and_raise('failure')
-
-        expect(fact).to eq([])
-      end
-    end
-
     context 'without printers or classes installed' do
       it 'returns an empty array' do
         classmembers = {}
         printers = []
         expected = []
 
-        mock_classmembers_lines(classmembers)
-        mock_queues_lines(printers, classmembers)
+        mock_classmembers_rows(classmembers)
+        mock_queues_rows(printers, classmembers)
         expect(fact).to match_array(expected)
       end
     end
@@ -154,8 +134,8 @@ describe PuppetX::Cups::Facts do
         printers = %w(BackOffice Office Warehouse)
         expected = %w(BackOffice Office Warehouse)
 
-        mock_classmembers_lines(classmembers)
-        mock_queues_lines(printers, classmembers)
+        mock_classmembers_rows(classmembers)
+        mock_queues_rows(printers, classmembers)
         expect(fact).to match_array(expected)
       end
     end
@@ -170,8 +150,8 @@ describe PuppetX::Cups::Facts do
         printers = %w(BackOffice Office Warehouse)
         expected = %w(BackOffice Office Warehouse)
 
-        mock_classmembers_lines(classmembers)
-        mock_queues_lines(printers, classmembers)
+        mock_classmembers_rows(classmembers)
+        mock_queues_rows(printers, classmembers)
         expect(fact).to match_array(expected)
       end
     end
@@ -180,22 +160,14 @@ describe PuppetX::Cups::Facts do
   describe '$::cups_queues' do
     let(:fact) { Facter.value(:cups_queues) }
 
-    context 'upon failure' do
-      it 'defaults to an empty array' do
-        allow(Open3).to receive(:capture3).and_raise('failure')
-
-        expect(fact).to eq([])
-      end
-    end
-
     context 'without queues installed' do
       it 'returns an empty array' do
         classmembers = {}
         printers = []
         expected = []
 
-        mock_classmembers_lines(classmembers)
-        mock_queues_lines(printers, classmembers)
+        mock_classmembers_rows(classmembers)
+        mock_queues_rows(printers, classmembers)
         expect(fact).to match_array(expected)
       end
     end
@@ -210,8 +182,8 @@ describe PuppetX::Cups::Facts do
         printers = %w(BackOffice Office Warehouse)
         expected = %w(CrawlSpace BackOffice GroundFloor Office UpperFloor Warehouse)
 
-        mock_classmembers_lines(classmembers)
-        mock_queues_lines(printers, classmembers)
+        mock_classmembers_rows(classmembers)
+        mock_queues_rows(printers, classmembers)
         expect(fact).to match_array(expected)
       end
     end

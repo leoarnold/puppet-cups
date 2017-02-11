@@ -1,6 +1,6 @@
 require 'erb'
 
-require_relative 'server'
+require_relative 'ipp'
 
 module PuppetX
   module Cups
@@ -10,8 +10,9 @@ module PuppetX
       module Attribute
         def self.query(queue, property)
           resource = '/printers/' + ERB::Util.url_encode(queue)
-          lines = PuppetX::Cups::Server.query(request(property), resource)
-          lines[0]
+          response = PuppetX::Cups::Ipp.query(request(property), resource)
+
+          response.first_row
         end
 
         def self.request(property)
