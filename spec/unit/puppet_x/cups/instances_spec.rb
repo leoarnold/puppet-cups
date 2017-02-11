@@ -1,16 +1,16 @@
 require 'spec_helper'
-require 'lib/facter/cups'
+require 'lib/puppet_x/cups/instances'
 
 def mock_queues_rows(printers, classmembers)
   response_mock = instance_double(PuppetX::Cups::Ipp::Response)
   allow(response_mock).to receive(:rows).and_return(printers + classmembers.keys)
-  allow(PuppetX::Cups::Ipp).to receive(:query).with(PuppetX::Cups::Facts::Queues.request).and_return(response_mock)
+  allow(PuppetX::Cups::Ipp).to receive(:query).with(PuppetX::Cups::Instances::Queues.request).and_return(response_mock)
 end
 
 def mock_classmembers_rows(classmembers)
   response_mock = instance_double(PuppetX::Cups::Ipp::Response)
   allow(response_mock).to receive(:rows).and_return(classmembers_rows(classmembers))
-  allow(PuppetX::Cups::Ipp).to receive(:query).with(PuppetX::Cups::Facts::ClassMembers.request).and_return(response_mock)
+  allow(PuppetX::Cups::Ipp).to receive(:query).with(PuppetX::Cups::Instances::ClassMembers.request).and_return(response_mock)
 end
 
 def classmembers_rows(classmembers)
@@ -23,19 +23,8 @@ def classmembers_rows(classmembers)
   response
 end
 
-describe PuppetX::Cups::Facts do
-  before(:each) do
-    described_class.add_facts
-  end
-
-  after(:each) do
-    Facter.clear
-    Facter.clear_messages
-  end
-
-  describe '$::cups_classes' do
-    let(:fact) { Facter.value(:cups_classes) }
-
+describe PuppetX::Cups::Instances::Classes do
+  describe '#to_a' do
     context 'without printers or classes installed' do
       it 'returns an empty array' do
         classmembers = {}
@@ -44,7 +33,7 @@ describe PuppetX::Cups::Facts do
 
         mock_classmembers_rows(classmembers)
         mock_queues_rows(printers, classmembers)
-        expect(fact).to match_array(expected)
+        expect(described_class.to_a).to match_array(expected)
       end
     end
 
@@ -56,7 +45,7 @@ describe PuppetX::Cups::Facts do
 
         mock_classmembers_rows(classmembers)
         mock_queues_rows(printers, classmembers)
-        expect(fact).to match_array(expected)
+        expect(described_class.to_a).to match_array(expected)
       end
     end
 
@@ -72,14 +61,14 @@ describe PuppetX::Cups::Facts do
 
         mock_classmembers_rows(classmembers)
         mock_queues_rows(printers, classmembers)
-        expect(fact).to match_array(expected)
+        expect(described_class.to_a).to match_array(expected)
       end
     end
   end
+end
 
-  describe '$::cups_classmembers' do
-    let(:fact) { Facter.value(:cups_classmembers) }
-
+describe PuppetX::Cups::Instances::ClassMembers do
+  describe '#to_h' do
     context 'with no classes installed' do
       it 'returns an empty hash' do
         classmembers = {}
@@ -88,7 +77,7 @@ describe PuppetX::Cups::Facts do
 
         mock_classmembers_rows(classmembers)
         mock_queues_rows(printers, classmembers)
-        expect(fact).to match_array(expected)
+        expect(described_class.to_h).to match_array(expected)
       end
     end
 
@@ -108,14 +97,14 @@ describe PuppetX::Cups::Facts do
 
         mock_classmembers_rows(classmembers)
         mock_queues_rows(printers, classmembers)
-        expect(fact).to match_array(expected)
+        expect(described_class.to_h).to match_array(expected)
       end
     end
   end
+end
 
-  describe '$::cups_printers' do
-    let(:fact) { Facter.value(:cups_printers) }
-
+describe PuppetX::Cups::Instances::Printers do
+  describe '#to_a' do
     context 'without printers or classes installed' do
       it 'returns an empty array' do
         classmembers = {}
@@ -124,7 +113,7 @@ describe PuppetX::Cups::Facts do
 
         mock_classmembers_rows(classmembers)
         mock_queues_rows(printers, classmembers)
-        expect(fact).to match_array(expected)
+        expect(described_class.to_a).to match_array(expected)
       end
     end
 
@@ -136,7 +125,7 @@ describe PuppetX::Cups::Facts do
 
         mock_classmembers_rows(classmembers)
         mock_queues_rows(printers, classmembers)
-        expect(fact).to match_array(expected)
+        expect(described_class.to_a).to match_array(expected)
       end
     end
 
@@ -152,14 +141,14 @@ describe PuppetX::Cups::Facts do
 
         mock_classmembers_rows(classmembers)
         mock_queues_rows(printers, classmembers)
-        expect(fact).to match_array(expected)
+        expect(described_class.to_a).to match_array(expected)
       end
     end
   end
+end
 
-  describe '$::cups_queues' do
-    let(:fact) { Facter.value(:cups_queues) }
-
+describe PuppetX::Cups::Instances::Queues do
+  describe '#to_a' do
     context 'without queues installed' do
       it 'returns an empty array' do
         classmembers = {}
@@ -168,7 +157,7 @@ describe PuppetX::Cups::Facts do
 
         mock_classmembers_rows(classmembers)
         mock_queues_rows(printers, classmembers)
-        expect(fact).to match_array(expected)
+        expect(described_class.to_a).to match_array(expected)
       end
     end
 
@@ -184,7 +173,7 @@ describe PuppetX::Cups::Facts do
 
         mock_classmembers_rows(classmembers)
         mock_queues_rows(printers, classmembers)
-        expect(fact).to match_array(expected)
+        expect(described_class.to_a).to match_array(expected)
       end
     end
   end

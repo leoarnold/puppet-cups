@@ -32,7 +32,6 @@
     * [Classes](#classes)
     * [Defines](#defines)
     * [Types](#types)
-    * [Facts](#facts)
 1. [Limitations](#limitations)
     * [Evince (aka Document Viewer)](#evince-aka-document-viewer)
     * [Option defaults](#option-defaults)
@@ -628,16 +627,6 @@ the ENC / Hiera just get to decide which classes get included on the node:
 ### Types
 
 * [`cups_queue`](#type-cups_queue)
-
-### Facts
-
-* `cups_classes`: An array of the names of all installed classes.
-
-* `cups_classmembers`: A hash with the names of all classes (as keys) and their members (as array value).
-
-* `cups_printers`: An array of the names of all installed print queues (*excluding* classes).
-
-* `cups_queues`: An array of the names of all installed print queues (*including* classes).
 
 #### Class: `cups`
 

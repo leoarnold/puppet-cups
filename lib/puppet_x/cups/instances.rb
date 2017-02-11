@@ -2,28 +2,21 @@ require_relative 'ipp'
 
 module PuppetX
   module Cups
-    # Namespace for modules related to generation of Puppet Facts
+    # Namespace for modules related to querying the CUPS server for available queue instances
     #
     # The design of this module is based on the ideas of R. Tyler Croy:
     # http://unethicalblogger.com/2014/03/01/testing-custom-facts-with-rspec.html
-    module Facts
-      def self.add_facts
-        Facter.add(:cups_classes) { setcode { PuppetX::Cups::Facts::Classes.fact } }
-        Facter.add(:cups_classmembers) { setcode { PuppetX::Cups::Facts::ClassMembers.fact } }
-        Facter.add(:cups_printers) { setcode { PuppetX::Cups::Facts::Printers.fact } }
-        Facter.add(:cups_queues) { setcode { PuppetX::Cups::Facts::Queues.fact } }
-      end
-
-      # `cups_classes`: An array of the names of all installed classes.
+    module Instances
+      # An array of the names of all installed classes.
       module Classes
-        def self.fact
-          PuppetX::Cups::Facts::ClassMembers.fact.keys
+        def self.to_a
+          PuppetX::Cups::Instances::ClassMembers.to_h.keys
         end
       end
 
-      # `cups_classmembers`: A hash with the names of all classes (as keys) and their members (as array value).
+      # A hash with the names of all classes (as keys) and their members (as array value).
       module ClassMembers
-        def self.fact
+        def self.to_h
           classmembers = {}
 
           response = PuppetX::Cups::Ipp.query(request)
@@ -48,16 +41,16 @@ module PuppetX
         end
       end
 
-      # `cups_printers`: An array of the names of all installed print queues (*excluding* classes).
+      # An array of the names of all installed print queues (*excluding* classes).
       module Printers
-        def self.fact
-          PuppetX::Cups::Facts::Queues.fact - Cups::Facts::Classes.fact
+        def self.to_a
+          PuppetX::Cups::Instances::Queues.to_a - PuppetX::Cups::Instances::Classes.to_a
         end
       end
 
-      # `cups_queues`: An array of the names of all installed print queues (*including* classes).
+      # An array of the names of all installed print queues (*including* classes).
       module Queues
-        def self.fact
+        def self.to_a
           response = PuppetX::Cups::Ipp.query(request)
 
           response.rows
