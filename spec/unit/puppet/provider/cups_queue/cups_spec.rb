@@ -8,8 +8,8 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     describe '#instances' do
       shared_examples 'correct instances' do |classmembers, printers|
         it 'returns the correct array of provider instances' do
-          allow(PuppetX::Cups::Instances::ClassMembers).to receive(:fact).and_return(classmembers)
-          allow(PuppetX::Cups::Instances::Printers).to receive(:fact).and_return(printers)
+          allow(PuppetX::Cups::Instances::ClassMembers).to receive(:to_h).and_return(classmembers)
+          allow(PuppetX::Cups::Instances::Printers).to receive(:to_a).and_return(printers)
 
           instances = provider.instances
           instance = nil
