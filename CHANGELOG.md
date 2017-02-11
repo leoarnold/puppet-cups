@@ -13,16 +13,21 @@ Please adjust your manifests according to the [upgrade instructions](UPGRADING.m
 
 ### Breaking changes
 
-- Puppet 3.x is no longer supported. All manifests now use Puppet 4 syntax.
-- Ruby 1.x is no longer supported since Puppet 4 comes with Ruby `~> 2.1`.
-- Some attributes were removed from the `cups` class.
-- The defined type `cups::ctl` was removed.
+- Puppet 3.x is no longer supported. All manifests now use Puppet 4 syntax
+- Ruby 1.x is no longer supported since Puppet 4 comes with Ruby `~> 2.1`
+- All facts were removed
+- Some attributes were removed from the `cups` class
+- The defined type `cups::ctl` was removed
 
 ### Features
 
-- `Class[cups]` now supports removing all CUPS packages
+- `Class[cups]` now has tunables for package and service management
 - The CUPS server can now be managed using the new defined type `cups::server`
-- `cups_queue` now supports managing the option `'auth-info-required'`
+- `cups_queue` now supports managing the option `auth-info-required`
+
+### Bugfixes
+
+- Execution of `ipptool` now enjoys more comprehensive error handling
 
 ## 2016-05-24 - Maintenance release 1.2.2
 
