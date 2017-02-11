@@ -26,7 +26,8 @@ class cups::server (
       mode   => '0755',
     }
 
-    file { "${conf_directory}/lpoptions" :
+    file { 'lpoptions' :
+      path    => "${conf_directory}/lpoptions",
       ensure  => 'absent',
       require => File[$conf_directory],
     }
