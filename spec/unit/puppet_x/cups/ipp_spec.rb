@@ -46,8 +46,19 @@ describe PuppetX::Cups::Ipp do
       end
     end
 
-    context 'when execution fails' do
-      it 'raises an error' do
+    context 'when execution fails and stderr == "No destinations added.\n"' do
+      it "provides the command's stdout" do
+        query = query_class.new('', '{ [IPP request] }')
+        stdout = ''
+
+        status_mock = instance_double(Process::Status)
+        allow(status_mock).to receive(:exitstatus).and_return(1)
+        allow(Open3).to receive(:capture3).and_return([stdout, "No destinations added.\n", status_mock])
+
+        expect(described_class.ipptool(query)).to eq(stdout)
+      end
+
+      it 'raises an error and stderr != "No destinations added.\n"' do
         query = query_class.new('', '{ [IPP request] }')
 
         status_mock = instance_double(Process::Status)
@@ -78,9 +89,9 @@ describe PuppetX::Cups::Ipp do
 
     describe '#rows' do
       context "when stdout = ''" do
-        it 'returns nil' do
+        it 'returns []' do
           response = described_class.new('')
-          expect(response.rows).to be nil
+          expect(response.rows).to match_array([])
         end
       end
 

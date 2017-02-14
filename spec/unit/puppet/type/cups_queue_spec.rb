@@ -293,38 +293,54 @@ describe Puppet::Type.type(:cups_queue) do
     end
 
     describe 'name' do
-      it 'should have documentation' do
+      it 'has documentation' do
         expect(type.attrclass(:name).doc).to be_instance_of(String)
         expect(type.attrclass(:name).doc.length).to be > 20
       end
 
-      describe 'should accept' do
-        it 'a string with international characters, numbers and underscores' do
-          @resource[:name] = 'RSpec_Test_äöü_абв_Nr1'
-          expect(@resource[:name]).to eq('RSpec_Test_äöü_абв_Nr1')
-        end
+      it 'accepts a string with international characters, numbers and underscores' do
+        @resource[:name] = 'RSpec_Test_äöü_абв_Nr1'
+        expect(@resource[:name]).to eq('RSpec_Test_äöü_абв_Nr1')
       end
 
-      describe 'should NOT accept' do
-        it 'a string with spaces' do
-          expect { @resource[:name] = 'RSpec Test_Printer' }.to raise_error(/may NOT contain/)
-        end
+      it 'rejects a string with a SPACE' do
+        expect { @resource[:name] = 'RSpec Test_Printer' }.to raise_error(/SPACE/)
+      end
 
-        it 'a string with tabs' do
-          expect { @resource[:name] = "RSpec\tTest_Printer" }.to raise_error(/may NOT contain/)
-        end
+      it 'rejects a string with a TAB' do
+        expect { @resource[:name] = "RSpec\tTest_Printer" }.to raise_error(/TAB/)
+      end
 
-        it 'a string with newline characters' do
-          expect { @resource[:name] = "RSpec\rTest\nPrinter" }.to raise_error(/may NOT contain/)
-        end
+      it 'rejects a string with a carriage return character' do
+        expect { @resource[:name] = "RSpec\rTest_Printer" }.to raise_error(/SPACE/)
+      end
 
-        it "a string with a '/'" do
-          expect { @resource[:name] = 'RSpec/Test_Printer' }.to raise_error(/may NOT contain/)
-        end
+      it 'rejects a string with a newline character' do
+        expect { @resource[:name] = "RSpec\nTest_Printer" }.to raise_error(/SPACE/)
+      end
 
-        it "a string with a '#'" do
-          expect { @resource[:name] = 'RSpec#Test_Printer' }.to raise_error(/may NOT contain/)
-        end
+      it 'rejects a string with a SLASH' do
+        expect { @resource[:name] = 'RSpec/Test_Printer' }.to raise_error(/SLASH/)
+      end
+
+      it 'rejects a string with a BACKSLASH' do
+        expect { @resource[:name] = 'RSpec\Test_Printer' }.to raise_error(/BACK[)]?SLASH/)
+      end
+
+      it 'rejects a string with a SINGLEQUOTE' do
+        expect { @resource[:name] = "RSpec'Test_Printer" }.to raise_error(/QUOTE/)
+      end
+
+      it 'rejects a string with a DOUBLEQUOTE' do
+        expect { @resource[:name] = 'RSpec"Test_Printer' }.to raise_error(/QUOTE/)
+      end
+
+      it 'rejects a string with a COMMA' do
+        expect { @resource[:name] = 'RSpec,Test_Printer' }.to raise_error(/COMMA/)
+      end
+
+      it "rejects a string with a '#'" do
+        expect { @resource[:name] = 'RSpec#Test_Printer' }.to raise_error(/COMMA/)
       end
     end
 

@@ -5,21 +5,23 @@ describe 'Custom type `cups_queue`' do
     ensure_cups_is_running
   end
 
+  name = 'RSpec&Test_Printer'
+
   context 'managing any queue' do
     before(:all) do
       purge_all_queues
-      add_printers(%w(Office))
+      add_printers(name)
     end
 
     context 'changing only the property' do
       context 'access' do
         before(:all) do
-          shell('lpadmin -E -p Office -u allow:all')
+          shell("lpadmin -E -p #{Shellwords.escape(name)} -u allow:all")
         end
 
         context 'with policy => allow' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure => 'printer',
               access => {
                 'policy' => 'allow',
@@ -39,7 +41,7 @@ describe 'Custom type `cups_queue`' do
 
         context 'with policy => allow and changing users' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure => 'printer',
               access => {
                 'policy' => 'allow',
@@ -59,7 +61,7 @@ describe 'Custom type `cups_queue`' do
 
         context 'with policy => deny' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure => 'printer',
               access => {
                 'policy' => 'deny',
@@ -79,7 +81,7 @@ describe 'Custom type `cups_queue`' do
 
         context 'with policy => deny and changing users' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure => 'printer',
               access => {
                 'policy' => 'deny',
@@ -99,7 +101,7 @@ describe 'Custom type `cups_queue`' do
 
         context 'unsetting all restrictions' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure => 'printer',
               access => {
                 'policy' => 'allow',
@@ -120,12 +122,12 @@ describe 'Custom type `cups_queue`' do
 
       context 'accepting' do
         before(:all) do
-          shell('cupsreject -E Office')
+          shell("cupsreject -E #{Shellwords.escape(name)}")
         end
 
         context '=> true' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure    => 'printer',
               accepting => 'true'
             }
@@ -136,7 +138,7 @@ describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell('lpoptions -p Office').stdout).to include('printer-is-accepting-jobs=true')
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to include('printer-is-accepting-jobs=true')
           end
 
           it 'is idempotent' do
@@ -146,7 +148,7 @@ describe 'Custom type `cups_queue`' do
 
         context '=> false' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure    => 'printer',
               accepting => 'false'
             }
@@ -157,7 +159,7 @@ describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell('lpoptions -p Office').stdout).to include('printer-is-accepting-jobs=false')
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to include('printer-is-accepting-jobs=false')
           end
 
           it 'is idempotent' do
@@ -168,11 +170,11 @@ describe 'Custom type `cups_queue`' do
 
       context 'description' do
         before(:all) do
-          shell("lpadmin -E -p Office -D 'color'")
+          shell("lpadmin -E -p #{Shellwords.escape(name)} -D 'color'")
         end
 
         manifest = <<-EOM
-          cups_queue { 'Office':
+          cups_queue { '#{name}':
             ensure      => 'printer',
             description => 'duplex'
           }
@@ -183,7 +185,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         it 'sets the correct value' do
-          expect(shell('lpoptions -p Office').stdout).to include('printer-info=duplex')
+          expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to include('printer-info=duplex')
         end
 
         it 'is idempotent' do
@@ -193,12 +195,12 @@ describe 'Custom type `cups_queue`' do
 
       context 'enabled' do
         before(:all) do
-          shell('cupsdisable -E Office')
+          shell("cupsdisable -E #{Shellwords.escape(name)}")
         end
 
         context '=> true' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure  => 'printer',
               enabled => 'true'
             }
@@ -209,7 +211,7 @@ describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell('lpoptions -p Office').stdout).not_to match(/printer-state-reasons=\S*paused\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).not_to match(/printer-state-reasons=\S*paused\S*/)
           end
 
           it 'is idempotent' do
@@ -219,7 +221,7 @@ describe 'Custom type `cups_queue`' do
 
         context '=> false' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure  => 'printer',
               enabled => 'false'
             }
@@ -230,7 +232,7 @@ describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell('lpoptions -p Office').stdout).to match(/printer-state-reasons=\S*paused\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to match(/printer-state-reasons=\S*paused\S*/)
           end
 
           it 'is idempotent' do
@@ -241,12 +243,12 @@ describe 'Custom type `cups_queue`' do
 
       context 'held' do
         before(:all) do
-          shell('cupsenable -E --release Office')
+          shell("cupsenable -E --release #{Shellwords.escape(name)}")
         end
 
         context '=> true' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure => 'printer',
               held   => 'true'
             }
@@ -257,7 +259,7 @@ describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell('lpoptions -p Office').stdout).to match(/printer-state-reasons=\S*hold-new-jobs\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to match(/printer-state-reasons=\S*hold-new-jobs\S*/)
           end
 
           it 'is idempotent' do
@@ -267,7 +269,7 @@ describe 'Custom type `cups_queue`' do
 
         context '=> false' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure => 'printer',
               held   => 'false'
             }
@@ -278,7 +280,7 @@ describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell('lpoptions -p Office').stdout).not_to match(/printer-state-reasons=\S*hold-new-jobs\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).not_to match(/printer-state-reasons=\S*hold-new-jobs\S*/)
           end
 
           it 'is idempotent' do
@@ -289,11 +291,11 @@ describe 'Custom type `cups_queue`' do
 
       context 'location' do
         before(:all) do
-          shell("lpadmin -E -p Office -L 'Room 451'")
+          shell("lpadmin -E -p #{Shellwords.escape(name)} -L 'Room 451'")
         end
 
         manifest = <<-EOM
-          cups_queue { 'Office':
+          cups_queue { '#{name}':
             ensure   => 'printer',
             location => 'Room 101'
           }
@@ -304,7 +306,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         it 'sets the correct value' do
-          expect(shell('lpstat -l -p Office').stdout).to include('Room 101')
+          expect(shell("lpstat -l -p #{Shellwords.escape(name)}").stdout).to include('Room 101')
         end
 
         it 'is idempotent' do
@@ -315,14 +317,14 @@ describe 'Custom type `cups_queue`' do
       context 'options' do
         context 'using native options' do
           before(:all) do
-            shell('lpadmin -E -p Office' \
-              '-o auth-info-required=negotiate' \
-              '-o job-sheets-default=banner,banner' \
-              '-o printer-error-policy=retry-current-job')
+            shell("lpadmin -E -p #{Shellwords.escape(name)}" \
+              ' -o auth-info-required=negotiate' \
+              ' -o job-sheets-default=banner,banner' \
+              ' -o printer-error-policy=retry-current-job')
           end
 
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure  => 'printer',
               options => {
                 'auth-info-required'   => 'none',
@@ -343,11 +345,11 @@ describe 'Custom type `cups_queue`' do
 
         context 'using vendor options' do
           before(:all) do
-            shell('lpadmin -E -p Office -o Duplex=None -o PageSize=Letter')
+            shell("lpadmin -E -p #{Shellwords.escape(name)} -o Duplex=None -o PageSize=Letter")
           end
 
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure  => 'printer',
               options => {
                 'Duplex'   => 'DuplexNoTumble',
@@ -361,7 +363,7 @@ describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct values' do
-            output = shell('lpoptions -p Office -l').stdout
+            output = shell("lpoptions -p #{Shellwords.escape(name)} -l").stdout
             expect(output).to match(%r{Duplex/.*\s\*DuplexNoTumble\s})
             expect(output).to match(%r{PageSize/.*\s\*A4\s})
           end
@@ -374,12 +376,12 @@ describe 'Custom type `cups_queue`' do
 
       context 'shared' do
         before(:all) do
-          shell('lpadmin -E -p Office -o printer-is-shared=false')
+          shell("lpadmin -E -p #{Shellwords.escape(name)} -o printer-is-shared=false")
         end
 
         context '=> true' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure => 'printer',
               shared => 'true'
             }
@@ -396,7 +398,7 @@ describe 'Custom type `cups_queue`' do
 
         context '=> false' do
           manifest = <<-EOM
-            cups_queue { 'Office':
+            cups_queue { '#{name}':
               ensure => 'printer',
               shared => 'false'
             }

@@ -185,7 +185,7 @@ describe 'Custom type `cups_queue`' do
         context 'and there are NO unwanted members' do
           before(:all) do
             purge_all_queues
-            add_printers(%w(Office))
+            add_printers('Office')
             add_printers_to_classes('GroundFloor' => %w(Office))
           end
 

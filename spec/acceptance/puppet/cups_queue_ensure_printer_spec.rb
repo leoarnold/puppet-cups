@@ -5,7 +5,7 @@ describe 'Custom type `cups_queue`' do
     ensure_cups_is_running
   end
 
-  name = 'Office'
+  name = 'RSpec&Test_Printer'
 
   describe 'ensuring a printer' do
     shared_examples 'installing a printer' do |manifest, make_and_model|
@@ -23,14 +23,14 @@ describe 'Custom type `cups_queue`' do
         end
 
         it 'installed the specified printer' do
-          expect(shell("lpoptions -p #{name}").stdout).to include("printer-make-and-model='#{make_and_model}'")
+          expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to include("printer-make-and-model='#{make_and_model}'")
         end
       end
 
       context 'when the queue is present as a printer' do
         before(:all) do
           purge_all_queues
-          add_printers([name])
+          add_printers(name)
         end
 
         it 'does not apply changes' do
@@ -53,7 +53,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         it 'replaced the class with the specified printer' do
-          expect(shell("lpoptions -p #{name}").stdout).to include("printer-make-and-model='#{make_and_model}'")
+          expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to include("printer-make-and-model='#{make_and_model}'")
         end
       end
     end
@@ -62,7 +62,7 @@ describe 'Custom type `cups_queue`' do
       context 'when the queue is present as a printer' do
         before(:all) do
           purge_all_queues
-          add_printers([name])
+          add_printers(name)
         end
 
         it 'applies changes' do
@@ -74,7 +74,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         it 'replaced the printer with the specified printer' do
-          expect(shell("lpoptions -p #{name}").stdout).to include("printer-make-and-model='#{make_and_model}'")
+          expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to include("printer-make-and-model='#{make_and_model}'")
         end
       end
     end
@@ -251,14 +251,14 @@ describe 'Custom type `cups_queue`' do
         end
 
         it 'configured the specified URI' do
-          expect(shell("lpoptions -p #{name}").stdout).to include("device-uri=#{uri}")
+          expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to include("device-uri=#{uri}")
         end
       end
 
       context 'when the queue is present as printer' do
         before(:all) do
           purge_all_queues
-          add_printers([name])
+          add_printers(name)
         end
 
         it 'applies changes' do
@@ -270,7 +270,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         it 'configured the specified URI' do
-          expect(shell("lpoptions -p #{name}").stdout).to include("device-uri=#{uri}")
+          expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to include("device-uri=#{uri}")
         end
       end
     end

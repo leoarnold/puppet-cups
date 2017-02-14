@@ -12,11 +12,15 @@ module PuppetX
       end
 
       def self.ipptool(query)
-        command = "ipptool -c #{query.uri} /dev/stdin"
+        command = "ipptool -c '#{query.uri}' /dev/stdin"
 
         stdout, stderr, process_status = Open3.capture3(command, stdin_data: query.request)
 
-        raise Error.new(query, stdout, stderr) if process_status.exitstatus.nonzero? || stdout.empty?
+        if process_status.exitstatus.zero?
+          raise Error.new(query, stdout, stderr) if stdout.empty?
+        else
+          raise Error.new(query, stdout, stderr) unless stderr == "No destinations added.\n"
+        end
 
         stdout
       end
@@ -45,11 +49,11 @@ module PuppetX
         end
 
         def rows
-          stdout_lines[1..-1]
+          stdout_lines.length > 1 ? stdout_lines[1..-1] : []
         end
 
         def first_row
-          rows.is_a?(Array) ? rows[0] : nil
+          rows[0]
         end
       end
 

@@ -97,10 +97,10 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newparam(:name) do
-    desc '(mandatory) CUPS queue names are case insensitive and may contain any printable character except SPACE, TAB, "/", or "#".'
+    desc '(mandatory) Queue names may contain any printable character except SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".'
 
     validate do |name|
-      raise ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if name =~ %r{[\s/#]}
+      raise ArgumentError, 'Queue names may NOT contain SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".' if name =~ %r{[\s\"\'\\,#/]}
     end
   end
 

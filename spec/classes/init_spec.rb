@@ -128,19 +128,12 @@ describe 'cups' do
         it { should_not contain_class('cups::default_queue') }
       end
 
-      context "= 'Office'" do
-        let(:pre_condition) do
-          <<-EOM
-            cups_queue { 'Office':
-              ensure => 'printer',
-              model  => 'drv:///sample.drv/generic.ppd',
-              uri    => 'lpd://192.168.2.105/binary_p1'
-            }
-          EOM
-        end
-        let(:params) { { default_queue: 'Office' } }
+      context "=> 'RSpec_Test_äöü_абв_Nr1'" do
+        let(:params) { { default_queue: 'RSpec_Test_äöü_абв_Nr1' } }
 
-        it { should contain_exec('lpadmin-d-Office') }
+        let(:pre_condition) { "cups_queue { 'RSpec_Test_äöü_абв_Nr1': }" }
+
+        it { should contain_class('cups::default_queue').with(queue: 'RSpec_Test_äöü_абв_Nr1') }
       end
     end
 

@@ -9,11 +9,14 @@ class cups::default_queue (
   String $queue,
 ) {
 
-  exec { "lpadmin-d-${queue}":
-    command => "lpadmin -E -d ${queue}",
-    unless  => "lpstat -d | grep -w ${queue}",
-    path    => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
-    require => Cups_queue[$queue]
+  if ($queue =~ /[\s\"\'\\,#\/]/) {
+    fail('Queue names may NOT contain SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".')
+  } else {
+    exec { "lpadmin -E -d '${queue}'":
+      unless  => "lpstat -d | grep -w '${queue}'",
+      path    => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
+      require => Cups_queue[$queue]
+    }
   }
 
 }

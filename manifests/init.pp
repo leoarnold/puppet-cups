@@ -46,8 +46,7 @@ class cups (
 
   unless ($default_queue == undef) {
     class { '::cups::default_queue' :
-      queue   => $default_queue,
-      require => File['lpoptions'],
+      queue => $default_queue,
     }
   }
 

@@ -28,6 +28,7 @@ Please adjust your manifests according to the [upgrade instructions](UPGRADING.m
 ### Bugfixes
 
 - Execution of `ipptool` now enjoys more comprehensive error handling
+- Queue names with special characters (e.g. ampersands) are now handled correctly
 
 ## 2016-05-24 - Maintenance release 1.2.2
 

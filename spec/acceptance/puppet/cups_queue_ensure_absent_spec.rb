@@ -27,7 +27,7 @@ describe 'Custom type `cups_queue`' do
     context 'when the queue is present' do
       before(:all) do
         purge_all_queues
-        add_printers([queue])
+        add_printers(queue)
       end
 
       it 'applies changes' do
@@ -39,7 +39,7 @@ describe 'Custom type `cups_queue`' do
       end
 
       it 'deleted the queue' do
-        shell("lpstat -p #{queue}", acceptable_exit_codes: [1])
+        shell("lpstat -p #{Shellwords.escape(queue)}", acceptable_exit_codes: [1])
       end
     end
   end

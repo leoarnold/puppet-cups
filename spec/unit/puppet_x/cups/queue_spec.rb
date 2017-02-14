@@ -8,9 +8,9 @@ describe PuppetX::Cups::Queue::Attribute do
       process = instance_double(Process::Status)
       expect(process).to receive(:exitstatus).and_return(0)
       expect(Open3).to receive(:capture3) \
-        .with('ipptool -c ipp://localhost/printers/%C3%9Cnic%C3%B4de /dev/stdin', stdin_data: request) \
+        .with("ipptool -c 'ipp://localhost/printers/%C3%9Cni%26c%C3%B4de' /dev/stdin", stdin_data: request) \
         .and_return(["device-uri\nlpd://192.168.2.105/binary_p1\n", '', process])
-      expect(described_class.query('Ünicôde', 'device-uri')).to eq('lpd://192.168.2.105/binary_p1')
+      expect(described_class.query('Üni&côde', 'device-uri')).to eq('lpd://192.168.2.105/binary_p1')
     end
   end
 end
