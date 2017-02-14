@@ -79,19 +79,22 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def run_parameter_setter(*parameters)
     parameters.each do |parameter|
-      value = resource.value(parameter)
-      method(parameter.to_s + '=').call(value) if value
+      run_attribute_setter(parameter, resource.value(parameter))
     end
   end
+  private :run_parameter_setter
 
   def run_property_setter(*properties)
     properties.each do |property|
-      target_value = resource.should(property)
-      method(property.to_s + '=').call(target_value) if target_value
+      run_attribute_setter(property, resource.should(property))
     end
   end
+  private :run_property_setter
 
-  private :run_parameter_setter, :run_property_setter
+  def run_attribute_setter(attribute, target_value)
+    method(attribute.to_s + '=').call(target_value) if target_value
+  end
+  private :run_attribute_setter
 
   def destroy
     lpadmin('-E', '-x', name) if queue_exists?
