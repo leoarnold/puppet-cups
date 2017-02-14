@@ -46,31 +46,52 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def queue_exists?
-    [:class, :printer].include? @property_hash[:ensure]
+    class_exists? || printer_exists?
   end
 
   ### Creation and destruction
 
   def create_class
+    # The queue might be present as a printer
     destroy
-    resource.should(:members).each { |member| lpadmin('-E', '-p', member, '-c', name) }
-    [:access, :description, :location, :options, :shared,
-     :enabled, :held, :accepting].each do |property|
-      value = resource.should(property)
-      method(property.to_s + '=').call(value) if value
+
+    resource.should(:members).each do |member|
+      lpadmin('-E', '-p', member, '-c', name)
     end
+
+    run_property_setter(:access, :description, :location, :options, :shared,
+                        :enabled, :held, :accepting)
   end
 
   def create_printer
+    # The queue might be present as a class
     destroy
-    lpadmin('-E', '-p', name, '-v', '/dev/null') # Creates a minimal raw queue
-    [:interface, :model, :ppd, :uri,
-     :access, :description, :location, :options, :shared,
-     :enabled, :held, :accepting].each do |property|
-      value = resource.value(property)
-      method(property.to_s + '=').call(value) if value
+
+    # Create a minimal raw queue first, then adapt it
+    lpadmin('-E', '-p', name, '-v', 'file:///dev/null')
+
+    run_parameter_setter(:interface, :model, :ppd)
+
+    run_property_setter(:uri,
+                        :access, :description, :location, :options, :shared,
+                        :enabled, :held, :accepting)
+  end
+
+  def run_parameter_setter(*parameters)
+    parameters.each do |parameter|
+      value = resource.value(parameter)
+      method(parameter.to_s + '=').call(value) if value
     end
   end
+
+  def run_property_setter(*properties)
+    properties.each do |property|
+      target_value = resource.should(property)
+      method(property.to_s + '=').call(target_value) if target_value
+    end
+  end
+
+  private :run_parameter_setter, :run_property_setter
 
   def destroy
     lpadmin('-E', '-x', name) if queue_exists?
@@ -88,11 +109,16 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def accepting=(value)
-    value == :true ? cupsaccept('-E', name) : cupsreject('-E', name)
+    if value == :true
+      cupsaccept('-E', name)
+    else
+      cupsreject('-E', name)
+    end
   end
 
   def access
     policy = (users_denied_is.nil? ? 'allow' : 'deny')
+
     { 'policy' => policy, 'users' => users_is }
   end
 
@@ -113,7 +139,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def enabled=(value)
-    value == :true ? while_root_allowed { cupsenable('-E', name) } : cupsdisable('-E', name)
+    if value == :true
+      while_root_allowed { cupsenable('-E', name) }
+    else
+      cupsdisable('-E', name)
+    end
   end
 
   def held
@@ -121,7 +151,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def held=(value)
-    value == :true ? cupsdisable('-E', '--hold', name) : cupsenable('-E', '--release', name)
+    if value == :true
+      cupsdisable('-E', '--hold', name)
+    else
+      cupsenable('-E', '--release', name)
+    end
   end
 
   def interface=(value)

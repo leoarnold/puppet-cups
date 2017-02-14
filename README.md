@@ -686,7 +686,8 @@ Installs and manages CUPS print queues.
 
 ##### Attributes
 
-* `name`: (mandatory) Queue names may contain any printable character except SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".
+* `name`: (mandatory) Queue names may contain any printable character
+  except SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".
   We recommend to use only ASCII characters as the node's shell might not support Unicode.
 
 * `ensure`: *mandatory* - Specifies whether this queue should be a `class`, a `printer` or `absent`.

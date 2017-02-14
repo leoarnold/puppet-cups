@@ -4,7 +4,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
   let(:type) { Puppet::Type.type(:cups_queue) }
   let(:provider) { described_class }
 
-  describe 'static class methods' do
+  describe 'static class method' do
     describe '#instances' do
       shared_examples 'correct instances' do |classmembers, printers|
         it 'returns the correct array of provider instances' do
@@ -133,7 +133,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           method = (manifest.keys & switch.keys)[0]
 
           allow(@provider).to receive(:lpadmin).with('-E', '-x', 'Office')
-          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', '/dev/null')
+          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', 'file:///dev/null')
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', switch[method], manifest[method]) if method
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'printer-is-shared=false')
 
@@ -191,7 +191,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     end
   end
 
-  describe 'provider methods' do
+  describe 'provider method' do
     before(:each) do
       manifest = {
         ensure: 'printer',
@@ -200,6 +200,32 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
       @resource = type.new(manifest)
       @provider = provider.new(@resource)
+    end
+
+    describe '#accepting' do
+      it 'calls #query with the correct parameter' do
+        expect(@provider).to receive(:query).with('printer-is-accepting-jobs')
+
+        @provider.accepting
+      end
+    end
+
+    describe '#accepting=' do
+      context 'true' do
+        it 'calls #cupsaccept with the correct arguments' do
+          expect(@provider).to receive(:cupsaccept).with('-E', 'Office')
+
+          @provider.accepting = :true
+        end
+      end
+
+      context 'false' do
+        it 'calls #cupsreject with the correct arguments' do
+          expect(@provider).to receive(:cupsreject).with('-E', 'Office')
+
+          @provider.accepting = :false
+        end
+      end
     end
 
     describe '#access' do
@@ -249,6 +275,122 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       end
     end
 
+    describe '#description' do
+      it 'calls #query with the correct parameter' do
+        expect(@provider).to receive(:query).with('printer-info').and_return('color / duplex / stapling')
+
+        expect(@provider.description).to eq('color / duplex / stapling')
+      end
+    end
+
+    describe '#description=' do
+      it 'calls #lpadmin with the correct arguments' do
+        expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-D', 'color / duplex / stapling')
+
+        @provider.description = 'color / duplex / stapling'
+      end
+    end
+
+    describe '#enabled' do
+      context 'when the printer is idle' do
+        it "returns 'true'" do
+          expect(@provider).to receive(:query).with('printer-state').and_return('idle')
+
+          expect(@provider.enabled).to eq(:true)
+        end
+      end
+
+      context 'when the printer is processing' do
+        it "returns 'true'" do
+          expect(@provider).to receive(:query).with('printer-state').and_return('processing')
+
+          expect(@provider.enabled).to eq(:true)
+        end
+      end
+
+      context 'when the printer is stopped' do
+        it "returns 'false'" do
+          expect(@provider).to receive(:query).with('printer-state').and_return('stopped')
+
+          expect(@provider.enabled).to eq(:false)
+        end
+      end
+    end
+
+    describe '#enabled=' do
+      context "'true'" do
+        it 'calls #cupsenable with the correct arguments' do
+          target_acl = { 'policy' => 'allow', 'users' => %w(lumbergh nina) }
+          expect(@provider).to receive(:access).and_return(target_acl)
+          expect(@provider).to receive(:access=).with('policy' => 'allow', 'users' => ['root'])
+          expect(@provider).to receive(:cupsenable).with('-E', 'Office')
+          expect(@provider).to receive(:access=).with(target_acl)
+
+          @provider.enabled = :true
+        end
+      end
+
+      context "'false'" do
+        it 'calls #cupsdisable with the correct arguments' do
+          expect(@provider).to receive(:cupsdisable).with('-E', 'Office')
+
+          @provider.enabled = :false
+        end
+      end
+    end
+
+    describe '#held' do
+      context 'when new jobs are being held' do
+        it "returns 'true'" do
+          expect(@provider).to receive(:query).with('printer-state-reasons').and_return('hold-new-jobs')
+
+          expect(@provider.held).to eq(:true)
+        end
+      end
+
+      context 'when new jobs are NOT being held' do
+        it "returns 'false'" do
+          expect(@provider).to receive(:query).with('printer-state-reasons').and_return('paused')
+
+          expect(@provider.held).to eq(:false)
+        end
+      end
+    end
+
+    describe '#held=' do
+      context 'true' do
+        it 'calls #cupsenable with the correct arguments' do
+          expect(@provider).to receive(:cupsdisable).with('-E', '--hold', 'Office')
+
+          @provider.held = :true
+        end
+      end
+
+      context 'false' do
+        it 'calls #cupsdisable with the correct arguments' do
+          expect(@provider).to receive(:cupsenable).with('-E', '--release', 'Office')
+
+          @provider.held = :false
+        end
+      end
+    end
+
+    describe '#location' do
+      it 'calls #query with the correct parameter' do
+        expect(@provider).to receive(:query).with('printer-location').and_return('Room 101')
+
+        expect(@provider.location).to eq('Room 101')
+      end
+    end
+
+    describe '#location=' do
+      it 'calls #lpadmin with the correct arguments' do
+        expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-L', 'Room 101')
+
+        @provider.location = 'Room 101'
+      end
+    end
+
     describe '#make_and_model' do
       context 'when fetching a class' do
         it 'returns nil' do
@@ -257,15 +399,35 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           expect(@provider.make_and_model).to be nil
         end
       end
+
+      context 'when fetching a printer' do
+        it 'calls #query with the correct parameter' do
+          allow(@provider).to receive(:printer_exists?).and_return(true)
+          expect(@provider).to receive(:query).with('printer-make-and-model').and_return('Local Raw Printer')
+
+          expect(@provider.make_and_model).to eq('Local Raw Printer')
+        end
+      end
     end
 
     describe '#make_and_model=(_value)' do
       context 'when ensuring a printer' do
         it 'calls #create_printer' do
-          allow(@provider).to receive(:ensure).and_return(:printer)
+          allow(@provider).to receive(:printer_exists?).and_return(true)
           expect(@provider).to receive(:create_printer)
 
           @provider.make_and_model = 'Local Raw Printer'
+        end
+      end
+    end
+
+    describe '#members=(_value)' do
+      context 'when ensuring a class' do
+        it 'calls #create_class' do
+          allow(@provider).to receive(:class_exists?).and_return(true)
+          expect(@provider).to receive(:create_class)
+
+          @provider.members = %w(Office Warehouse)
         end
       end
     end
@@ -318,11 +480,46 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       describe '#uri' do
         context 'when fetching a class' do
           it 'returns nil' do
-            allow(@provider).to receive(:ensure).and_return(:class)
+            allow(@provider).to receive(:class_exists?).and_return(true)
 
             expect(@provider.uri).to be nil
           end
         end
+      end
+    end
+
+    describe '#shared' do
+      it 'calls #query with the correct parameter' do
+        expect(@provider).to receive(:query).with('printer-is-shared')
+
+        @provider.shared
+      end
+    end
+
+    describe '#shared=' do
+      it 'calls #lpadmin with the correct arguments' do
+        expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'printer-is-shared=true')
+
+        @provider.shared = :true
+      end
+    end
+
+    describe '#uri' do
+      context 'when fetching a printer' do
+        it 'calls #query with the correct parameter' do
+          allow(@provider).to receive(:printer_exists?).and_return(true)
+
+          expect(@provider).to receive(:query).with('device-uri').and_return('file:///dev/null')
+          expect(@provider.uri).to eq('file:///dev/null')
+        end
+      end
+    end
+
+    describe '#uri=' do
+      it 'calls #lpadmin with the correct arguments' do
+        expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', 'file:///dev/null')
+
+        @provider.uri = 'file:///dev/null'
       end
     end
   end
@@ -336,6 +533,14 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
       @resource = type.new(manifest)
       @provider = provider.new(@resource)
+    end
+
+    describe '#query' do
+      it 'sends a query to the IPP module' do
+        expect(PuppetX::Cups::Queue::Attribute).to receive(:query).with('Office', 'printer-location')
+
+        @provider.send(:query, 'printer-location')
+      end
     end
 
     describe '#specified_options_is' do
