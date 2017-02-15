@@ -3,6 +3,97 @@ require 'spec_helper'
 describe Puppet::Type.type(:cups_queue) do
   let(:type) { described_class }
 
+  describe 'dependency relations' do
+    before(:each) do
+      @catalog = Puppet::Resource::Catalog.new
+    end
+
+    context 'when ensuring a class' do
+      it 'autorequires File[lpoptions]' do
+        file = Puppet::Type.type(:file).new(name: 'lpoptions', path: '/etc/cups/lpoptions')
+        queue = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+
+        @catalog.add_resource queue
+        @catalog.add_resource file
+        reqs = queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(file)
+        expect(reqs[0].target).to eq(queue)
+      end
+
+      it 'autorequires its members' do
+        member = type.new(name: 'BackOffice')
+        class_queue = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+
+        @catalog.add_resource class_queue
+        @catalog.add_resource member
+        reqs = class_queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(member)
+        expect(reqs[0].target).to eq(class_queue)
+      end
+    end
+
+    context 'when ensuring a printer' do
+      it 'autorequires File[lpoptions]' do
+        file = Puppet::Type.type(:file).new(name: 'lpoptions', path: '/etc/cups/lpoptions')
+        queue = type.new(name: 'Office', ensure: 'printer')
+
+        @catalog.add_resource queue
+        @catalog.add_resource file
+        reqs = queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(file)
+        expect(reqs[0].target).to eq(queue)
+      end
+
+      it 'autorequires its SystemV interface script' do
+        script = '/usr/share/cups/model/myqueue.sh'
+        file = Puppet::Type.type(:file).new(name: script)
+        queue = type.new(name: 'Office', ensure: 'printer', interface: script)
+
+        @catalog.add_resource queue
+        @catalog.add_resource file
+        reqs = queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(file)
+        expect(reqs[0].target).to eq(queue)
+      end
+
+      it 'autorequires its ppd file' do
+        ppd = '/usr/share/ppd/cupsfilters/textonly.ppd'
+        file = Puppet::Type.type(:file).new(name: ppd)
+        queue = type.new(name: 'Office', ensure: 'printer', ppd: ppd)
+
+        @catalog.add_resource queue
+        @catalog.add_resource file
+        reqs = queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(file)
+        expect(reqs[0].target).to eq(queue)
+      end
+
+      it 'autorequires its model as File resource' do
+        model = 'custom.ppd'
+        file = Puppet::Type.type(:file).new(name: "/usr/share/cups/model/#{model}")
+        queue = type.new(name: 'Office', ensure: 'printer', model: model)
+
+        @catalog.add_resource queue
+        @catalog.add_resource file
+        reqs = queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(file)
+        expect(reqs[0].target).to eq(queue)
+      end
+    end
+  end
+
   describe 'mandatory attributes' do
     context 'when ensuring a class' do
       describe 'with members' do
@@ -374,19 +465,136 @@ describe Puppet::Type.type(:cups_queue) do
         expect(type.attrclass(:ensure).doc.length).to be > 20
       end
 
-      it "accepts 'class'" do
-        @resource[:ensure] = 'class'
-        expect(@resource[:ensure]).to eq(:class)
+      context '=> class' do
+        context 'when the class is absent' do
+          it 'creates the class' do
+            resource = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+
+            expect(resource.provider).to receive(:class_exists?).and_return(false)
+            expect(resource.provider).to receive(:create_class)
+
+            resource.property(:ensure).set_class
+          end
+        end
+
+        context 'when the class is present' do
+          it 'does nothing' do
+            resource = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+
+            expect(resource.provider).to receive(:class_exists?).and_return(true)
+            expect(resource.provider).not_to receive(:create_class)
+
+            resource.property(:ensure).set_class
+          end
+        end
+
+        context 'when a printer by the same name is present' do
+          it 'creates the class' do
+            resource = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+
+            expect(resource.provider).to receive(:class_exists?).and_return(false)
+            expect(resource.provider).to receive(:create_class)
+
+            resource.property(:ensure).set_class
+          end
+        end
       end
 
-      it "accepts 'printer'" do
-        @resource[:ensure] = 'printer'
-        expect(@resource[:ensure]).to eq(:printer)
+      context '=> printer' do
+        context 'when the printer is absent' do
+          it 'creates the printer' do
+            resource = type.new(name: 'Office', ensure: 'printer')
+
+            expect(resource.provider).to receive(:printer_exists?).and_return(false)
+            expect(resource.provider).to receive(:create_printer)
+
+            resource.property(:ensure).set_printer
+          end
+        end
+
+        context 'when the printer is present' do
+          it 'does nothing' do
+            resource = type.new(name: 'Office', ensure: 'printer')
+
+            expect(resource.provider).to receive(:printer_exists?).and_return(true)
+            expect(resource.provider).not_to receive(:create_printer)
+
+            resource.property(:ensure).set_printer
+          end
+        end
+
+        context 'when a class by the same name is present' do
+          it 'creates the printer' do
+            resource = type.new(name: 'Office', ensure: 'printer')
+
+            expect(resource.provider).to receive(:printer_exists?).and_return(false)
+            expect(resource.provider).to receive(:create_printer)
+
+            resource.property(:ensure).set_printer
+          end
+        end
       end
 
-      it "accepts 'absent'" do
-        @resource[:ensure] = 'absent'
-        expect(@resource[:ensure]).to eq(:absent)
+      context '=> absent' do
+        context 'when the printer is absent' do
+          it 'does nothing' do
+            resource = type.new(name: 'Office', ensure: 'absent')
+
+            expect(resource.provider).to receive(:queue_exists?).and_return(false)
+            expect(resource.provider).not_to receive(:destroy)
+
+            resource.property(:ensure).set_absent
+          end
+        end
+
+        context 'when a queue by the same name is present' do
+          it 'removes the queue' do
+            resource = type.new(name: 'Office', ensure: 'absent')
+
+            expect(resource.provider).to receive(:queue_exists?).and_return(true)
+            expect(resource.provider).to receive(:destroy)
+
+            resource.property(:ensure).set_absent
+          end
+        end
+      end
+    end
+
+    describe '#change_to_s' do
+      context 'narrates the change' do
+        it 'mentions the creation of a class' do
+          expect(@resource.property(:ensure).send(:change_to_s, :absent, :class)).to eq('created a class')
+        end
+      end
+
+      context 'from :absent to :printer' do
+        it 'narrates the change' do
+          expect(@resource.property(:ensure).send(:change_to_s, :absent, :printer)).to eq('created a printer')
+        end
+      end
+
+      context 'from :class to :printer' do
+        it 'narrates the change' do
+          expect(@resource.property(:ensure).send(:change_to_s, :class, :printer)).to eq('changed from class to printer')
+        end
+      end
+
+      context 'from :printer to :class' do
+        it 'narrates the change' do
+          expect(@resource.property(:ensure).send(:change_to_s, :printer, :class)).to eq('changed from printer to class')
+        end
+      end
+
+      context 'from :class to :absent' do
+        it 'narrates the change' do
+          expect(@resource.property(:ensure).send(:change_to_s, :class, :absent)).to eq('class removed')
+        end
+      end
+
+      context 'from :printer to :class' do
+        it 'narrates the change' do
+          expect(@resource.property(:ensure).send(:change_to_s, :printer, :absent)).to eq('printer removed')
+        end
       end
     end
 
@@ -549,6 +757,28 @@ describe Puppet::Type.type(:cups_queue) do
       it 'rejects a hash containing options already managed by other attributes' do
         %w(printer-is-accepting-jobs printer-info printer-state printer-location printer-is-shared device-uri).each do |key|
           expect { @resource[:options] = { key => 'some value' } }.to raise_error(Puppet::ResourceError)
+        end
+      end
+
+      describe '#is_to_s' do
+        it 'returns the options, sorted alphabetically by key' do
+          options_is = { 'PageSize' => 'Letter', 'Duplex' => 'None', 'InputSlot' => 'Tray1' }
+          expectation = '{"Duplex"=>"None", "InputSlot"=>"Tray1", "PageSize"=>"Letter"}'
+
+          @resource[:options] = options_is
+
+          expect(@resource.property(:options).send(:is_to_s, options_is)).to eq(expectation)
+        end
+      end
+
+      describe '#should_to_s' do
+        it 'returns the options, sorted alphabetically by key' do
+          options_should = { 'PageSize' => 'A4', 'Duplex' => 'DuplexNoTumble', 'InputSlot' => 'Default' }
+          expectation = '{"Duplex"=>"DuplexNoTumble", "InputSlot"=>"Default", "PageSize"=>"A4"}'
+
+          @resource[:options] = { 'PageSize' => 'Letter', 'Duplex' => 'None', 'InputSlot' => 'Tray1' }
+
+          expect(@resource.property(:options).send(:should_to_s, options_should)).to eq(expectation)
         end
       end
     end

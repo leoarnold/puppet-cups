@@ -49,15 +49,35 @@ Puppet::Type.newtype(:cups_queue) do
   validate do
     case should(:ensure)
     when :class
-      raise('Please provide a non-empty array of member printers.') unless (should(:members).is_a? Array) && !should(:members).empty?
-      raise('Classes do NOT support the following attributes: `model`, `ppd`, `interface`, `make_and_model`, `uri`') \
-        if value(:model) || value(:ppd) || value(:interface) || should(:make_and_model) || should(:uri)
+      validate_class_attributes
+      validate_class_members
     when :printer
-      raise('The attributes `interface`, `model` and `ppd` are mutually exclusive. Please specify at most one of them.') \
-        if [value(:interface).nil?, value(:model).nil?, value(:ppd).nil?].count(false) > 1
-      raise('Printers do not support the attribute `members`.') if should(:members)
+      validate_printer_attributes
+      validate_printer_creation
     end
   end
+
+  def validate_class_attributes
+    raise('Classes do NOT support the following attributes: `model`, `ppd`, `interface`, `make_and_model`, `uri`') \
+      if value(:model) || value(:ppd) || value(:interface) || should(:make_and_model) || should(:uri)
+  end
+  private :validate_class_attributes
+
+  def validate_class_members
+    raise('Please provide a non-empty array of member printers.') unless (should(:members).is_a? Array) && !should(:members).empty?
+  end
+  private :validate_class_members
+
+  def validate_printer_attributes
+    raise('Printers do not support the attribute `members`.') if should(:members)
+  end
+  private :validate_printer_attributes
+
+  def validate_printer_creation
+    raise('The attributes `interface`, `model` and `ppd` are mutually exclusive. Please specify at most one of them.') \
+      if [value(:interface).nil?, value(:model).nil?, value(:ppd).nil?].count(false) > 1
+  end
+  private :validate_printer_creation
 
   autorequire(:cups_queue) do
     should(:members)
@@ -67,6 +87,7 @@ Puppet::Type.newtype(:cups_queue) do
     answer = ['lpoptions']
     answer << value(:interface) if value(:interface)
     answer << value(:ppd) if value(:ppd)
+    answer << "/usr/share/cups/model/#{value(:model)}" if value(:model)
     answer
   end
 
@@ -82,17 +103,13 @@ Puppet::Type.newtype(:cups_queue) do
     end
 
     newvalue(:absent) do
-      provider.destroy
+      provider.destroy if provider.queue_exists?
     end
 
     def change_to_s(currentvalue, newvalue)
       return "created a #{should_to_s(newvalue)}" if currentvalue == :absent || currentvalue.nil?
-      return "removed a #{is_to_s(currentvalue)}" if newvalue == :absent
-      return "changed from #{is_to_s(currentvalue)} to #{should_to_s(newvalue)}"
-    rescue Puppet::Error, Puppet::DevError
-      raise
-    rescue => detail
-      raise Puppet::DevError, "Could not convert change #{name} to string: #{detail}", detail.backtrace
+      return "#{is_to_s(currentvalue)} removed" if newvalue == :absent
+      "changed from #{is_to_s(currentvalue)} to #{should_to_s(newvalue)}"
     end
   end
 
