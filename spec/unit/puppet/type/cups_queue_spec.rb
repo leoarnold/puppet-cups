@@ -445,6 +445,10 @@ describe Puppet::Type.type(:cups_queue) do
         @resource[:ppd] = '/usr/share/cups/model/myprinter.ppd'
         expect(@resource[:ppd]).to eq('/usr/share/cups/model/myprinter.ppd')
       end
+
+      it 'rejects a path starting with /etc/cups' do
+        expect { @resource[:ppd] = '/etc/cups/ppd/myprinter.ppd' }.to raise_error(%r{/usr/share/cups/model})
+      end
     end
   end
 

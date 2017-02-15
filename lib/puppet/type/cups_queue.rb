@@ -175,7 +175,7 @@ Puppet::Type.newtype(:cups_queue) do
       ' If the catalog contains a `file` resource with this path as title, it will automatically be required.'
 
     validate do |value|
-      raise("The absolute local file path '#{value}' seems malformed.") unless Pathname(value).absolute?
+      raise ArgumentError, "The absolute local file path '#{value}' seems malformed." unless Pathname(value).absolute?
     end
   end
 
@@ -257,7 +257,9 @@ Puppet::Type.newtype(:cups_queue) do
       ' The recommended location for your PPD files is `/usr/share/cups/model/` or `/usr/local/share/cups/model/`.'
 
     validate do |value|
-      raise("The absolute local file path '#{value}' seems malformed.") unless Pathname(value).absolute?
+      raise ArgumentError, "The absolute local file path '#{value}' seems malformed." unless Pathname(value).absolute?
+      raise ArgumentError, "Putting your PPD files into '/etc/cups/ppd/' is error prone. Please use '/usr/share/cups/model/' instead." \
+        if Pathname(value).dirname.to_s =~ %r{\A/etc/cups/ppd/}
     end
   end
 
