@@ -473,6 +473,7 @@ describe Puppet::Type.type(:cups_queue) do
         context 'when the class is absent' do
           it 'creates the class' do
             resource = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+            resource.provider = type.provider(:cups).new(resource)
 
             expect(resource.provider).to receive(:class_exists?).and_return(false)
             expect(resource.provider).to receive(:create_class)
@@ -484,6 +485,7 @@ describe Puppet::Type.type(:cups_queue) do
         context 'when the class is present' do
           it 'does nothing' do
             resource = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+            resource.provider = type.provider(:cups).new(resource)
 
             expect(resource.provider).to receive(:class_exists?).and_return(true)
             expect(resource.provider).not_to receive(:create_class)
@@ -495,6 +497,7 @@ describe Puppet::Type.type(:cups_queue) do
         context 'when a printer by the same name is present' do
           it 'creates the class' do
             resource = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+            resource.provider = type.provider(:cups).new(resource)
 
             expect(resource.provider).to receive(:class_exists?).and_return(false)
             expect(resource.provider).to receive(:create_class)
@@ -508,6 +511,7 @@ describe Puppet::Type.type(:cups_queue) do
         context 'when the printer is absent' do
           it 'creates the printer' do
             resource = type.new(name: 'Office', ensure: 'printer')
+            resource.provider = type.provider(:cups).new(resource)
 
             expect(resource.provider).to receive(:printer_exists?).and_return(false)
             expect(resource.provider).to receive(:create_printer)
@@ -519,6 +523,7 @@ describe Puppet::Type.type(:cups_queue) do
         context 'when the printer is present' do
           it 'does nothing' do
             resource = type.new(name: 'Office', ensure: 'printer')
+            resource.provider = type.provider(:cups).new(resource)
 
             expect(resource.provider).to receive(:printer_exists?).and_return(true)
             expect(resource.provider).not_to receive(:create_printer)
@@ -530,6 +535,7 @@ describe Puppet::Type.type(:cups_queue) do
         context 'when a class by the same name is present' do
           it 'creates the printer' do
             resource = type.new(name: 'Office', ensure: 'printer')
+            resource.provider = type.provider(:cups).new(resource)
 
             expect(resource.provider).to receive(:printer_exists?).and_return(false)
             expect(resource.provider).to receive(:create_printer)
@@ -543,6 +549,7 @@ describe Puppet::Type.type(:cups_queue) do
         context 'when the printer is absent' do
           it 'does nothing' do
             resource = type.new(name: 'Office', ensure: 'absent')
+            resource.provider = type.provider(:cups).new(resource)
 
             expect(resource.provider).to receive(:queue_exists?).and_return(false)
             expect(resource.provider).not_to receive(:destroy)
@@ -554,6 +561,7 @@ describe Puppet::Type.type(:cups_queue) do
         context 'when a queue by the same name is present' do
           it 'removes the queue' do
             resource = type.new(name: 'Office', ensure: 'absent')
+            resource.provider = type.provider(:cups).new(resource)
 
             expect(resource.provider).to receive(:queue_exists?).and_return(true)
             expect(resource.provider).to receive(:destroy)
