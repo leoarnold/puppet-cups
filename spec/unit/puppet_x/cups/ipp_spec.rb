@@ -57,8 +57,10 @@ describe PuppetX::Cups::Ipp do
 
         expect(described_class.ipptool(query)).to eq(stdout)
       end
+    end
 
-      it 'raises an error and stderr != "No destinations added.\n"' do
+    context 'when execution fails and stderr != "No destinations added.\n"' do
+      it 'raises an error' do
         query = query_class.new('', '{ [IPP request] }')
 
         status_mock = instance_double(Process::Status)
