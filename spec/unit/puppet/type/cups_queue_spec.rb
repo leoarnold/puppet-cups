@@ -9,12 +9,53 @@ describe Puppet::Type.type(:cups_queue) do
     end
 
     context 'when ensuring a class' do
-      it 'autorequires File[lpoptions]' do
-        file = Puppet::Type.type(:file).new(name: 'lpoptions', path: '/etc/cups/lpoptions')
-        queue = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+      before(:each) do
+        @queue = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+        @catalog.add_resource @queue
+      end
 
-        @catalog.add_resource queue
+      it 'autorequires File[/etc/cups/lpoptions]' do
+        file = Puppet::Type.type(:file).new(name: '/etc/cups/lpoptions', path: '/etc/cups/lpoptions')
         @catalog.add_resource file
+
+        reqs = @queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(file)
+        expect(reqs[0].target).to eq(@queue)
+      end
+
+      it 'autorequires Service[cups]' do
+        service = Puppet::Type.type(:service).new(name: 'cups')
+        @catalog.add_resource service
+
+        reqs = @queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(service)
+        expect(reqs[0].target).to eq(@queue)
+      end
+
+      it 'autorequires its members' do
+        member = type.new(name: 'BackOffice')
+        @catalog.add_resource member
+
+        reqs = @queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(member)
+        expect(reqs[0].target).to eq(@queue)
+      end
+    end
+
+    context 'when ensuring a printer' do
+      it 'autorequires File[/etc/cups/lpoptions]' do
+        file = Puppet::Type.type(:file).new(name: '/etc/cups/lpoptions', path: '/etc/cups/lpoptions')
+        @catalog.add_resource file
+
+        queue = type.new(name: 'Office', ensure: 'printer')
+        @catalog.add_resource queue
+
         reqs = queue.autorequire
 
         expect(reqs).not_to be_empty
@@ -22,41 +63,29 @@ describe Puppet::Type.type(:cups_queue) do
         expect(reqs[0].target).to eq(queue)
       end
 
-      it 'autorequires its members' do
-        member = type.new(name: 'BackOffice')
-        class_queue = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
+      it 'autorequires Service[cups]' do
+        service = Puppet::Type.type(:service).new(name: 'cups')
+        @catalog.add_resource service
 
-        @catalog.add_resource class_queue
-        @catalog.add_resource member
-        reqs = class_queue.autorequire
-
-        expect(reqs).not_to be_empty
-        expect(reqs[0].source).to eq(member)
-        expect(reqs[0].target).to eq(class_queue)
-      end
-    end
-
-    context 'when ensuring a printer' do
-      it 'autorequires File[lpoptions]' do
-        file = Puppet::Type.type(:file).new(name: 'lpoptions', path: '/etc/cups/lpoptions')
         queue = type.new(name: 'Office', ensure: 'printer')
-
         @catalog.add_resource queue
-        @catalog.add_resource file
+
         reqs = queue.autorequire
 
         expect(reqs).not_to be_empty
-        expect(reqs[0].source).to eq(file)
+        expect(reqs[0].source).to eq(service)
         expect(reqs[0].target).to eq(queue)
       end
 
       it 'autorequires its SystemV interface script' do
         script = '/usr/share/cups/model/myqueue.sh'
-        file = Puppet::Type.type(:file).new(name: script)
-        queue = type.new(name: 'Office', ensure: 'printer', interface: script)
 
+        queue = type.new(name: 'Office', ensure: 'printer', interface: script)
         @catalog.add_resource queue
+
+        file = Puppet::Type.type(:file).new(name: script)
         @catalog.add_resource file
+
         reqs = queue.autorequire
 
         expect(reqs).not_to be_empty
@@ -66,11 +95,13 @@ describe Puppet::Type.type(:cups_queue) do
 
       it 'autorequires its ppd file' do
         ppd = '/usr/share/ppd/cupsfilters/textonly.ppd'
-        file = Puppet::Type.type(:file).new(name: ppd)
-        queue = type.new(name: 'Office', ensure: 'printer', ppd: ppd)
 
+        queue = type.new(name: 'Office', ensure: 'printer', ppd: ppd)
         @catalog.add_resource queue
+
+        file = Puppet::Type.type(:file).new(name: ppd)
         @catalog.add_resource file
+
         reqs = queue.autorequire
 
         expect(reqs).not_to be_empty
@@ -79,12 +110,14 @@ describe Puppet::Type.type(:cups_queue) do
       end
 
       it 'autorequires its model as File resource' do
-        model = 'custom.ppd'
-        file = Puppet::Type.type(:file).new(name: "/usr/share/cups/model/#{model}")
-        queue = type.new(name: 'Office', ensure: 'printer', model: model)
+        model = 'myprinter.ppd'
 
+        queue = type.new(name: 'Office', ensure: 'printer', model: model)
         @catalog.add_resource queue
+
+        file = Puppet::Type.type(:file).new(name: "/usr/share/cups/model/#{model}")
         @catalog.add_resource file
+
         reqs = queue.autorequire
 
         expect(reqs).not_to be_empty

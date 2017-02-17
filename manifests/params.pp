@@ -4,60 +4,50 @@
 #
 class cups::params {
 
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian': {
-      case $::operatingsystem {
+      case $facts['os']['name'] {
         'Debian': {
-          if (versioncmp($::lsbdistrelease, '7') >= 0) and (versioncmp($::lsbdistrelease, '9') < 0) {
+          if (versioncmp($facts['os']['release']['major'], '7') >= 0) and (versioncmp($facts['os']['release']['major'], '9') < 0) {
             # CUPS ~> 1.5
             $package_names = ['cups']
-            $services = ['cups']
-          } elsif (versioncmp($::lsbdistrelease, '9') >= 0) {
+          } elsif (versioncmp($facts['os']['release']['major'], '9') >= 0) {
             # CUPS ~> 2.0
             $package_names = ['cups', 'cups-ipp-utils']
-            $services = ['cups']
           }
         }
         'Ubuntu': {
-          if (versioncmp($::lsbdistrelease, '14.04') >= 0) and (versioncmp($::lsbdistrelease, '15.10') < 0) {
+          if (versioncmp($facts['os']['release']['major'], '14.04') >= 0) and (versioncmp($facts['os']['release']['major'], '15.10') < 0) {
             # CUPS ~> 1.5
             $package_names = ['cups']
-            $services = ['cups']
-          } elsif (versioncmp($::lsbdistrelease, '15.10') >= 0) {
+          } elsif (versioncmp($facts['os']['release']['major'], '15.10') >= 0) {
             # CUPS ~> 2.0
             $package_names = ['cups', 'cups-ipp-utils']
-            $services = ['cups']
           }
         }
         'LinuxMint': {
-          if (versioncmp($::lsbdistrelease, '17') >= 0) and (versioncmp($::lsbdistrelease, '18') < 0) {
+          if (versioncmp($facts['os']['release']['major'], '17') >= 0) and (versioncmp($facts['os']['release']['major'], '18') < 0) {
             # CUPS ~> 1.5
             $package_names = ['cups']
-            $services = ['cups']
-          } elsif (versioncmp($::lsbdistrelease, '18') >= 0) {
+          } elsif (versioncmp($facts['os']['release']['major'], '18') >= 0) {
             # CUPS ~> 2.0
             $package_names = ['cups', 'cups-ipp-utils']
-            $services = ['cups']
           }
         }
         default: {
           $package_names = undef
-          $services = undef
         }
       }
     }
 
     'RedHat': {
       $package_names = ['cups', 'cups-ipptool']
-      $services = ['cups']
     }
     'Suse': {
       $package_names = ['cups']
-      $services = ['cups']
     }
     default: {
       $package_names = undef
-      $services = undef
     }
   }
 

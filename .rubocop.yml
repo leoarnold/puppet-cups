@@ -1,5 +1,6 @@
 ---
 AllCops:
+  TargetRubyVersion: 2.0
   Exclude:
     - 'spec/fixtures/**/*'
 Metrics/LineLength:

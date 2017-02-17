@@ -91,6 +91,10 @@ Puppet::Type.newtype(:cups_queue) do
     answer
   end
 
+  autorequire(:service) do
+    '/etc/cups/lpoptions'
+  end
+
   newproperty(:ensure) do
     desc '(mandatory) Specifies whether this queue should be a `class`, a `printer` or `absent`.'
 

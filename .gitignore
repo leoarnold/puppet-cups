@@ -8,4 +8,5 @@
 /spec/fixtures/manifests
 /spec/fixtures/modules
 .puppetforge.yml
+.ruby-version
 Gemfile.lock

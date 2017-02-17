@@ -19,6 +19,14 @@ require 'rspec-puppet/spec_helper'
 require 'rspec-puppet-facts'
 include RspecPuppetFacts
 
+def any_supported_os
+  {
+    operatingsystem: 'CentOS',
+    osfamily: 'Suse',
+    os: { 'family' => 'Suse', 'name' => 'CentOS' }
+  }
+end
+
 # Make all files in this module available to #require
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../'))
 

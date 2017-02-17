@@ -1,296 +1,238 @@
 require 'spec_helper'
 
 describe 'cups' do
-  context 'with defaults for all parameters' do
-    on_supported_os.each do |os, facts|
-      context "on #{os}" do
-        let(:facts) { facts }
+  context 'with default values for all attributes' do
+    let(:facts) { any_supported_os }
 
-        it { should contain_class('cups').with(purge_unmanaged_queues: 'false') }
+    it { should contain_class('cups::params') }
 
-        it { should contain_class('cups::params') }
+    it do
+      defaults = {
+        package_ensure: 'present',
+        package_manage: 'true',
+        purge_unmanaged_queues: 'false',
+        service_enable: 'true',
+        service_ensure: 'running',
+        service_manage: 'true'
+      }
 
-        it { should_not contain_class('cups::default_queue') }
-
-        it { should contain_package('cups').with(ensure: 'present') }
-
-        it { should contain_service('cups').with(ensure: 'running', enable: 'true') }
-
-        it { should contain_service('cups').that_requires('Package[cups]') }
-
-        it { should contain_resources('cups_queue').with(purge: 'false') }
-
-        case facts[:osfamily]
-        when 'Debian'
-          case facts[:operatingsystem]
-          when 'Debian'
-            if facts[:operatingsystemmajrelease].to_f < 9
-              it { should_not contain_package('cups-ipp-utils') }
-            else
-              it { should contain_package('cups-ipp-utils') }
-
-              it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
-            end
-          when 'Ubuntu'
-            if facts[:operatingsystemmajrelease].to_f < 15.10
-              it { should_not contain_package('cups-ipp-utils') }
-            else
-              it { should contain_package('cups-ipp-utils') }
-
-              it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
-            end
-          when 'LinuxMint'
-            if facts[:operatingsystemmajrelease].to_f < 18
-              it { should_not contain_package('cups-ipp-utils') }
-            else
-              it { should contain_package('cups-ipp-utils') }
-
-              it { should contain_service('cups').that_requires('Package[cups-ipp-utils]') }
-            end
-          end
-        when 'RedHat'
-          it { should contain_package('cups-ipptool').with(ensure: 'present') }
-
-          it { should contain_service('cups').that_requires('Package[cups-ipptool]') }
-        end
-      end
+      should contain_class('cups').with(defaults)
     end
+
+    it { should contain_class('cups::packages') }
+
+    it { should contain_class('cups::server').that_requires('Class[cups::packages]') }
+
+    it { should contain_class('cups::queues').that_requires('Class[cups::server]') }
   end
 
-  context 'on any other operating system' do
-    let(:facts) { { osfamily: 'Unknown' } }
-
-    context 'with defaults for all parameters' do
-      it { should_not compile }
-    end
-
-    context "with package_names = ['custom-cups', 'custom-ipptool'] and services not specified" do
-      let(:params) { { package_names: ['custom-cups', 'custom-ipptool'] } }
-
-      it { should_not compile }
-    end
-
-    context 'with package_names = [] and services = []' do
-      let(:params) do
-        {
-          package_names: [],
-          services: []
-        }
-      end
-
-      it { should compile }
-    end
-
-    context "with package_names = ['custom-cups', 'custom-ipptool'] and services = []" do
-      let(:params) do
-        {
-          package_names: ['custom-cups', 'custom-ipptool'],
-          services: []
-        }
-      end
-
-      it { should contain_package('custom-cups').with(ensure: 'present') }
-
-      it { should contain_package('custom-ipptool').with(ensure: 'present') }
-    end
-
-    context "with package_names = ['custom-cups', 'custom-ipptool'] and services = ['cupsd', 'cups-browsed']" do
-      let(:params) do
-        {
-          package_names: ['custom-cups', 'custom-ipptool'],
-          services: ['cupsd', 'cups-browsed']
-        }
-      end
-
-      it { should contain_package('custom-cups').with(ensure: 'present') }
-
-      it { should contain_package('custom-ipptool').with(ensure: 'present') }
-
-      it { should contain_service('cupsd').with(ensure: 'running', enable: 'true') }
-
-      it { should contain_service('cupsd').that_requires('Package[custom-cups]') }
-
-      it { should contain_service('cupsd').that_requires('Package[custom-ipptool]') }
-
-      it { should contain_service('cups-browsed').with(ensure: 'running', enable: 'true') }
-
-      it { should contain_service('cups-browsed').that_requires('Package[custom-cups]') }
-
-      it { should contain_service('cups-browsed').that_requires('Package[custom-ipptool]') }
-    end
-  end
-
-  context 'OS independent attribute' do
-    let(:facts) { { osfamily: 'Suse' } }
-
+  context 'with attribute' do
     describe 'default_queue' do
+      let(:facts) { any_supported_os }
+
       context 'not provided' do
-        it { should_not contain_class('cups::default_queue') }
+        it { should_not contain_exec('cups::queues::default') }
       end
 
-      context "=> 'RSpec_Test_äöü_абв_Nr1'" do
-        let(:params) { { default_queue: 'RSpec_Test_äöü_абв_Nr1' } }
+      context "=> 'Office'" do
+        let(:params) { { default_queue: 'Office' } }
 
-        let(:pre_condition) { "cups_queue { 'RSpec_Test_äöü_абв_Nr1': }" }
-
-        it { should contain_class('cups::default_queue').with(queue: 'RSpec_Test_äöü_абв_Nr1') }
-      end
-    end
-
-    describe 'package_ensure' do
-      context 'by default' do
-        it { should contain_class('cups').with(package_ensure: 'present') }
-      end
-
-      context '= present' do
-        let(:params) do
-          {
-            package_ensure: 'present',
-            package_names: %w(cups ipptool)
-          }
+        context "but the catalog does NOT contain the corresponding 'cups_queue' resource" do
+          it { expect { should compile }.to raise_error(/dependency/) }
         end
 
-        it 'ensures presence of all specified packages' do
-          should contain_package('cups').with(ensure: 'present')
-          should contain_package('ipptool').with(ensure: 'present')
-        end
-      end
+        context "and the catalog contains the corresponding 'cups_queue' resource" do
+          let(:pre_condition) { "cups_queue { 'Office':  ensure => 'printer' }" }
 
-      context '= absent' do
-        let(:params) do
-          {
-            package_ensure: 'absent',
-            package_names: %w(cups ipptool)
-          }
-        end
+          it { should contain_exec('cups::queues::default').with(command: "lpadmin -E -d 'Office'") }
 
-        it 'ensures absence of all specified packages' do
-          should contain_package('cups').with(ensure: 'absent')
-          should contain_package('ipptool').with(ensure: 'absent')
+          it { should contain_exec('cups::queues::default').with(unless: "lpstat -d | grep -w 'Office'") }
+
+          it { should contain_exec('cups::queues::default').that_requires('Cups_queue[Office]') }
         end
       end
     end
 
     describe 'package_manage' do
-      context 'by default' do
-        it { should contain_class('cups').with(package_manage: true) }
+      context '=> true' do
+        context 'with default package_names' do
+          on_supported_os.each do |os, facts|
+            %w(present absent).each do |package_ensure|
+              context "when package_ensure => #{package_ensure}" do
+                let(:params) { { package_ensure: package_ensure, package_manage: true } }
+
+                context "on #{os}" do
+                  let(:facts) { facts }
+
+                  it { should contain_package('cups').with(ensure: package_ensure) }
+
+                  case facts[:os]['family']
+                  when 'Debian'
+                    case facts[:os]['name']
+                    when 'Debian'
+                      if facts[:os]['release']['major'].to_f < 9
+                        it { should_not contain_package('cups-ipp-utils') }
+                      else
+                        it { should contain_package('cups-ipp-utils').with(ensure: package_ensure) }
+                      end
+                    when 'Ubuntu'
+                      if facts[:os]['release']['major'].to_f < 15.10
+                        it { should_not contain_package('cups-ipp-utils') }
+                      else
+                        it { should contain_package('cups-ipp-utils').with(ensure: package_ensure) }
+                      end
+                    when 'LinuxMint'
+                      if facts[:os]['release']['major'].to_f < 18
+                        it { should_not contain_package('cups-ipp-utils') }
+                      else
+                        it { should contain_package('cups-ipp-utils').with(ensure: package_ensure) }
+                      end
+                    end
+                  when 'RedHat'
+                    it { should contain_package('cups-ipptool').with(ensure: package_ensure) }
+                  end
+                end
+              end
+            end
+          end
+        end
+
+        context "when package_names = ['mycups', 'myipp']" do
+          %w(present absent).each do |package_ensure|
+            context "when package_ensure => #{package_ensure}" do
+              let(:facts) { any_supported_os }
+
+              let(:params) do
+                {
+                  package_ensure: package_ensure,
+                  package_manage: true,
+                  package_names: %w(mycups myipp)
+                }
+              end
+
+              it { should contain_package('mycups').with(ensure: package_ensure) }
+
+              it { should contain_package('myipp').with(ensure: package_ensure) }
+            end
+          end
+        end
       end
 
-      context '= true' do
-        let(:params) do
-          {
-            package_manage: true,
-            package_names: %w(cups ipptool)
-          }
+      context '=> false' do
+        let(:params) { { package_manage: false } }
+
+        context 'with default package_names' do
+          on_supported_os.each do |os, facts|
+            context "on #{os}" do
+              let(:facts) { facts }
+
+              it { should_not contain_package('cups') }
+
+              it { should_not contain_package('cups-ipp-utils') }
+
+              it { should_not contain_package('cups-ipptool') }
+            end
+          end
         end
 
-        it 'manages of all specified packages' do
-          should contain_package('cups')
-          should contain_package('ipptool')
-        end
-      end
+        context "when package_names = ['mycups', 'myipp']" do
+          let(:facts) { any_supported_os }
 
-      context '= false' do
-        let(:params) do
-          {
-            package_manage: false,
-            package_names: %w(cups ipptool)
-          }
-        end
+          let(:params) { { package_manage: false, package_names: %w(mycups myipp) } }
 
-        it 'does not manage any of the specified packages' do
-          should_not contain_package('cups')
-          should_not contain_package('ipptool')
+          it { should_not contain_package('mycups') }
+
+          it { should_not contain_package('myipp') }
         end
       end
     end
 
-    describe 'package_names' do
-      context '= undef' do
-        let(:facts) { { osfamily: 'Unknown' } }
+    describe 'service_manage' do
+      let(:facts) { any_supported_os }
 
-        it { expect { should compile }.to raise_error(/package_names/) }
+      context '=> true' do
+        %w(cups mycups).each do |service_name|
+          context "with service_name => #{service_name}," do
+            %w(running stopped).each do |service_ensure|
+              context "service_ensure => #{service_ensure}" do
+                %w(true false).each do |service_enable|
+                  context "and service_enable => #{service_enable}" do
+                    let(:params) do
+                      {
+                        service_enable: service_enable,
+                        service_ensure: service_ensure,
+                        service_manage: true,
+                        service_name: service_name
+                      }
+                    end
+
+                    it { should contain_service(service_name).with(ensure: service_ensure, enable: service_enable) }
+                  end
+                end
+              end
+            end
+          end
+        end
       end
 
-      context '= []' do
-        let(:params) { { package_names: [] } }
+      context '=> false' do
+        %w(cups mycups).each do |service_name|
+          context "with service_name => #{service_name}," do
+            let(:params) { { service_manage: false, service_name: service_name } }
 
-        it { should_not contain_package('cups') }
+            it { should_not contain_service(service_name) }
+          end
+        end
       end
 
-      context "= ['custom-cups', 'custom-ipptool']" do
-        let(:params) { { package_names: ['custom-cups', 'custom-ipptool'] } }
+      context "when service_name = ['mycups', 'myipp']" do
+        %w(present absent).each do |service_ensure|
+          context "when service_ensure => #{service_ensure}" do
+            let(:facts) { any_supported_os }
 
-        it { should contain_package('custom-cups').with(ensure: 'present') }
+            let(:params) do
+              {
+                service_ensure: service_ensure,
+                service_manage: false,
+                service_name: 'mycups'
+              }
+            end
 
-        it { should contain_package('custom-ipptool').with(ensure: 'present') }
+            it { should_not contain_service('mycups') }
+          end
+        end
       end
     end
 
     describe 'papersize' do
-      context '= undef' do
-        it { should_not contain_class('cups::papersize') }
+      let(:facts) { any_supported_os }
+
+      context '=> undef' do
+        it { should_not contain_exec('cups::papersize') }
       end
 
-      context '= a4' do
-        let(:facts) { { osfamily: 'Suse' } }
+      context '=> a4' do
         let(:params) { { papersize: 'a4' } }
 
-        it { should contain_class('cups::papersize').with(papersize: 'a4') }
+        it { should contain_exec('cups::papersize').with(command: 'paperconfig -p a4') }
 
-        it { should contain_class('cups::papersize').that_requires('Package[cups]') }
-
-        it { should contain_class('cups::papersize').that_notifies('Service[cups]') }
-
-        it { should contain_exec('paperconfig -p a4') }
+        it { should contain_exec('cups::papersize').with(unless: 'cat /etc/papersize | grep -w a4') }
       end
     end
 
     describe 'purge_unmanaged_queues' do
-      context '= false' do
-        it { should contain_resources('cups_queue').with(purge: 'false') }
-      end
+      let(:facts) { any_supported_os }
 
-      context '= true' do
+      context '=> true' do
         let(:params) { { purge_unmanaged_queues: true } }
 
         it { should contain_resources('cups_queue').with(purge: 'true') }
       end
-    end
 
-    describe 'services' do
-      context '= undef' do
-        let(:facts) { { osfamily: 'Unknown' } }
-        let(:params) { { package_names: ['cupsd'] } }
+      context '=> false' do
+        let(:params) { { purge_unmanaged_queues: false } }
 
-        it { expect { should compile }.to raise_error(/services/) }
-      end
-
-      context '= []' do
-        let(:params) { { services: [] } }
-
-        it { should_not contain_service('cups') }
-      end
-
-      context "= ['cupsd', 'cups-browsed'] and package_names = ['custom-cups', 'custom-ipptool']" do
-        let(:params) do
-          {
-            package_names: ['custom-cups', 'custom-ipptool'],
-            services: ['cupsd', 'cups-browsed']
-          }
-        end
-
-        it { should contain_service('cupsd').with(ensure: 'running', enable: 'true') }
-
-        it { should contain_service('cupsd').that_requires('Package[custom-cups]') }
-
-        it { should contain_service('cupsd').that_requires('Package[custom-ipptool]') }
-
-        it { should contain_service('cups-browsed').with(ensure: 'running', enable: 'true') }
-
-        it { should contain_service('cups-browsed').that_requires('Package[custom-cups]') }
-
-        it { should contain_service('cups-browsed').that_requires('Package[custom-ipptool]') }
+        it { should contain_resources('cups_queue').with(purge: 'false') }
       end
     end
   end
