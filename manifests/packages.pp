@@ -1,8 +1,8 @@
 class cups::packages inherits cups {
 
-  if ($package_manage) {
-    package { $package_names :
-      ensure  => $package_ensure,
+  if ($::cups::package_manage) {
+    package { $::cups::package_names :
+      ensure  => $::cups::package_ensure,
     }
   }
 

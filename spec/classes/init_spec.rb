@@ -155,7 +155,7 @@ describe 'cups' do
           context "with service_name => #{service_name}," do
             %w(running stopped).each do |service_ensure|
               context "service_ensure => #{service_ensure}" do
-                %w(true false).each do |service_enable|
+                [true, false].each do |service_enable|
                   context "and service_enable => #{service_enable}" do
                     let(:params) do
                       {

@@ -8,7 +8,7 @@ class cups (
   Optional[String] $papersize              = undef,
   Boolean          $purge_unmanaged_queues = false,
   String           $service_ensure         = 'running',
-  String           $service_enable         = 'true',
+  Boolean          $service_enable         = true,
   Boolean          $service_manage         = true,
   String           $service_name           = 'cups',
 ) inherits cups::params {

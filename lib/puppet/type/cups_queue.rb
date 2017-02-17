@@ -84,7 +84,7 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   autorequire(:file) do
-    answer = ['lpoptions']
+    answer = ['/etc/cups/lpoptions']
     answer << value(:interface) if value(:interface)
     answer << value(:ppd) if value(:ppd)
     answer << "/usr/share/cups/model/#{value(:model)}" if value(:model)
@@ -92,7 +92,7 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   autorequire(:service) do
-    '/etc/cups/lpoptions'
+    'cups'
   end
 
   newproperty(:ensure) do
