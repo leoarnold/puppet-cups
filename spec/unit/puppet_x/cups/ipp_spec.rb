@@ -9,7 +9,7 @@ describe PuppetX::Cups::Ipp do
       allow(described_class).to receive(:ipptool).and_return(stdout)
 
       response = described_class.query('{ [IPP request] }')
-      expect(response.stdout).to match(stdout)
+      expect(response.to_a).to match_array(%w(Office Warehouse))
     end
   end
 
@@ -73,64 +73,62 @@ describe PuppetX::Cups::Ipp do
   end
 
   describe described_class::Response do
-    describe '#stdout_lines' do
-      context "when stdout = ''" do
-        it 'returns an empty array' do
-          response = described_class.new('')
-          expect(response.stdout_lines).to match_array([])
-        end
-      end
-
-      context "when stdout = 'Microphone check\\nOne\\nTwo\\n'" do
-        it "returns ['Microphone check', 'One', 'Two']" do
-          response = described_class.new("Microphone check\nOne\nTwo\n")
-          expect(response.stdout_lines).to match_array(['Microphone check', 'One', 'Two'])
-        end
-      end
-    end
-
-    describe '#rows' do
-      context "when stdout = ''" do
-        it 'returns []' do
-          response = described_class.new('')
-          expect(response.rows).to match_array([])
-        end
-      end
-
+    describe '#to_a' do
       context "when stdout = 'Microphone check\\n'" do
         it 'returns []' do
           response = described_class.new("Microphone check\n")
-          expect(response.rows).to match_array([])
+          expect(response.to_a).to match_array([])
+        end
+      end
+
+      context "when stdout = 'Microphone check\\n\\n'" do
+        it "returns ['']" do
+          response = described_class.new("Microphone check\n\n")
+          expect(response.to_a).to match_array([''])
+        end
+      end
+
+      context "when stdout = 'Microphone check\\nOne\\n'" do
+        it "returns ['One']" do
+          response = described_class.new("Microphone check\nOne\n")
+          expect(response.to_a).to match_array(%w(One))
         end
       end
 
       context "when stdout = 'Microphone check\\nOne\\nTwo\\n'" do
         it "returns ['One', 'Two']" do
           response = described_class.new("Microphone check\nOne\nTwo\n")
-          expect(response.rows).to match_array(%w(One Two))
+          expect(response.to_a).to match_array(%w(One Two))
         end
       end
     end
 
-    describe '#first_row' do
-      context "when stdout = ''" do
-        it 'returns nil' do
-          response = described_class.new('')
-          expect(response.first_row).to be nil
-        end
-      end
-
+    describe '#to_s' do
       context "when stdout = 'Microphone check\\n'" do
         it 'returns nil' do
           response = described_class.new("Microphone check\n")
-          expect(response.first_row).to be nil
+          expect(response.to_s).to be nil
+        end
+      end
+
+      context "when stdout = 'Microphone check\\n\\n'" do
+        it "returns ''" do
+          response = described_class.new("Microphone check\n\n")
+          expect(response.to_s).to eq('')
+        end
+      end
+
+      context "when stdout = 'Microphone check\\nOne\\n'" do
+        it "returns 'One'" do
+          response = described_class.new("Microphone check\nOne\n")
+          expect(response.to_s).to eq('One')
         end
       end
 
       context "when stdout = 'Microphone check\\nOne\\nTwo\\n'" do
-        it "returns 'One'" do
+        it "returns 'One,Two'" do
           response = described_class.new("Microphone check\nOne\nTwo\n")
-          expect(response.first_row).to eq('One')
+          expect(response.to_s).to eq('One,Two')
         end
       end
     end

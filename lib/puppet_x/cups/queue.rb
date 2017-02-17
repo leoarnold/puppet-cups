@@ -12,7 +12,7 @@ module PuppetX
           resource = '/printers/' + ERB::Util.url_encode(queue)
           response = PuppetX::Cups::Ipp.query(request(property), resource)
 
-          response.first_row
+          response.to_s
         end
 
         def self.request(property)

@@ -38,22 +38,28 @@ module PuppetX
       # A value object containing a query to the CUPS server
       # and all of its metadata.
       class Response
-        attr_reader :stdout
-
         def initialize(stdout)
           @stdout = stdout
         end
 
-        def stdout_lines
-          @stdout.split("\n")
+        def to_a
+          lines.length > 1 ? lines[1..-1] : []
         end
 
-        def rows
-          stdout_lines.length > 1 ? stdout_lines[1..-1] : []
+        def to_s
+          to_a.empty? ? nil : to_a.join(',')
         end
 
-        def first_row
-          rows[0]
+        private
+
+        def lines
+          answer = []
+
+          @stdout.each_line do |line|
+            answer << line.delete("\n")
+          end
+
+          answer
         end
       end
 

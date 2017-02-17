@@ -20,7 +20,7 @@ module PuppetX
           classmembers = {}
 
           response = PuppetX::Cups::Ipp.query(request)
-          response.rows.each do |line|
+          response.to_a.each do |line|
             classname, members = line.split(',', 2)
             classmembers[classname] = members.gsub(/\A"|"\Z/, '').split(',') if members
           end
@@ -53,7 +53,7 @@ module PuppetX
         def self.to_a
           response = PuppetX::Cups::Ipp.query(request)
 
-          response.rows
+          response.to_a
         end
 
         def self.request
