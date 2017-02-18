@@ -15,7 +15,7 @@ describe 'cups' do
         service_enable: 'true',
         service_ensure: 'running',
         service_manage: 'true',
-        service_name: 'cups',
+        service_name: 'cups'
       }
 
       should contain_class('cups').with(defaults)
@@ -227,8 +227,8 @@ describe 'cups' do
         let(:params) do
           {
             resources: {
-              'BackOffice' => { 'ensure' => 'printer'},
-              'UpperFloor' => { 'ensure' => 'class', 'members' => [ 'BackOffice' ] }
+              'BackOffice' => { 'ensure' => 'printer' },
+              'UpperFloor' => { 'ensure' => 'class', 'members' => ['BackOffice'] }
             }
           }
         end

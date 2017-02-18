@@ -1,0 +1,7 @@
+---
+cups::web_interface: false
+cups::resources:
+  Warehouse:
+    ensure: printer
+    model: drv:///sample.drv/generic.ppd
+    uri: warehouse.initech.com

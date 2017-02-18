@@ -12,7 +12,7 @@ cups_queue { 'Office':
 cups_queue { 'Warehouse':
   ensure => 'printer',
   model  => 'drv:///sample.drv/laserjet.ppd',
-  uri    => 'socket://warehouse.example.com'
+  uri    => 'socket://warehouse.initech.com'
 }
 
 # and you want to install a CUPS class containing both of them,

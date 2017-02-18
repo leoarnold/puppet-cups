@@ -3,4 +3,7 @@
 /junit/
 /log/
 /pkg/
+/spec/
+Gemfile
 Gemfile.lock
+Rakefile

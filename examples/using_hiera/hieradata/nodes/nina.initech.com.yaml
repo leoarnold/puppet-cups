@@ -1,0 +1,12 @@
+---
+cups::web_interface: true
+cups::resources:
+  Office:
+    ensure: printer
+    model: drv:///sample.drv/generic.ppd
+    uri: office.initech.com
+  GroundFloor:
+    ensure: class
+    members:
+      - Office
+      - Warehouse

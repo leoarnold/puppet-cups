@@ -5,7 +5,6 @@
 /junit/
 /log/
 /pkg/
-/spec/fixtures/manifests
 /spec/fixtures/modules
 .puppetforge.yml
 .ruby-version

@@ -1,0 +1,10 @@
+---
+cups::web_interface: true
+cups::resources:
+  Office:
+    ensure: printer
+  GroundFloor:
+    ensure: class
+    members:
+      - Office
+      - Warehouse

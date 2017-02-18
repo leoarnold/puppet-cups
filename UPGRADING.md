@@ -6,47 +6,28 @@
 
 #### Attribute `confdir`
 
-Before:
+The attribute was removed without alternative.
+The module now only supports `/etc/cups` as CUPS configuration directory.
 
-```Puppet
-class { '::cups':
-  confdir => '/etc/custom_dir',
-}
-```
+#### Attribute `hiera`
 
-After:
+The attribute was removed. Refactor to use `resources`.
+See the [Hiera example](examples/using_hiera/) for more information.
 
-```Puppet
-class { '::cups':
-}
+#### Attribute `packages`
 
-class { '::cups::server':
-  conf_directory => '/etc/custom_dir',
-}
-```
+The attribute was renamed to `package_names`.
+Package management can now be disabled using `package_manage => false`.
+
+#### Attribute `services`
+
+The attribute was renamed to `service_name`.
+service management can now be disabled using `service_manage => false`.
 
 #### Attribute `webinterface`
 
-Before:
-
-```Puppet
-class { '::cups':
-  webinterface => true,
-}
-```
-
-After:
-
-```Puppet
-class { '::cups':
-}
-
-class { '::cups::server':
-  web_interface => true,
-}
-```
+The attribute was renamed to `web_interface`.
 
 ### Define `cups::ctl`
 
-Use the corresponding attribute of the new class `cups::server`.
-See the [manual](README.md#class-cupsserver) for a complete list of available attributes.
+The define `cups::ctl` was removed without alternative.

@@ -1,0 +1,5 @@
+---
+cups::web_interface: false
+cups::resources:
+  Warehouse:
+    ensure: printer

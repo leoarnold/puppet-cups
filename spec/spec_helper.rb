@@ -19,12 +19,12 @@ require 'rspec-puppet/spec_helper'
 require 'rspec-puppet-facts'
 include RspecPuppetFacts
 
-def any_supported_os
+def any_supported_os(morefacts = {})
   {
     operatingsystem: 'CentOS',
     osfamily: 'Suse',
     os: { 'family' => 'Suse', 'name' => 'CentOS' }
-  }
+  }.merge(morefacts)
 end
 
 # Make all files in this module available to #require
