@@ -6,4 +6,3 @@
 :hierarchy:
   - "nodes/%{::certname}"
   - "common"
-:merge_behavior: deeper

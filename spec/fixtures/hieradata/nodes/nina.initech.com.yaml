@@ -3,6 +3,8 @@ cups::web_interface: true
 cups::resources:
   Office:
     ensure: printer
+  Warehouse:
+    ensure: printer
   GroundFloor:
     ensure: class
     members:
