@@ -5,14 +5,14 @@ class cups (
   Variant[String, Array[String]] $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
   String                         $package_ensure         = 'present',
   Boolean                        $package_manage         = true,
-  Array[String]                  $package_names          = $::cups::params::package_names,
+  Variant[String, Array[String]] $package_names          = $::cups::params::package_names,
   Optional[String]               $papersize              = undef,
   Boolean                        $purge_unmanaged_queues = false,
   Optional[Hash]                 $resources              = undef,
   Boolean                        $service_enable         = true,
   String                         $service_ensure         = 'running',
   Boolean                        $service_manage         = true,
-  String                         $service_name           = 'cups',
+  Variant[String, Array[String]] $service_names          = 'cups',
   Optional[Boolean]              $web_interface          = undef,
 ) inherits cups::params {
 

@@ -31,7 +31,7 @@ but also the complete situation it arises in. We highly recommend [Cucumber](htt
 
   ```Shell
   Error: This version of the CUPS module does not know how to install or manage the CUPS service on your operating system.
-  at /etc/puppetlabs/code/environments/production/modules/cups/manifests/params.pp:17 on node gibbons.initech.com
+  at /etc/puppetlabs/code/environments/production/modules/cups/manifests/params.pp:17 on node nina.initech.com
   ```
 
 Please make sure that you described what you **expected to happen**, preferable in the "**In order to**" step.

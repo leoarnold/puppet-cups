@@ -24,13 +24,9 @@
     * [Configuring queues](#configuring-queues)
     * [Configuring CUPS](#configuring-cups)
     * [Automatic dependencies](#automatic-dependencies)
-1. [Bricolage - Hackish ways of resource creation](#bricolage)
-    * [Using an External Node Classifier (ENC)](#using-an-external-node-classifier-enc)
-    * [Using Hiera](#using-hiera)
-    * [Recommended refactor](#recommended-refactor)
+    * [Using Hiera (or any other ENC)](#using-hiera)
 1. [Reference - The documentation of all features available](#reference)
     * [Classes](#classes)
-    * [Defines](#defines)
     * [Types](#types)
 1. [Limitations](#limitations)
     * [Evince (aka Document Viewer)](#evince-aka-document-viewer)
@@ -59,29 +55,26 @@ Key design goals include *locale independence* and *test driven development*.
 
 ### Setup Requirements
 
-This module is written for and tested on systems using
+This module is written for and tested on Linux systems with
 
 * Puppet Agent `~> 4.0`
 
-* CUPS `~> 1.5` or 2.x
-
-It might also work with CUPS versions prior to 1.5 after [manually installing](http://www.cups.org/software.php?VERSION=ipptool)
-the `ipptool` command line utility.
+* CUPS `~> 1.5` or `~> 2.x`
 
 ### Beginning with CUPS
 
 First you need to install this module. One way to do this is
 
-  ```puppet
-  puppet module install leoarnold-cups
-  ```
+```puppet
+puppet module install leoarnold-cups
+```
 
 All resources in this module require the CUPS daemon to be installed and configured in a certain way.
 To ensure these preconditions you should include the main `cups` class wherever you use this module:
 
-  ```puppet
-  include '::cups'
-  ```
+```puppet
+class { 'cups': }
+```
 
 See the [section](#class-cups) on the `cups` class for details.
 Adding printer or class resources is described in the section on [usage](#usage).
@@ -162,7 +155,7 @@ Minimal printer manifests:
   }
   ```
 
-  which will be autorequired by `Cups_queue['MinimalPrinter']`.
+  which will automatically be required by `Cups_queue['MinimalPrinter']`.
 
 * Using a System V interface script:
 
@@ -187,7 +180,7 @@ Minimal printer manifests:
   }
   ```
 
-  which will be autorequired by `Cups_queue['MinimalPrinter']`.
+  which will automatically be required by `Cups_queue['MinimalPrinter']`.
 
 #### Changing the driver
 
@@ -212,7 +205,7 @@ through syncing the `make_and_model` property, which defaults to
   cups_queue { 'Office':
     ensure         => 'printer',
     make_and_model => 'HP Color LaserJet 4730mfp Postscript (recommended)',
-    ...
+    # ...
   }
   ```
 
@@ -222,10 +215,10 @@ and you would like to
 
   ```Text
   $ lpinfo -m | grep 4730mfp
-  ...
+  # ...
   drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3
   postscript-hp:0/ppd/hplip/HP/hp-color_laserjet_4730mfp-ps.ppd HP Color LaserJet 4730mfp Postscript (recommended)
-  ...
+  # ...
   ```
 
   then you just need to adapt the manifest from above to
@@ -235,7 +228,7 @@ and you would like to
     ensure         => 'printer',
     model          => 'drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd',
     make_and_model => 'HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3',
-    ...
+    # ...
   }
   ```
 
@@ -252,7 +245,7 @@ and you would like to
     ensure         => 'printer',
     ppd            => '/usr/share/cups/model/hp4730v2.ppd',
     make_and_model => 'HP Color LaserJet 4730mfp Postscript (MyCompany v2)',
-    ...
+    # ...
   }
   ```
 
@@ -263,7 +256,7 @@ and you would like to
     ensure         => 'printer',
     interface      => '/usr/share/cups/model/myprinter.sh',
     make_and_model => 'Local System V Printer',
-    ...
+    # ...
   }
   ```
 
@@ -285,7 +278,7 @@ and you would like to
   cups_queue { 'Office':
     ensure    => 'printer',
     interface => '/etc/cups/interfaces/Office',
-    ...
+    # ...
   }
   ```
 
@@ -295,7 +288,7 @@ and you would like to
   cups_queue { 'Office':
     ensure         => 'printer',
     make_and_model => 'Local Raw Printer',
-    ...
+    # ...
   }
   ```
 
@@ -313,16 +306,16 @@ When defining a printer class, it is *mandatory* to also define its member print
 
   cups_queue { 'Office':
     ensure => 'printer',
-    ...
+    # ...
   }
 
   cups_queue { 'Warehouse':
     ensure => 'printer',
-    ...
+    # ...
   }
   ```
 
-The `Cups_queue['MinimalClass']` resource will autorequire its member resources `Cups_queue['Office', 'Warehouse']`.
+The `Cups_queue['MinimalClass']` resource will automatically require its member resources `Cups_queue['Office', 'Warehouse']`.
 
 ### Configuring queues
 
@@ -358,7 +351,7 @@ The asterisk (*) indicates the current value. Use this to adapt your manifest
 
   ```puppet
   cups_queue { 'Office':
-    ...
+    # ...
     options => {
       'Duplex'   => 'DuplexNoTumble',
       'PageSize' => 'A4',
@@ -377,7 +370,7 @@ this can be achieved by:
 
   ```puppet
   cups_queue { 'Office':
-    ...
+    # ...
     access => {
       'policy' => 'allow',
       'users'  => ['lumbergh', 'nina', '@council'],
@@ -392,7 +385,7 @@ Furthermore, you can unset all restrictions by using
 
   ```puppet
   cups_queue { 'Office':
-    ...
+    # ...
     access => {
       'policy' => 'allow',
       'users'  => ['all'],
@@ -433,196 +426,85 @@ cups_queue { 'GroundFloor':
 
 cups_queue { 'Office':
   ensure => 'printer',
-  ...
+  # ...
 }
 
 cups_queue { 'Warehouse':
   ensure => 'printer',
-  ...
+  # ...
 }
 ```
 
 by default generates the dependencies
 
 ```Text
-                      Package['cups']
-                             |
-                      Service['cups']
-                             |
-                     File['lpoptions']
-                    /                 \
-Cups_queue['Office']                   Cups_queue['Warehouse']
-                    \                 /                       \
-                 Cups_queue['GroundFloor']                     Class['cups::default_queue']
+                     Class['cups']
+                    /             \
+Cups_queue['Office']               Cups_queue['Warehouse']
+                    \             /                       \
+               Cups_queue['GroundFloor']                   Class['cups::queues::default']
 ```
-
-## Bricolage
-
-The module usage described in this section is considered *bad style*
-and we strongly encourage the reader to use the [recommended refactor](#recommended-refactor) instead.
-
-Nevertheless this module does support these methods to cover some corner cases.
-
-### Using an External Node Classifier (ENC)
-
-> The following usage example is considered *bad style*. Please consider the [recommended refactor](#recommended-refactor).
-
-You can also create `cups_queue` resources using an ENC.
-Make sure your setup includes the `::cups` class on the relevant nodes and replace a manifest like
-
-  ```puppet
-  class { '::cups':
-    default_queue => 'GroundFloor',
-  }
-
-  cups_queue { 'Office':
-    ensure => 'printer',
-    uri    => 'lpd://192.168.2.105/binary_p1',
-  }
-
-  cups_queue { 'GroundFloor':
-    ensure  => 'class',
-    members => ['Office', 'Warehouse'],
-  }
-  ```
-
-with the ENC output
-
-  ```YAML
-  ---
-  cups::default_queue: 'GroundFloor'
-  cups::resources:
-    'Office':
-      ensure: 'printer'
-      uri: 'lpd://192.168.2.105/binary_p1'
-    'GroundFloor':
-      ensure: 'class'
-      members: ['Office', 'Warehouse']
-  ```
 
 ### Using Hiera
 
-> The following usage example is considered *bad style*. Please consider the [recommended refactor](#recommended-refactor).
+Make sure your Puppet setup includes the `::cups` class on the relevant nodes.
+Configuration is straightforward:
 
-You can also create `cups_queue` resources using Hiera.
-Make sure your setup includes the `::cups` class on the relevant nodes and replace a manifest like
+```YAML
+---
+cups::default_queue: Warehouse
+cups::web_interface: true
+```
 
-  ```puppet
-  class { '::cups':
-    default_queue => 'GroundFloor',
-  }
+Beyond that you can also create `cups_queue` resources using Hiera. Just replace a manifest like
 
-  cups_queue { 'Office':
-    ensure => 'printer',
-    uri    => 'lpd://192.168.2.105/binary_p1',
-  }
+```puppet
+class { 'cups':
+  default_queue => 'Warehouse',
+  web_interface => true
+}
 
-  cups_queue { 'GroundFloor':
-    ensure  => 'class',
-    members => ['Office', 'Warehouse'],
-  }
-  ```
+cups_queue { 'MinimalClass':
+  ensure  => 'class',
+  members => ['Office', 'Warehouse']
+}
+
+cups_queue { 'Office':
+  ensure => 'printer',
+  uri    => 'socket://office.initech.com',
+}
+
+cups_queue { 'Warehouse':
+  ensure => 'printer',
+  uri    => 'socket://warehouse.initech.com',
+}
+```
 
 with the Hiera data
 
-  ```YAML
-  ---
-  cups::default_queue: 'GroundFloor'
-  cups::hiera: priority
-  cups_queue:
-    'Office':
-      ensure: 'printer'
-      uri: 'lpd://192.168.2.105/binary_p1'
-    'GroundFloor':
-      ensure: 'class'
-      members: ['Office', 'Warehouse']
-  ```
-
-where the `cups::hiera` attribute must be set to `priority` or `merge` in order to enable Hiera lookups.
-
-### Recommended refactor
-
-If you considered using Hiera or an ENC to directly create `cups_queue` resources,
-you probably did this in order to have fine-grained control over which CUPS queues
-are available on which node.
-
-Instead of creating the resources directly, we strongly encourage you to
-encapsulate your `cups_queue` resource definitions in subclasses of a custom `myprinters` module
-and then have the ENC / Hiera decide, which of these subclasses to ensure or remove on the given node.
-
-Suppose you want to refactor the following manifest:
-
-  ```puppet
-  class { '::cups':
-    default_queue => 'GroundFloor',
-  }
-
-  cups_queue { 'Office':
-    ensure => 'printer',
-    uri    => 'lpd://192.168.2.105/binary_p1',
-  }
-
-  cups_queue { 'GroundFloor':
-    ensure  => 'class',
-    members => ['Office', 'Warehouse'],
-  }
-  ```
-
-Then your custom `myprinters` module could be organized like this:
-
-  ```puppet
-  # MODULEPATH/myprinters/manifests/init.pp
-  class myprinters {
-    # Mandatory file - content optional
-  }
-  ```
-
-  ```puppet
-  # MODULEPATH/myprinters/manifests/office.pp
-  class myprinters::office {
-    include cups
-
-    cups_queue { 'Office':
-      ensure => 'printer',
-      uri    => 'lpd://192.168.2.105/binary_p1',
-    }
-  }
-  ```
-
-  ```puppet
-  # MODULEPATH/myprinters/manifests/groundfloor.pp
-  class myprinters::groundfloor {
-    include cups
-    include myprinters::office
-    include myprinters::warehouse
-
-    cups_queue { 'GroundFloor':
-      ensure  => 'class',
-      members => ['Office', 'Warehouse'],
-    }
-  }
-  ```
-
-Now you that you have your resource parametes safely wrapped in subclasses,
-the ENC / Hiera just get to decide which classes get included on the node:
-
-  ```YAML
-  # Example ENC output
-  classes:
-      cups:
-          default_queue: GroundFloor
-      myprinters::groundfloor:
-  ```
+```YAML
+---
+cups::default_queue: Warehouse
+cups::web_interface: true
+cups::resources:
+  GroundFloor:
+    ensure: class
+    members:
+      - Office
+      - Warehouse
+  Office:
+    ensure: printer
+    uri: socket://office.initech.com
+  Warehouse:
+    ensure: printer
+    uri: socket://warehouse.initech.com
+```
 
 ## Reference
 
 ### Classes
 
 * [`cups`](#class-cups)
-
-* [`cups::server`](#class-cupsserver)
-
-### Defines
 
 ### Types
 
@@ -637,46 +519,35 @@ Installs, configures, and manages the CUPS service.
 * `default_queue`: The name of the default destination for all print jobs.
   Requires the catalog to contain a `cups_queue` resource with the same name.
 
-* `hiera`: When set to `priority` or `merge`, Puppet will look up the Hiera key `cups_queue`
-  to manage `cups_queue` resources. See also the [example](#using-hiera) above. Disabled by default.
+* `listen`: Which adresses to the CUPS daemon should listen to.
+  Accepts (an array of) strings.
+  Defaults to `['localhost:631', '/var/run/cups/cups.sock']`.
+  Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
 
 * `package_ensure`: Whether CUPS packages should be `present` or `absent`. Defaults to `present`.
 
 * `package_manage`: Whether to manage package installation at all. Defaults to `true`.
 
-* `package_names`: An array with the names of all packages needed to install for CUPS and `ipptool`.
-  OS dependent defaults apply.
+* `package_names`: A name or an array of names of all packages needed to be installed
+  in order to run CUPS and provide `ipptool`. OS dependent defaults apply.
 
 * `papersize`: Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
 
 * `purge_unmanaged_queues`: Setting `true` will remove all queues from the node
   which do not match a `cups_queue` resource in the current catalog. Defaults to `false`.
 
-* `resources`: This attribute is intended for use with ENCs only (see [example above](#using-an-external-node-classifier-enc)).
+* `resources`: This attribute is intended for use with Hiera or any other ENC (see the [example above](#using-hiera)).
 
-* `services`: An array with the names of all CUPS services to be managed.
-  Use `[]` to disable automatic service management. OS dependent defaults apply.
+* `service_enable`: Whether the CUPS services should be enabled to run at boot.
+  Defaults to `true`.
 
-#### Class: `cups::server`
+* `service_ensure`: Whether the CUPS services should be `running` or `stopped`.
+  Defaults to `running`.
 
-Manages the CUPS server configuration files.
+* `service_manage`:  Whether to manage services at all. Defaults to `true`.
 
-##### Attributes
-
-* `ensure`: Whether the server should be `present` or `absent`. Defaults to `present`.
-
-* `conf_directory`: The absolute path of the directory (without trailing slash) for the CUPS configuration files.
-  Defaults to `/etc/cups`.
-
-* `file_device`: Boolean value to allow or deny `file://` URIs other than `/dev/null`.
-
-* `listen`: An array of network addresses (e.g. `'localhost:631'`) and domain sockets (e.g. `'/var/run/cups/cups.sock'`)
-  the server should listen to.
-
-* `log_level`: Sets the verbosity of the `error_log`.
-  Valid values are `none`, `emerg`, `alert`, `crit`, `error`, `warn`, `notice`, `info`, `debug` and `debug2`.
-
-* `port`: An array of ports (e.g. `631`) the server should listen to.
+* `service_names`: A name or an array of names of all CUPS services to be managed.
+  OS dependent defaults apply.
 
 * `web_interface`:  Boolean value to enable or disable the server's web interface.
 
@@ -688,7 +559,7 @@ Installs and manages CUPS print queues.
 
 * `name`: (mandatory) Queue names may contain any printable character
   except SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".
-  We recommend to use only ASCII characters as the node's shell might not support Unicode.
+  We recommend to use only ASCII characters because the node's shell might not support Unicode.
 
 * `ensure`: *mandatory* - Specifies whether this queue should be a `class`, a `printer` or `absent`.
 

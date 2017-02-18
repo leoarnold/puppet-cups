@@ -15,7 +15,7 @@ describe 'cups' do
         service_enable: 'true',
         service_ensure: 'running',
         service_manage: 'true',
-        service_name: 'cups'
+        service_names: 'cups'
       }
 
       should contain_class('cups').with(defaults)
@@ -138,6 +138,24 @@ describe 'cups' do
           end
         end
 
+        context "when package_names = 'mycupsipp'" do
+          %w(present absent).each do |package_ensure|
+            context "when package_ensure => #{package_ensure}" do
+              let(:facts) { any_supported_os }
+
+              let(:params) do
+                {
+                  package_ensure: package_ensure,
+                  package_manage: true,
+                  package_names: 'mycupsipp'
+                }
+              end
+
+              it { should contain_package('mycupsipp').with(ensure: package_ensure) }
+            end
+          end
+        end
+
         context "when package_names = ['mycups', 'myipp']" do
           %w(present absent).each do |package_ensure|
             context "when package_ensure => #{package_ensure}" do
@@ -243,23 +261,44 @@ describe 'cups' do
       let(:facts) { any_supported_os }
 
       context '=> true' do
-        %w(cups mycups).each do |service_name|
-          context "with service_name => #{service_name}," do
-            %w(running stopped).each do |service_ensure|
-              context "service_ensure => #{service_ensure}" do
-                [true, false].each do |service_enable|
-                  context "and service_enable => #{service_enable}" do
-                    let(:params) do
-                      {
-                        service_enable: service_enable,
-                        service_ensure: service_ensure,
-                        service_manage: true,
-                        service_name: service_name
-                      }
-                    end
-
-                    it { should contain_service(service_name).with(ensure: service_ensure, enable: service_enable) }
+        context "with service_names => 'mycups'," do
+          %w(running stopped).each do |service_ensure|
+            context "service_ensure => #{service_ensure}" do
+              [true, false].each do |service_enable|
+                context "and service_enable => #{service_enable}" do
+                  let(:params) do
+                    {
+                      service_enable: service_enable,
+                      service_ensure: service_ensure,
+                      service_manage: true,
+                      service_names: 'mycups'
+                    }
                   end
+
+                  it { should contain_service('mycups').with(ensure: service_ensure, enable: service_enable) }
+                end
+              end
+            end
+          end
+        end
+
+        context "with service_names => ['mycups', 'mycups-browsed']," do
+          %w(running stopped).each do |service_ensure|
+            context "service_ensure => #{service_ensure}" do
+              [true, false].each do |service_enable|
+                context "and service_enable => #{service_enable}" do
+                  let(:params) do
+                    {
+                      service_enable: service_enable,
+                      service_ensure: service_ensure,
+                      service_manage: true,
+                      service_names: %w(mycups mycups-browsed)
+                    }
+                  end
+
+                  it { should contain_service('mycups').with(ensure: service_ensure, enable: service_enable) }
+
+                  it { should contain_service('mycups-browsed').with(ensure: service_ensure, enable: service_enable) }
                 end
               end
             end
@@ -268,16 +307,16 @@ describe 'cups' do
       end
 
       context '=> false' do
-        %w(cups mycups).each do |service_name|
-          context "with service_name => #{service_name}," do
-            let(:params) { { service_manage: false, service_name: service_name } }
+        %w(cups mycups).each do |service_names|
+          context "with service_names => #{service_names}," do
+            let(:params) { { service_manage: false, service_names: service_names } }
 
-            it { should_not contain_service(service_name) }
+            it { should_not contain_service(service_names) }
           end
         end
       end
 
-      context "when service_name = 'mycups'" do
+      context "when service_names = 'mycups'" do
         %w(present absent).each do |service_ensure|
           context "when service_ensure => #{service_ensure}" do
             let(:facts) { any_supported_os }
@@ -286,7 +325,7 @@ describe 'cups' do
               {
                 service_ensure: service_ensure,
                 service_manage: false,
-                service_name: 'mycups'
+                service_names: 'mycups'
               }
             end
 

@@ -1,7 +1,10 @@
 ---
-cups::web_interface: false
+# Configure Class['cups']
+cups::default_queue: Warehouse
+cups::web_interface: true
+# Create `cups_queue` resources using Hiera
 cups::resources:
   Warehouse:
     ensure: printer
     model: drv:///sample.drv/generic.ppd
-    uri: warehouse.initech.com
+    uri: socket://warehouse.initech.com

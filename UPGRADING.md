@@ -21,7 +21,7 @@ Package management can now be disabled using `package_manage => false`.
 
 #### Attribute `services`
 
-The attribute was renamed to `service_name`.
+The attribute was renamed to `service_names`.
 service management can now be disabled using `service_manage => false`.
 
 #### Attribute `webinterface`

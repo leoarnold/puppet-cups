@@ -5,9 +5,9 @@
 class cups::server inherits cups {
 
   contain cups::server::config
-  contain cups::server::service
+  contain cups::server::services
 
   Class[cups::server::config]
-  ~> Class[cups::server::service]
+  ~> Class[cups::server::services]
 
 }
