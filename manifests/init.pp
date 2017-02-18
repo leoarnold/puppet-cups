@@ -1,16 +1,18 @@
 # Class 'cups'
 #
 class cups (
-  Optional[String] $default_queue          = undef,
-  String           $package_ensure         = 'present',
-  Boolean          $package_manage         = true,
-  Array[String]    $package_names          = $::cups::params::package_names,
-  Optional[String] $papersize              = undef,
-  Boolean          $purge_unmanaged_queues = false,
-  String           $service_ensure         = 'running',
-  Boolean          $service_enable         = true,
-  Boolean          $service_manage         = true,
-  String           $service_name           = 'cups',
+  Optional[String]               $default_queue          = undef,
+  Variant[String, Array[String]] $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
+  String                         $package_ensure         = 'present',
+  Boolean                        $package_manage         = true,
+  Array[String]                  $package_names          = $::cups::params::package_names,
+  Optional[String]               $papersize              = undef,
+  Boolean                        $purge_unmanaged_queues = false,
+  Boolean                        $service_enable         = true,
+  String                         $service_ensure         = 'running',
+  Boolean                        $service_manage         = true,
+  String                         $service_name           = 'cups',
+  Boolean                        $web_interface          = true,
 ) inherits cups::params {
 
   contain cups::packages

@@ -1,12 +1,15 @@
 LogLevel warn
 PageLogFormat
 MaxLogSize 0
-Listen localhost:631
-Listen /var/run/cups/cups.sock
+<% unless @listen.empty? -%>
+<%   [@listen].flatten.each do |l| -%>
+<%=    "Listen #{l}" %>
+<%   end -%>
+<% end -%>
 Browsing Off
 BrowseLocalProtocols dnssd
 DefaultAuthType Basic
-WebInterface Yes
+<%= '#' if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>
 <Location />
   Order allow,deny
 </Location>

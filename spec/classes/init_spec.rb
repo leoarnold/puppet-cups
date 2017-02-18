@@ -8,18 +8,32 @@ describe 'cups' do
 
     it do
       defaults = {
+        listen: ['localhost:631', '/var/run/cups/cups.sock'],
         package_ensure: 'present',
         package_manage: 'true',
         purge_unmanaged_queues: 'false',
         service_enable: 'true',
         service_ensure: 'running',
-        service_manage: 'true'
+        service_manage: 'true',
+        service_name: 'cups',
+        web_interface: 'true'
       }
 
       should contain_class('cups').with(defaults)
     end
 
+    it do
+      undefs = [
+        :default_queue,
+        :papersize,
+      ]
+
+      should contain_class('cups').without(undefs)
+    end
+
     it { should contain_class('cups::packages') }
+
+    it { should contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
 
     it { should contain_class('cups::server').that_requires('Class[cups::packages]') }
 
@@ -50,6 +64,30 @@ describe 'cups' do
 
           it { should contain_exec('cups::queues::default').that_requires('Cups_queue[Office]') }
         end
+      end
+    end
+
+    describe 'listen' do
+      let(:facts) { any_supported_os }
+
+      context 'by default' do
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen localhost:631$/) }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: %r{^Listen /var/run/cups/cups.sock$}) }
+      end
+
+      context "=> '*:631'" do
+        let(:params) { { listen: '*:631' } }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen \*:631$/) }
+      end
+
+      context "=> ['*:631', 'localhost:8080']" do
+        let(:params) { { listen: ['*:631', 'localhost:8080'] } }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen \*:631$/) }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen localhost:8080$/) }
       end
     end
 
@@ -147,6 +185,38 @@ describe 'cups' do
       end
     end
 
+    describe 'papersize' do
+      let(:facts) { any_supported_os }
+
+      context '=> undef' do
+        it { should_not contain_exec('cups::papersize') }
+      end
+
+      context '=> a4' do
+        let(:params) { { papersize: 'a4' } }
+
+        it { should contain_exec('cups::papersize').with(command: 'paperconfig -p a4') }
+
+        it { should contain_exec('cups::papersize').with(unless: 'cat /etc/papersize | grep -w a4') }
+      end
+    end
+
+    describe 'purge_unmanaged_queues' do
+      let(:facts) { any_supported_os }
+
+      context '=> true' do
+        let(:params) { { purge_unmanaged_queues: true } }
+
+        it { should contain_resources('cups_queue').with(purge: 'true') }
+      end
+
+      context '=> false' do
+        let(:params) { { purge_unmanaged_queues: false } }
+
+        it { should contain_resources('cups_queue').with(purge: 'false') }
+      end
+    end
+
     describe 'service_manage' do
       let(:facts) { any_supported_os }
 
@@ -204,35 +274,19 @@ describe 'cups' do
       end
     end
 
-    describe 'papersize' do
-      let(:facts) { any_supported_os }
-
-      context '=> undef' do
-        it { should_not contain_exec('cups::papersize') }
-      end
-
-      context '=> a4' do
-        let(:params) { { papersize: 'a4' } }
-
-        it { should contain_exec('cups::papersize').with(command: 'paperconfig -p a4') }
-
-        it { should contain_exec('cups::papersize').with(unless: 'cat /etc/papersize | grep -w a4') }
-      end
-    end
-
-    describe 'purge_unmanaged_queues' do
+    describe 'web_interface' do
       let(:facts) { any_supported_os }
 
       context '=> true' do
-        let(:params) { { purge_unmanaged_queues: true } }
+        let(:params) { { web_interface: true } }
 
-        it { should contain_resources('cups_queue').with(purge: 'true') }
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface Yes$/) }
       end
 
       context '=> false' do
-        let(:params) { { purge_unmanaged_queues: false } }
+        let(:params) { { web_interface: false } }
 
-        it { should contain_resources('cups_queue').with(purge: 'false') }
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface No$/) }
       end
     end
   end
