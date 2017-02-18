@@ -8,11 +8,12 @@ class cups (
   Array[String]                  $package_names          = $::cups::params::package_names,
   Optional[String]               $papersize              = undef,
   Boolean                        $purge_unmanaged_queues = false,
+  Optional[Hash]                 $resources              = undef,
   Boolean                        $service_enable         = true,
   String                         $service_ensure         = 'running',
   Boolean                        $service_manage         = true,
   String                         $service_name           = 'cups',
-  Boolean                        $web_interface          = true,
+  Optional[Boolean]              $web_interface          = undef,
 ) inherits cups::params {
 
   contain cups::packages

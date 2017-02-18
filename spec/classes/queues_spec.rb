@@ -6,6 +6,8 @@ describe 'cups::queues' do
 
     it { should contain_class('cups::queues::default') }
 
+    it { should contain_class('cups::queues::resources') }
+
     it { should contain_class('cups::queues::unmanaged') }
   end
 end

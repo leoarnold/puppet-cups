@@ -16,7 +16,6 @@ describe 'cups' do
         service_ensure: 'running',
         service_manage: 'true',
         service_name: 'cups',
-        web_interface: 'true'
       }
 
       should contain_class('cups').with(defaults)
@@ -26,6 +25,8 @@ describe 'cups' do
       undefs = [
         :default_queue,
         :papersize,
+        :resources,
+        :web_interface
       ]
 
       should contain_class('cups').without(undefs)
@@ -34,6 +35,8 @@ describe 'cups' do
     it { should contain_class('cups::packages') }
 
     it { should contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
+
+    it { should contain_file('/etc/cups/cupsd.conf').with(ensure: 'file', owner: 'root', group: 'lp', mode: '0640') }
 
     it { should contain_class('cups::server').that_requires('Class[cups::packages]') }
 
@@ -217,6 +220,25 @@ describe 'cups' do
       end
     end
 
+    describe 'resources' do
+      let(:facts) { any_supported_os }
+
+      context "=> { 'BackOffice' => { 'ensure' => 'printer' }, UpperFloor' => { 'ensure' => 'class', 'members' => ['BackOffice'] }" do
+        let(:params) do
+          {
+            resources: {
+              'BackOffice' => { 'ensure' => 'printer'},
+              'UpperFloor' => { 'ensure' => 'class', 'members' => [ 'BackOffice' ] }
+            }
+          }
+        end
+
+        it { should contain_cups_queue('BackOffice').with(ensure: 'printer') }
+
+        it { should contain_cups_queue('UpperFloor').with(ensure: 'class', members: ['BackOffice']) }
+      end
+    end
+
     describe 'service_manage' do
       let(:facts) { any_supported_os }
 
@@ -255,7 +277,7 @@ describe 'cups' do
         end
       end
 
-      context "when service_name = ['mycups', 'myipp']" do
+      context "when service_name = 'mycups'" do
         %w(present absent).each do |service_ensure|
           context "when service_ensure => #{service_ensure}" do
             let(:facts) { any_supported_os }
