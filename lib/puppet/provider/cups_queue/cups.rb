@@ -120,7 +120,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def access
-    policy = (users_denied_is.nil? ? 'allow' : 'deny')
+    policy = (query_users('denied').empty? ? 'allow' : 'deny')
 
     { 'policy' => policy, 'users' => users_is }
   end
@@ -269,7 +269,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     case option
     when 'auth-info-required'
       # Related issue: https://github.com/apple/cups/issues/4958
-      value.nil? ? 'none' : value
+      value.empty? ? 'none' : value
     when 'job-sheets-default'
       value.gsub(/\A"|"\Z/, '')
     else
@@ -291,33 +291,25 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   ### Helper functions for #access
 
   def users_is
-    users_allowed = users_allowed_is
-    users_denied = users_denied_is
+    users_allowed = query_users('allowed')
+    users_denied = query_users('denied')
 
-    if users_allowed
+    if !users_allowed.empty?
       users_allowed
-    elsif users_denied
+    elsif !users_denied.empty?
       users_denied
     else
       ['all']
     end
   end
 
+  def query_users(status)
+    names = query("requesting-user-name-#{status}")
+    names.gsub(/[\'\"]/, '').split(',').sort.uniq if names
+  end
+
   def users_should
     resource.should(:access).nil? ? [] : resource.should(:access)['users']
-  end
-
-  def users_allowed_is
-    query_users('requesting-user-name-allowed')
-  end
-
-  def users_denied_is
-    query_users('requesting-user-name-denied')
-  end
-
-  def query_users(property)
-    names = query(property)
-    names.gsub(/[\'\"]/, '').split(',').sort.uniq if names
   end
 
   # Sometimes the `root` user is not considered a privileged user in CUPS

@@ -231,8 +231,8 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     describe '#access' do
       context 'when no policy is in place' do
         it 'returns all users allowed' do
-          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
-          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('')
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('')
 
           expect(@provider.access).to eq('policy' => 'allow', 'users' => ['all'])
         end
@@ -241,7 +241,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       context 'when an allow policy is in place' do
         it 'returns all allowed user names' do
           allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('@council,lumbergh,nina')
-          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('')
 
           expect(@provider.access).to eq('policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'])
         end
@@ -249,7 +249,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
       context 'when a deny policy is in place' do
         it 'returns all denied user names' do
-          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('')
           allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('@council,lumbergh,nina')
 
           expect(@provider.access).to eq('policy' => 'deny', 'users' => ['@council', 'lumbergh', 'nina'])
@@ -587,7 +587,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     describe '#query_native_option' do
       context "'auth-info-required'" do
         it "upon empty query result returns 'none'" do
-          allow(@provider).to receive(:query).with('auth-info-required').and_return(nil)
+          allow(@provider).to receive(:query).with('auth-info-required').and_return('')
 
           expect(@provider.send(:query_native_option, 'auth-info-required')).to eq('none')
         end
@@ -653,8 +653,8 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
     describe '#users_is' do
       context 'when no policy is in place' do
         it "returns 'all'" do
-          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
-          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('')
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('')
 
           expect(@provider.send(:users_is)).to eq(%w(all))
         end
@@ -663,7 +663,7 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
       context 'when there are users on an allow policy' do
         it 'returns a sorted array without duplicates' do
           allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('nina,@council,nina,lumbergh')
-          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
+          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('')
 
           expect(@provider.send(:users_is)).to eq(%w(@council lumbergh nina))
         end
@@ -671,7 +671,7 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
 
       context 'when there are users on an deny policy' do
         it 'returns a sorted array without duplicates' do
-          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
+          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('')
           allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('nina,@council,nina,lumbergh')
 
           expect(@provider.send(:users_is)).to eq(%w(@council lumbergh nina))
@@ -693,42 +693,6 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
           allow(@resource).to receive(:should).with(:access).and_return('policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'])
 
           expect(@provider.send(:users_should)).to eq(['@council', 'lumbergh', 'nina'])
-        end
-      end
-    end
-
-    describe '#users_allowed_is' do
-      context 'when there are NO users on an allow policy' do
-        it 'returns nil' do
-          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return(nil)
-
-          expect(@provider.send(:users_allowed_is)).to be nil
-        end
-      end
-
-      context 'when there are users on an allow policy' do
-        it 'returns a sorted array without duplicates' do
-          allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('nina,@council,nina,lumbergh')
-
-          expect(@provider.send(:users_allowed_is)).to eq(%w(@council lumbergh nina))
-        end
-      end
-    end
-
-    describe '#users_denied_is' do
-      context 'when there are NO users on a deny policy' do
-        it 'returns nil' do
-          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return(nil)
-
-          expect(@provider.send(:users_denied_is)).to be nil
-        end
-      end
-
-      context 'when there are users on a deny policy' do
-        it 'returns a sorted array without duplicates' do
-          allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('nina,@council,nina,lumbergh')
-
-          expect(@provider.send(:users_denied_is)).to eq(%w(@council lumbergh nina))
         end
       end
     end
