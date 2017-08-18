@@ -1,3 +1,3 @@
-node 'nina.initech.com' {
+node 'default' {
   include cups
 }

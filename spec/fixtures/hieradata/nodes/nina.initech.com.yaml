@@ -1,4 +1,5 @@
 ---
+cups::web_interface: true
 cups::resources:
   Office:
     ensure: printer
