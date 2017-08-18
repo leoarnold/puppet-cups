@@ -115,6 +115,16 @@ Puppet::Type.newtype(:cups_queue) do
       return "#{is_to_s(currentvalue)} removed" if newvalue == :absent
       "changed from #{is_to_s(currentvalue)} to #{should_to_s(newvalue)}"
     end
+
+    # rubocop:disable Style/PredicateName
+    def is_to_s(value)
+      value.to_s
+    end
+    # rubocop:enable Style/PredicateName
+
+    def should_to_s(value)
+      value.to_s
+    end
   end
 
   newparam(:name) do

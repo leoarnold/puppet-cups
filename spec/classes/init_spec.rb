@@ -57,7 +57,7 @@ describe 'cups' do
         let(:params) { { default_queue: 'Office' } }
 
         context "but the catalog does NOT contain the corresponding 'cups_queue' resource" do
-          it { expect { should compile }.to raise_error(/dependency/) }
+          it { should_not compile }
         end
 
         context "and the catalog contains the corresponding 'cups_queue' resource" do
