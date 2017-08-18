@@ -15,7 +15,8 @@ rvm:
 matrix:
   exclude:
   - rvm: 2.4.1
-    env: PUPPET_GEM_VERSION='4.0.0' STRICT_VARIABLES='yes'script: bundle exec rake static_checks
+    env: PUPPET_GEM_VERSION='4.0.0' STRICT_VARIABLES='yes'
+script: bundle exec rake static_checks
 after_script: bundle exec codeclimate-test-reporter
 notifications:
   email: false
