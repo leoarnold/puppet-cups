@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'cups' do
@@ -22,11 +24,11 @@ describe 'cups' do
     end
 
     it do
-      undefs = [
-        :default_queue,
-        :papersize,
-        :resources,
-        :web_interface
+      undefs = %i[
+        default_queue
+        papersize
+        resources
+        web_interface
       ]
 
       should contain_class('cups').without(undefs)
@@ -98,7 +100,7 @@ describe 'cups' do
       context '=> true' do
         context 'with default package_names' do
           on_supported_os.each do |os, facts|
-            %w(present absent).each do |package_ensure|
+            %w[present absent].each do |package_ensure|
               context "when package_ensure => #{package_ensure}" do
                 let(:params) { { package_ensure: package_ensure, package_manage: true } }
 
@@ -139,7 +141,7 @@ describe 'cups' do
         end
 
         context "when package_names = 'mycupsipp'" do
-          %w(present absent).each do |package_ensure|
+          %w[present absent].each do |package_ensure|
             context "when package_ensure => #{package_ensure}" do
               let(:facts) { any_supported_os }
 
@@ -157,7 +159,7 @@ describe 'cups' do
         end
 
         context "when package_names = ['mycups', 'myipp']" do
-          %w(present absent).each do |package_ensure|
+          %w[present absent].each do |package_ensure|
             context "when package_ensure => #{package_ensure}" do
               let(:facts) { any_supported_os }
 
@@ -165,7 +167,7 @@ describe 'cups' do
                 {
                   package_ensure: package_ensure,
                   package_manage: true,
-                  package_names: %w(mycups myipp)
+                  package_names: %w[mycups myipp]
                 }
               end
 
@@ -197,7 +199,7 @@ describe 'cups' do
         context "when package_names = ['mycups', 'myipp']" do
           let(:facts) { any_supported_os }
 
-          let(:params) { { package_manage: false, package_names: %w(mycups myipp) } }
+          let(:params) { { package_manage: false, package_names: %w[mycups myipp] } }
 
           it { should_not contain_package('mycups') }
 
@@ -262,7 +264,7 @@ describe 'cups' do
 
       context '=> true' do
         context "with service_names => 'mycups'," do
-          %w(running stopped).each do |service_ensure|
+          %w[running stopped].each do |service_ensure|
             context "service_ensure => #{service_ensure}" do
               [true, false].each do |service_enable|
                 context "and service_enable => #{service_enable}" do
@@ -283,7 +285,7 @@ describe 'cups' do
         end
 
         context "with service_names => ['mycups', 'mycups-browsed']," do
-          %w(running stopped).each do |service_ensure|
+          %w[running stopped].each do |service_ensure|
             context "service_ensure => #{service_ensure}" do
               [true, false].each do |service_enable|
                 context "and service_enable => #{service_enable}" do
@@ -292,7 +294,7 @@ describe 'cups' do
                       service_enable: service_enable,
                       service_ensure: service_ensure,
                       service_manage: true,
-                      service_names: %w(mycups mycups-browsed)
+                      service_names: %w[mycups mycups-browsed]
                     }
                   end
 
@@ -307,7 +309,7 @@ describe 'cups' do
       end
 
       context '=> false' do
-        %w(cups mycups).each do |service_names|
+        %w[cups mycups].each do |service_names|
           context "with service_names => #{service_names}," do
             let(:params) { { service_manage: false, service_names: service_names } }
 
@@ -317,7 +319,7 @@ describe 'cups' do
       end
 
       context "when service_names = 'mycups'" do
-        %w(present absent).each do |service_ensure|
+        %w[present absent].each do |service_ensure|
           context "when service_ensure => #{service_ensure}" do
             let(:facts) { any_supported_os }
 

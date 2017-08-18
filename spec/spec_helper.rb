@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'codacy-coverage'
 require 'simplecov-console'
 

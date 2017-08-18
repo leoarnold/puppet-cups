@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:cups_queue) do
@@ -170,7 +172,7 @@ describe Puppet::Type.type(:cups_queue) do
             manifest = {
               ensure: 'class',
               name: 'GroundFloor',
-              members: %w(Office Warehouse)
+              members: %w[Office Warehouse]
             }
 
             expect(type.new(manifest)).not_to be_nil
@@ -304,7 +306,7 @@ describe Puppet::Type.type(:cups_queue) do
           manifest = {
             ensure: 'class',
             name: 'GroundFloor',
-            members: %w(Office Warehouse),
+            members: %w[Office Warehouse],
             model: 'drv:///sample.drv/generic.ppd'
           }
 
@@ -317,7 +319,7 @@ describe Puppet::Type.type(:cups_queue) do
           manifest = {
             ensure: 'class',
             name: 'GroundFloor',
-            members: %w(Office Warehouse),
+            members: %w[Office Warehouse],
             ppd: '/usr/share/cups/model/myprinter.ppd'
           }
 
@@ -330,7 +332,7 @@ describe Puppet::Type.type(:cups_queue) do
           manifest = {
             ensure: 'class',
             name: 'GroundFloor',
-            members: %w(Office Warehouse),
+            members: %w[Office Warehouse],
             interface: '/usr/share/cups/model/myprinter.sh'
           }
 
@@ -343,7 +345,7 @@ describe Puppet::Type.type(:cups_queue) do
           manifest = {
             ensure: 'class',
             name: 'GroundFloor',
-            members: %w(Office Warehouse),
+            members: %w[Office Warehouse],
             make_and_model: 'Local Printer Class'
           }
 
@@ -356,7 +358,7 @@ describe Puppet::Type.type(:cups_queue) do
           manifest = {
             ensure: 'class',
             name: 'GroundFloor',
-            members: %w(Office Warehouse),
+            members: %w[Office Warehouse],
             uri: 'lpd://192.168.2.105/binary_p1'
           }
 
@@ -372,7 +374,7 @@ describe Puppet::Type.type(:cups_queue) do
             ensure: 'printer',
             name: 'GroundFloor',
             model: 'drv:///sample.drv/generic.ppd',
-            members: %w(Office Warehouse)
+            members: %w[Office Warehouse]
           }
 
           expect { type.new(manifest) }.to raise_error(/support/)
@@ -679,7 +681,7 @@ describe Puppet::Type.type(:cups_queue) do
       end
 
       it 'rejects an array' do
-        expect { @resource[:access] = %w(a b) }.to raise_error(Puppet::ResourceError)
+        expect { @resource[:access] = %w[a b] }.to raise_error(Puppet::ResourceError)
       end
 
       it 'rejects a string' do
@@ -792,7 +794,7 @@ describe Puppet::Type.type(:cups_queue) do
       end
 
       it 'rejects an array' do
-        expect { @resource[:options] = %w(a b) }.to raise_error(Puppet::ResourceError)
+        expect { @resource[:options] = %w[a b] }.to raise_error(Puppet::ResourceError)
       end
 
       it 'rejects a string' do
@@ -800,7 +802,7 @@ describe Puppet::Type.type(:cups_queue) do
       end
 
       it 'rejects a hash containing options already managed by other attributes' do
-        %w(printer-is-accepting-jobs printer-info printer-state printer-location printer-is-shared device-uri).each do |key|
+        %w[printer-is-accepting-jobs printer-info printer-state printer-location printer-is-shared device-uri].each do |key|
           expect { @resource[:options] = { key => 'some value' } }.to raise_error(Puppet::ResourceError)
         end
       end

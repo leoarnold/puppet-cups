@@ -1,0 +1,6 @@
+---
+inherit_from: ../.rubocop.yml
+AllCops:
+  TargetRubyVersion: 2.3
+Layout/IndentHeredoc:
+  EnforcedStyle: squiggly

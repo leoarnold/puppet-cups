@@ -139,7 +139,7 @@ Puppet::Type.newtype(:cups_queue) do
 
     validate do |value|
       raise ArgumentError, 'Please provide a hash value.' unless value.is_a?(Hash)
-      raise ArgumentError, 'Please provide a hash with both keys `policy` and `users`.' unless value.keys.sort == %w(policy users).sort
+      raise ArgumentError, 'Please provide a hash with both keys `policy` and `users`.' unless value.keys.sort == %w[policy users].sort
       raise ArgumentError, "The value 'policy => #{value['policy']}' is unsupported. Valid values are 'allow' and 'deny'." \
         if value.key?('policy') && !%(allow, deny).include?(value['policy'])
       raise ArgumentError, 'Please provide a non-empty array of user names.' unless value['users'].is_a?(Array) && !value['users'].empty?

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.configure do |c|
@@ -14,6 +16,6 @@ describe 'nina.initech.com' do
 
     it { should contain_cups_queue('Warehouse').with(ensure: 'printer') }
 
-    it { should contain_cups_queue('GroundFloor').with(ensure: 'class', members: %w(Office Warehouse)) }
+    it { should contain_cups_queue('GroundFloor').with(ensure: 'class', members: %w[Office Warehouse]) }
   end
 end

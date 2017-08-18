@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'shellwords'
 require 'beaker-rspec'
 
@@ -37,7 +39,7 @@ def add_printers_to_classes(classmembers)
   add_printers('Dummy')
   classmembers.keys.each do |classname|
     members = classmembers[classname]
-    members = %w(Dummy) if members.empty?
+    members = %w[Dummy] if members.empty?
     members.each do |printername|
       shell("lpadmin -E -p #{Shellwords.escape(printername)} -c #{Shellwords.escape(classname)}")
     end

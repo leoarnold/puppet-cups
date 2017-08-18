@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:cups_queue).provider(:cups) do
@@ -17,7 +19,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       end
 
       it 'temporarily allows root access, then reinstates the original ACL' do
-        acl = { 'policy' => 'allow', 'users' => %w(lumbergh nina) }
+        acl = { 'policy' => 'allow', 'users' => %w[lumbergh nina] }
 
         allow(@provider).to receive(:access).and_return(acl)
 
@@ -34,7 +36,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         manifest = {
           ensure: 'printer',
           name: 'Office',
-          access: { 'policy' => 'allow', 'users' => %w(lumbergh nina) }
+          access: { 'policy' => 'allow', 'users' => %w[lumbergh nina] }
         }
 
         @resource = type.new(manifest)
@@ -46,7 +48,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
         expect(@provider).to receive(:access=).with('policy' => 'allow', 'users' => ['root'])
         expect(@provider).to receive(:cupsenable)
-        expect(@provider).to receive(:access=).with('policy' => 'allow', 'users' => %w(lumbergh nina))
+        expect(@provider).to receive(:access=).with('policy' => 'allow', 'users' => %w[lumbergh nina])
 
         @provider.enabled = :true
       end

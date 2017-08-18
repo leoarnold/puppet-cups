@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'Custom type `cups_queue`' do
@@ -11,7 +13,7 @@ describe 'Custom type `cups_queue`' do
         context 'using a minimal manifest' do
           before(:all) do
             purge_all_queues
-            add_printers(%w(Office Warehouse))
+            add_printers(%w[Office Warehouse])
           end
 
           manifest = <<-EOM
@@ -33,7 +35,7 @@ describe 'Custom type `cups_queue`' do
         context 'using a full-fledged manifest' do
           before(:all) do
             purge_all_queues
-            add_printers(%w(Office Warehouse))
+            add_printers(%w[Office Warehouse])
           end
 
           manifest = <<-EOM
@@ -119,8 +121,8 @@ describe 'Custom type `cups_queue`' do
         context 'but some are not members yet' do
           before(:all) do
             purge_all_queues
-            add_printers(%w(Office Warehouse))
-            add_printers_to_classes('GroundFloor' => %w(Warehouse))
+            add_printers(%w[Office Warehouse])
+            add_printers_to_classes('GroundFloor' => %w[Warehouse])
           end
 
           it 'applies changes' do
@@ -135,8 +137,8 @@ describe 'Custom type `cups_queue`' do
         context 'and the class already consists of them, but in wrong order' do
           before(:all) do
             purge_all_queues
-            add_printers(%w(Office Warehouse))
-            add_printers_to_classes('GroundFloor' => %w(Warehouse Office))
+            add_printers(%w[Office Warehouse])
+            add_printers_to_classes('GroundFloor' => %w[Warehouse Office])
           end
 
           it 'applies changes' do
@@ -151,8 +153,8 @@ describe 'Custom type `cups_queue`' do
         context 'and they already are members, amongst others' do
           before(:all) do
             purge_all_queues
-            add_printers(%w(BackOffice Office Warehouse))
-            add_printers_to_classes('GroundFloor' => %w(Warehouse BackOffice Office))
+            add_printers(%w[BackOffice Office Warehouse])
+            add_printers_to_classes('GroundFloor' => %w[Warehouse BackOffice Office])
           end
 
           it 'applies changes' do
@@ -186,7 +188,7 @@ describe 'Custom type `cups_queue`' do
           before(:all) do
             purge_all_queues
             add_printers('Office')
-            add_printers_to_classes('GroundFloor' => %w(Office))
+            add_printers_to_classes('GroundFloor' => %w[Office])
           end
 
           it 'applies changes' do
@@ -201,8 +203,8 @@ describe 'Custom type `cups_queue`' do
         context 'and there are unwanted members' do
           before(:all) do
             purge_all_queues
-            add_printers(%w(BackOffice Office))
-            add_printers_to_classes('GroundFloor' => %w(BackOffice Office))
+            add_printers(%w[BackOffice Office])
+            add_printers_to_classes('GroundFloor' => %w[BackOffice Office])
           end
 
           it 'applies changes' do
@@ -223,7 +225,7 @@ describe 'Custom type `cups_queue`' do
     context 'when the queue is present as printer' do
       before(:all) do
         purge_all_queues
-        add_printers(%w(GroundFloor Office Warehouse))
+        add_printers(%w[GroundFloor Office Warehouse])
       end
 
       manifest = <<-EOM

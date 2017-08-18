@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'lib/puppet_x/cups/ipp'
 
@@ -9,7 +11,7 @@ describe PuppetX::Cups::Ipp do
       allow(described_class).to receive(:ipptool).and_return(stdout)
 
       response = described_class.query('{ [IPP request] }')
-      expect(response.to_a).to match_array(%w(Office Warehouse))
+      expect(response.to_a).to match_array(%w[Office Warehouse])
     end
   end
 
@@ -91,14 +93,14 @@ describe PuppetX::Cups::Ipp do
       context "when stdout = 'Microphone check\\nOne\\n'" do
         it "returns ['One']" do
           response = described_class.new("Microphone check\nOne\n")
-          expect(response.to_a).to match_array(%w(One))
+          expect(response.to_a).to match_array(%w[One])
         end
       end
 
       context "when stdout = 'Microphone check\\nOne\\nTwo\\n'" do
         it "returns ['One', 'Two']" do
           response = described_class.new("Microphone check\nOne\nTwo\n")
-          expect(response.to_a).to match_array(%w(One Two))
+          expect(response.to_a).to match_array(%w[One Two])
         end
       end
     end

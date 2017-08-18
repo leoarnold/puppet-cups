@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:cups_queue).provider(:cups) do
@@ -36,15 +38,15 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       end
 
       context 'with printers, but without classes installed' do
-        include_examples 'correct instances', [{}, %w(BackOffice Office Warehouse)]
+        include_examples 'correct instances', [{}, %w[BackOffice Office Warehouse]]
       end
 
       context 'with printers and classes installed' do
         include_examples 'correct instances', [{
-          'CrawlSpace'  => %w(),
-          'GroundFloor' => %w(Office Warehouse),
-          'UpperFloor'  => %w(BackOffice)
-        }, %w(BackOffice Office Warehouse)]
+          'CrawlSpace'  => %w[],
+          'GroundFloor' => %w[Office Warehouse],
+          'UpperFloor'  => %w[BackOffice]
+        }, %w[BackOffice Office Warehouse]]
       end
     end
 
@@ -73,15 +75,15 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       end
 
       context 'when no queues are installed' do
-        include_examples 'correct prefetch', [%w(BackOffice Office Warehouse), %w()]
+        include_examples 'correct prefetch', [%w[BackOffice Office Warehouse], %w[]]
       end
 
       context 'when some specified queues are installed' do
-        include_examples 'correct prefetch', [%w(BackOffice Office Warehouse), %w(Office)]
+        include_examples 'correct prefetch', [%w[BackOffice Office Warehouse], %w[Office]]
       end
 
       context 'when more queues are installed than specified' do
-        include_examples 'correct prefetch', [%w(Office), %w(BackOffice Office Warehouse)]
+        include_examples 'correct prefetch', [%w[Office], %w[BackOffice Office Warehouse]]
       end
     end
   end
@@ -91,7 +93,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       manifest = {
         ensure: 'class',
         name: 'GroundFloor',
-        members: %w(Office Warehouse)
+        members: %w[Office Warehouse]
       }
 
       @resource = type.new(manifest)
@@ -320,7 +322,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     describe '#enabled=' do
       context "'true'" do
         it 'calls #cupsenable with the correct arguments' do
-          target_acl = { 'policy' => 'allow', 'users' => %w(lumbergh nina) }
+          target_acl = { 'policy' => 'allow', 'users' => %w[lumbergh nina] }
           expect(@provider).to receive(:access).and_return(target_acl)
           expect(@provider).to receive(:access=).with('policy' => 'allow', 'users' => ['root'])
           expect(@provider).to receive(:cupsenable).with('-E', 'Office')
@@ -427,7 +429,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           allow(@provider).to receive(:class_exists?).and_return(true)
           expect(@provider).to receive(:create_class)
 
-          @provider.members = %w(Office Warehouse)
+          @provider.members = %w[Office Warehouse]
         end
       end
     end
@@ -629,11 +631,11 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
       context 'for a queue using a PPD file' do
         it 'should return a hash of vendor options and their current values' do
-          input = <<-EOT
-PageSize/Who: Custom.WIDTHxHEIGHT Letter Legal Executive FanFoldGermanLegal *A4 A5 A6 Env10 EnvMonarch EnvDL EnvC5
-MediaType/cares: *PLAIN THIN THICK THICKERPAPER2 BOND ENV ENVTHICK ENVTHIN RECYCLED
-InputSlot/about: MANUAL *TRAY1
-Duplex/this: DuplexTumble DuplexNoTumble *None
+          input = <<~EOT
+            PageSize/Who: Custom.WIDTHxHEIGHT Letter Legal Executive FanFoldGermanLegal *A4 A5 A6 Env10 EnvMonarch EnvDL EnvC5
+            MediaType/cares: *PLAIN THIN THICK THICKERPAPER2 BOND ENV ENVTHICK ENVTHIN RECYCLED
+            InputSlot/about: MANUAL *TRAY1
+            Duplex/this: DuplexTumble DuplexNoTumble *None
           EOT
 
           expected = {
@@ -656,7 +658,7 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
           allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('')
           allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('')
 
-          expect(@provider.send(:users_is)).to eq(%w(all))
+          expect(@provider.send(:users_is)).to eq(%w[all])
         end
       end
 
@@ -665,7 +667,7 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
           allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('nina,@council,nina,lumbergh')
           allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('')
 
-          expect(@provider.send(:users_is)).to eq(%w(@council lumbergh nina))
+          expect(@provider.send(:users_is)).to eq(%w[@council lumbergh nina])
         end
       end
 
@@ -674,7 +676,7 @@ Duplex/this: DuplexTumble DuplexNoTumble *None
           allow(@provider).to receive(:query).with('requesting-user-name-allowed').and_return('')
           allow(@provider).to receive(:query).with('requesting-user-name-denied').and_return('nina,@council,nina,lumbergh')
 
-          expect(@provider.send(:users_is)).to eq(%w(@council lumbergh nina))
+          expect(@provider.send(:users_is)).to eq(%w[@council lumbergh nina])
         end
       end
     end

@@ -252,10 +252,10 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   def native_options_is
     answer = {}
 
-    options = %w(
+    options = %w[
       auth-info-required job-k-limit job-page-limit job-quota-period
       job-sheets-default port-monitor printer-error-policy printer-op-policy
-    )
+    ]
 
     options.each { |option| answer[option] = query_native_option(option) }
 

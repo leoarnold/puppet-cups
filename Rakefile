@@ -13,4 +13,4 @@ task :mdl do
 end
 
 desc 'Perform all static code analysis checks'
-task static_checks: [:release_checks, :mdl]
+task static_checks: %i[release_checks mdl]
