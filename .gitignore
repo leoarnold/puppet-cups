@@ -1,6 +1,6 @@
 /.bundle/
 /.vagrant/
-/.vendor/
+/vendor/
 /coverage/
 /junit/
 /log/

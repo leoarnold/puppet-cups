@@ -9,7 +9,7 @@ SimpleCov.formatters = [
 
 SimpleCov.start do
   add_filter '/.mdl/'
-  add_filter '/.vendor/'
+  add_filter '/vendor/'
   add_filter '/spec/'
 end
 

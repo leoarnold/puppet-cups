@@ -3,6 +3,7 @@ AllCops:
   TargetRubyVersion: 2.0
   Exclude:
     - 'spec/fixtures/**/*'
+    - 'vendor/**/*'
 Metrics/LineLength:
   Max: 144
   AllowURI: true

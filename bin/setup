@@ -6,4 +6,4 @@ set -euo pipefail
 IFS=$'\n\t'
 set -vx
 
-bundle install --path ${ProjectRoot}/.vendor/bundle --without ci
+bundle install --path ${ProjectRoot}/vendor/bundle --without ci
