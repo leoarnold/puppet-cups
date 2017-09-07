@@ -23,7 +23,8 @@ group :development do
   gem 'rspec-puppet-facts', '~> 1.7'
   gem 'rubocop', '~> 0.37'
   gem 'semantic_puppet' if puppetversion.to_f < 4.9
-  gem 'simplecov-console', '~> 0.4'
+  gem 'simplecov', '~> 0.13'
+  gem 'simplecov-murmur', '~> 0.8'
 end
 
 group :acceptance_testing do

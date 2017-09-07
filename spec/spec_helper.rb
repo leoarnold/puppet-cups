@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 require 'codacy-coverage'
-require 'simplecov-console'
+require 'simplecov-murmur'
 
 SimpleCov.formatters = [
-  SimpleCov::Formatter::Console,
+  SimpleCov::Formatter::MurMurFormatter,
   SimpleCov::Formatter::HTMLFormatter,
   Codacy::Formatter
 ]
+
+SimpleCov::Formatter::MurMurFormatter.mode = :all
 
 SimpleCov.start do
   add_filter '/.mdl/'
