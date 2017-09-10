@@ -228,7 +228,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   private
 
   def query(property)
-    PuppetX::Cups::Queue::Attribute.query(name, property)
+    PuppetX::Cups::Queue.attribute(name, property)
   end
 
   ### Helper functions for #options

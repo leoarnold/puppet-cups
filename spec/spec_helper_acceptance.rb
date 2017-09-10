@@ -60,9 +60,9 @@ def purge_all_queues
     GROUP operation
     ATTR charset attributes-charset utf-8
     ATTR language attributes-natural-language en
-    STATUS successful-ok
     DISPLAY printer-name
   }'
-  result = shell('ipptool -c ipp://localhost/ /dev/stdin', stdin: request, acceptable_exit_codes: [0, 1])
-  remove_queues(result.stdout.split("\n")[1..-1]) if result.exit_code.zero?
+  result = shell('ipptool -t ipp://localhost/ /dev/stdin', stdin: request, acceptable_exit_codes: [0, 1])
+  queues = result.stdout.scan(%r{printer-name \(nameWithoutLanguage\) = ([^\s\"\'\\,#/]+)})
+  remove_queues(queues)
 end

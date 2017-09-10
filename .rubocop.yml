@@ -4,6 +4,8 @@ AllCops:
   Exclude:
     - 'spec/fixtures/**/*'
     - 'vendor/**/*'
+Layout/IndentHeredoc:
+  Enabled: false
 Metrics/LineLength:
   Max: 144
   AllowURI: true
@@ -16,4 +18,6 @@ Metrics/LineLength:
     - socket
     - puppet
 Metrics/BlockLength:
+  Enabled: false
+Style/Documentation:
   Enabled: false

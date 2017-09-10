@@ -5,26 +5,44 @@ require_relative 'ipp'
 module PuppetX
   module Cups
     module Queue
+      def self.attribute(queue, property)
+        attribute = Attribute.new(queue, property)
+
+        attribute.value
+      end
+
       # Namespace encapsulating helper functions
       # to query the CUPS server for print queue attributes
-      module Attribute
-        def self.query(queue, property)
-          resource = '/printers/' + ERB::Util.url_encode(queue)
-          response = PuppetX::Cups::Ipp.query(request(property), resource)
-
-          response.to_s
+      class Attribute
+        def initialize(queue, name)
+          @queue = queue
+          @name = name
         end
 
-        def self.request(property)
-          "{
-            OPERATION Get-Printer-Attributes
-            GROUP operation
-            ATTR charset attributes-charset utf-8
-            ATTR language attributes-natural-language en
-            ATTR uri printer-uri $uri
-            STATUS successful-ok
-            DISPLAY #{property}
-          }"
+        def value
+          results = PuppetX::Cups::Ipp.query(resource, request)
+
+          results.first
+        end
+
+        private
+
+        def resource
+          '/printers/' + ERB::Util.url_encode(@queue)
+        end
+
+        def request
+          <<-REQUEST
+            {
+              OPERATION Get-Printer-Attributes
+              GROUP operation
+              ATTR charset attributes-charset utf-8
+              ATTR language attributes-natural-language en
+              ATTR uri printer-uri $uri
+              STATUS successful-ok
+              DISPLAY #{@name}
+            }
+          REQUEST
         end
       end
     end

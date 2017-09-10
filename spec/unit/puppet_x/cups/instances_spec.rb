@@ -1,20 +1,23 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+
 require 'lib/puppet_x/cups/instances'
 
 def cups_get_printers(stdout)
-  response = PuppetX::Cups::Ipp::Response.new(stdout)
-  allow(PuppetX::Cups::Ipp).to receive(:query)
-    .with(PuppetX::Cups::Instances::Queues.request)
-    .and_return(response)
+  mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
+
+  allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+    .with('-c', '/', PuppetX::Cups::Instances::Queues.request)
+                                                  .and_return(mock_shellout)
 end
 
 def cups_get_classes(stdout)
-  response = PuppetX::Cups::Ipp::Response.new(stdout)
-  allow(PuppetX::Cups::Ipp).to receive(:query)
-    .with(PuppetX::Cups::Instances::ClassMembers.request)
-    .and_return(response)
+  mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
+
+  allow(PuppetX::Cups::Shell).to receive(:ipptool)
+    .with('-c', '/', PuppetX::Cups::Instances::ClassMembers.request)
+    .and_return(mock_shellout)
 end
 
 describe PuppetX::Cups::Instances::Classes do

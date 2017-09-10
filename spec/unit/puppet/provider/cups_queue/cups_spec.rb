@@ -539,7 +539,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
     describe '#query' do
       it 'sends a query to the IPP module' do
-        expect(PuppetX::Cups::Queue::Attribute).to receive(:query).with('Office', 'printer-location')
+        expect(PuppetX::Cups::Queue).to receive(:attribute).with('Office', 'printer-location')
 
         @provider.send(:query, 'printer-location')
       end

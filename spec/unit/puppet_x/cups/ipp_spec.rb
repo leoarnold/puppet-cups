@@ -1,162 +1,229 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+
 require 'lib/puppet_x/cups/ipp'
+require 'lib/puppet_x/cups/instances'
 
-describe PuppetX::Cups::Ipp do
-  describe '#query' do
-    it 'correctly handles the output of #ipptool' do
-      stdout = "printer-name\nOffice\nWarehouse\n"
+describe PuppetX::Cups::Ipp::QueryC do
+  describe '#new' do
+    context 'when the shell command exits 0' do
+      it 'creates an object' do
+        mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: 'mock stdout', exitcode: 0)
 
-      allow(described_class).to receive(:ipptool).and_return(stdout)
+        allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
 
-      response = described_class.query('{ [IPP request] }')
-      expect(response.to_a).to match_array(%w[Office Warehouse])
-    end
-  end
+        query = described_class.new('/', '{ [IPP] }')
 
-  describe '#ipptool' do
-    let(:query_class) { described_class::Query }
-    let(:error_class) { described_class::Error }
-
-    context 'when execution was successful' do
-      context 'and returned output' do
-        it "provides the command's stdout" do
-          query = query_class.new('/printers/Office', '{ [IPP request] }')
-          stdout = "printer-location\nRoom 101\n"
-
-          status_mock = instance_double(Process::Status)
-          allow(status_mock).to receive(:exitstatus).and_return(0)
-          allow(Open3).to receive(:capture3).and_return([stdout, '', status_mock])
-
-          expect(described_class.ipptool(query)).to eq(stdout)
-        end
-      end
-
-      context 'and stdout was empty' do
-        # Related issue: https://github.com/leoarnold/puppet-cups/issues/12
-        it 'raises an error' do
-          query = query_class.new('/printers/Office', '{ [IPP request] }')
-          stdout = ''
-
-          status_mock = instance_double(Process::Status)
-          allow(status_mock).to receive(:exitstatus).and_return(0)
-          allow(Open3).to receive(:capture3).and_return([stdout, '', status_mock])
-
-          expect { described_class.ipptool(query) }.to raise_error(error_class)
-        end
+        expect(query).to be_a described_class
       end
     end
 
-    context 'when execution fails and stderr == "No destinations added.\n"' do
-      it "provides the command's stdout" do
-        query = query_class.new('', '{ [IPP request] }')
-        stdout = ''
-
-        status_mock = instance_double(Process::Status)
-        allow(status_mock).to receive(:exitstatus).and_return(1)
-        allow(Open3).to receive(:capture3).and_return([stdout, "No destinations added.\n", status_mock])
-
-        expect(described_class.ipptool(query)).to eq(stdout)
-      end
-    end
-
-    context 'when execution fails and stderr != "No destinations added.\n"' do
+    context 'when the shell command exits 1' do
       it 'raises an error' do
-        query = query_class.new('', '{ [IPP request] }')
+        request = '{ [IPP] }'
 
-        status_mock = instance_double(Process::Status)
-        allow(status_mock).to receive(:exitstatus).and_return(1)
-        allow(Open3).to receive(:capture3).and_return(['', '', status_mock])
+        mock_shellout = double(PuppetX::Cups::Shell::ShellOut,
+                               command: 'mock command',
+                               stdin: request,
+                               stdout: 'mock stdout',
+                               stderr: 'mock stderr',
+                               exitcode: 1)
 
-        expect { described_class.ipptool(query) }.to raise_error(error_class)
+        allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+
+        expect { described_class.new('/', request) }.to raise_error PuppetX::Cups::Ipp::QueryError
       end
     end
   end
 
-  describe described_class::Response do
-    describe '#to_a' do
-      context "when stdout = 'Microphone check\\n'" do
-        it 'returns []' do
-          response = described_class.new("Microphone check\n")
-          expect(response.to_a).to match_array([])
+  describe '#results' do
+    context 'when stdout is a header-only CSV table' do
+      it 'returns an empty array' do
+        stdout = <<~EOT
+          printer-name
+        EOT
+
+        mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
+
+        allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+
+        query = described_class.new('/', '{ [CUPS-Get-Printers] }')
+
+        expect(query.results).to match_array([])
+      end
+    end
+
+    context 'when stdout is a single-row CSV table' do
+      it 'returns an array containing the row' do
+        stdout = <<~EOT
+            printer-name
+            Office
+          EOT
+
+        mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
+
+        allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+
+        query = described_class.new('/', '{ [CUPS-Get-Printers] }')
+
+        expect(query.results).to match_array(%w[Office])
+      end
+    end
+
+    context 'when stdout is a multi-row CSV table' do
+      it 'returns an array containing the rows' do
+        stdout = <<~EOT
+            printer-name
+            BackOffice
+            Office
+            Warehouse
+          EOT
+
+        mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
+
+        allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+
+        query = described_class.new('/', '{ [CUPS-Get-Printers] }')
+
+        expect(query.results).to match_array(%w[Office BackOffice Warehouse])
+      end
+    end
+  end
+end
+
+describe PuppetX::Cups::Ipp::QueryT do
+  describe '#new' do
+    context 'when stdout contains "status-code = successful-ok"' do
+      context 'when the shell command exits 0' do
+        it 'creates an object' do
+          mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: 'status-code = successful-ok', exitcode: 0)
+
+          allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+
+          query = described_class.new('/', '{ [IPP] }')
+
+          expect(query).to be_a described_class
         end
       end
 
-      context "when stdout = 'Microphone check\\n\\n'" do
-        it "returns ['']" do
-          response = described_class.new("Microphone check\n\n")
-          expect(response.to_a).to match_array([''])
-        end
-      end
+      context 'when the shell command exits 1' do
+        it 'creates an object' do
+          mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: 'status-code = successful-ok', exitcode: 1)
 
-      context "when stdout = 'Microphone check\\nOne\\n'" do
-        it "returns ['One']" do
-          response = described_class.new("Microphone check\nOne\n")
-          expect(response.to_a).to match_array(%w[One])
-        end
-      end
+          allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
 
-      context "when stdout = 'Microphone check\\nOne\\nTwo\\n'" do
-        it "returns ['One', 'Two']" do
-          response = described_class.new("Microphone check\nOne\nTwo\n")
-          expect(response.to_a).to match_array(%w[One Two])
+          query = described_class.new('/', '{ [IPP] }')
+
+          expect(query).to be_a described_class
         end
       end
     end
 
-    describe '#to_s' do
-      context "when stdout = 'Microphone check\\n'" do
-        it 'returns nil' do
-          response = described_class.new("Microphone check\n")
-          expect(response.to_s).to be nil
+    context 'when stdout does NOT contain "status-code = successful-ok"' do
+      context 'when the shell command exits 0' do
+        it 'creates an object' do
+          mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: 'mock stdout', exitcode: 0)
+
+          allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+
+          query = described_class.new('/', '{ [IPP] }')
+
+          expect(query).to be_a described_class
         end
       end
 
-      context "when stdout = 'Microphone check\\n\\n'" do
-        it "returns ''" do
-          response = described_class.new("Microphone check\n\n")
-          expect(response.to_s).to eq('')
-        end
-      end
+      context 'when the shell command exits 1' do
+        it 'raises an error' do
+          request = '{ [IPP] }'
 
-      context "when stdout = 'Microphone check\\nOne\\n'" do
-        it "returns 'One'" do
-          response = described_class.new("Microphone check\nOne\n")
-          expect(response.to_s).to eq('One')
-        end
-      end
+          mock_shellout = double(PuppetX::Cups::Shell::ShellOut,
+                                 command: 'mock command',
+                                 stdin: request,
+                                 stdout: 'mock stdout',
+                                 stderr: 'mock stderr',
+                                 exitcode: 1)
 
-      context "when stdout = 'Microphone check\\nOne\\nTwo\\n'" do
-        it "returns 'One,Two'" do
-          response = described_class.new("Microphone check\nOne\nTwo\n")
-          expect(response.to_s).to eq('One,Two')
+          allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+
+          expect { described_class.new('/', request) }.to raise_error PuppetX::Cups::Ipp::QueryError
         end
       end
     end
   end
 
-  describe described_class::Error do
-    let(:query_class) { PuppetX::Cups::Ipp::Query }
+  describe '#results' do
+    context 'when stdout does not contain the attribute' do
+      it 'returns an empty array' do
+        request = PuppetX::Cups::Instances::Queues.request
 
-    it 'provides a comprehensive error message' do
-      query = query_class.new('/things/Office', '[IPP request]')
-      stdout = "In this case, there would be no output.\n"
-      stderr = "ipptool: Unable to connect to localhost on port 631 - Transport endpoint is not connected\n"
+        stdout = <<~EOT
+            "CUPS-Get-Printers.ipp":
+                CUPS-Get-Printers                                                    [PASS]
+          EOT
 
-      expect { raise described_class.new(query, stdout, stderr) }.to raise_error(/#{query.uri}/)
-      expect { raise described_class.new(query, stdout, stderr) }.to raise_error(/#{query.request}/)
-      expect { raise described_class.new(query, stdout, stderr) }.to raise_error(/#{stdout}/)
-      expect { raise described_class.new(query, stdout, stderr) }.to raise_error(/#{stderr}/)
+        mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdin: request, stdout: stdout, exitcode: 0)
+
+        allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+
+        query = described_class.new('/', request)
+
+        expect(query.results).to match_array([])
+      end
     end
 
-    # Related issue: https://github.com/leoarnold/puppet-cups/issues/6
-    it 'references RFC 2911 when stderr = "successful-ok\n"' do
-      query = query_class.new('/printers/Office', '{ [IPP request] }')
-      stdout = ''
-      stderr = "successful-ok\n"
+    context 'when stdout contains a single occurance of the attribute' do
+      it 'returns an array containing the attribute value' do
+        request = PuppetX::Cups::Instances::Queues.request
 
-      expect { raise described_class.new(query, stdout, stderr) }.to raise_error(/RFC 2911/)
+        stdout = <<~EOT
+            "CUPS-Get-Printers.ipp":
+                CUPS-Get-Printers                                                    [FAIL]
+                    RECEIVED: 8084 bytes in response
+                    status-code = successful-ok (successful-ok)
+                    Duplicate "pwg-raster-document-type-supported" attribute in printer-attributes-tag group
+                    Duplicate "pwg-raster-document-resolution-supported" attribute in printer-attributes-tag group
+                    printer-name (nameWithoutLanguage) = Office
+          EOT
+
+        mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdin: request, stdout: stdout, exitcode: 0)
+
+        allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+
+        query = described_class.new('/', request)
+
+        expect(query.results).to match_array(%w[Office])
+      end
+    end
+
+    context 'when stdout contains multiple occurance of the attribute' do
+      it 'returns an array containing the attribute values' do
+        request = PuppetX::Cups::Instances::Queues.request
+
+        stdout = <<~EOT
+            "CUPS-Get-Printers.ipp":
+                CUPS-Get-Printers                                                    [FAIL]
+                    RECEIVED: 24143 bytes in response
+                    status-code = successful-ok (successful-ok)
+                    Duplicate "pwg-raster-document-type-supported" attribute in printer-attributes-tag group
+                    Duplicate "pwg-raster-document-resolution-supported" attribute in printer-attributes-tag group
+                    Duplicate "pwg-raster-document-type-supported" attribute in printer-attributes-tag group
+                    Duplicate "pwg-raster-document-resolution-supported" attribute in printer-attributes-tag group
+                    Duplicate "pwg-raster-document-type-supported" attribute in printer-attributes-tag group
+                    Duplicate "pwg-raster-document-resolution-supported" attribute in printer-attributes-tag group
+                    printer-name (nameWithoutLanguage) = BackOffice
+                    printer-name (nameWithoutLanguage) = Office
+                    printer-name (nameWithoutLanguage) = Warehouse
+          EOT
+
+        mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdin: request, stdout: stdout, exitcode: 0)
+
+        allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
+
+        query = described_class.new('/', request)
+
+        expect(query.results).to match_array(%w[Office BackOffice Warehouse])
+      end
     end
   end
 end

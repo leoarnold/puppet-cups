@@ -10,7 +10,7 @@ module PuppetX
       # An array of the names of all installed classes.
       module Classes
         def self.to_a
-          PuppetX::Cups::Instances::ClassMembers.to_h.keys
+          ClassMembers.to_h.keys
         end
       end
 
@@ -19,8 +19,8 @@ module PuppetX
         def self.to_h
           classmembers = {}
 
-          response = PuppetX::Cups::Ipp.query(request)
-          response.to_a.each do |line|
+          query = PuppetX::Cups::Ipp::QueryC.new('/', request)
+          query.results.each do |line|
             classname, members = line.split(',', 2)
             classmembers[classname] = members.gsub(/\A"|"\Z/, '').split(',') if members
           end
@@ -29,42 +29,44 @@ module PuppetX
         end
 
         def self.request
-          '{
-            OPERATION CUPS-Get-Classes
-            GROUP operation
-            ATTR charset attributes-charset utf-8
-            ATTR language attributes-natural-language en
-            STATUS successful-ok
-            DISPLAY printer-name
-            DISPLAY member-names
-          }'
+          <<-REQUEST
+            {
+              OPERATION CUPS-Get-Classes
+              GROUP operation
+              ATTR charset attributes-charset utf-8
+              ATTR language attributes-natural-language en
+              DISPLAY printer-name
+              DISPLAY member-names
+            }
+          REQUEST
         end
       end
 
       # An array of the names of all installed print queues (*excluding* classes).
       module Printers
         def self.to_a
-          PuppetX::Cups::Instances::Queues.to_a - PuppetX::Cups::Instances::Classes.to_a
+          Queues.to_a - Classes.to_a
         end
       end
 
       # An array of the names of all installed print queues (*including* classes).
       module Queues
         def self.to_a
-          response = PuppetX::Cups::Ipp.query(request)
+          query = PuppetX::Cups::Ipp.query('/', request)
 
-          response.to_a
+          query.results
         end
 
         def self.request
-          '{
-            OPERATION CUPS-Get-Printers
-            GROUP operation
-            ATTR charset attributes-charset utf-8
-            ATTR language attributes-natural-language en
-            STATUS successful-ok
-            DISPLAY printer-name
-          }'
+          <<-REQUEST
+            {
+              OPERATION CUPS-Get-Printers
+              GROUP operation
+              ATTR charset attributes-charset utf-8
+              ATTR language attributes-natural-language en
+              DISPLAY printer-name
+            }
+          REQUEST
         end
       end
     end
