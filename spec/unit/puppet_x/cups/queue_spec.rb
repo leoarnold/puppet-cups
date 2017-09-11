@@ -11,12 +11,14 @@ end
 describe PuppetX::Cups::Queue::Attribute do
   describe '#value' do
     context 'when the query result is an array' do
-      it 'returns nil' do
+      it 'returns an empty string' do
         attribute = described_class.new('Office', 'auth-info-required')
 
-        allow(PuppetX::Cups::Ipp).to receive(:query).and_return([])
+        mock_query = double(PuppetX::Cups::Ipp::QueryC, results: [])
 
-        expect(attribute.value).to be nil
+        allow(PuppetX::Cups::Ipp).to receive(:query).and_return(mock_query)
+
+        expect(attribute.value).to eq ''
       end
     end
 
@@ -24,7 +26,9 @@ describe PuppetX::Cups::Queue::Attribute do
       it 'returns the first entry' do
         attribute = described_class.new('Office', 'device-uri')
 
-        allow(PuppetX::Cups::Ipp).to receive(:query).and_return(%w[lpd://192.168.2.105/binary_p1])
+        mock_query = double(PuppetX::Cups::Ipp::QueryC, results: %w[lpd://192.168.2.105/binary_p1])
+
+        allow(PuppetX::Cups::Ipp).to receive(:query).and_return(mock_query)
 
         expect(attribute.value).to eq 'lpd://192.168.2.105/binary_p1'
       end

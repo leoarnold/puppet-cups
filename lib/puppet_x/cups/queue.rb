@@ -20,9 +20,9 @@ module PuppetX
         end
 
         def value
-          results = PuppetX::Cups::Ipp.query(resource, request)
+          query = PuppetX::Cups::Ipp.query(resource, request)
 
-          results.first
+          query.results.empty? ? '' : query.results.first
         end
 
         private
