@@ -131,7 +131,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
       describe '#create_printer' do
         it 'installs the printer with default values' do
-          switch = { interface: '-i', model: '-m', ppd: '-P' }
+          switch = { model: '-m', ppd: '-P' }
           method = (manifest.keys & switch.keys)[0]
 
           allow(@provider).to receive(:lpadmin).with('-E', '-x', 'Office')
@@ -177,16 +177,6 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         ensure: 'printer',
         name: 'Office',
         ppd: '/usr/share/ppd/cupsfilters/textonly.ppd'
-      }
-
-      include_examples 'provider contract', manifest
-    end
-
-    describe 'using a System V interface script' do
-      manifest = {
-        ensure: 'printer',
-        name: 'Office',
-        interface: '/usr/share/cups/model/myprinter.sh'
       }
 
       include_examples 'provider contract', manifest

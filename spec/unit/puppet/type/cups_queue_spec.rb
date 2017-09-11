@@ -79,22 +79,6 @@ describe Puppet::Type.type(:cups_queue) do
         expect(reqs[0].target).to eq(queue)
       end
 
-      it 'autorequires its SystemV interface script' do
-        script = '/usr/share/cups/model/myqueue.sh'
-
-        queue = type.new(name: 'Office', ensure: 'printer', interface: script)
-        @catalog.add_resource queue
-
-        file = Puppet::Type.type(:file).new(name: script)
-        @catalog.add_resource file
-
-        reqs = queue.autorequire
-
-        expect(reqs).not_to be_empty
-        expect(reqs[0].source).to eq(file)
-        expect(reqs[0].target).to eq(queue)
-      end
-
       it 'autorequires its ppd file' do
         ppd = '/usr/share/ppd/cupsfilters/textonly.ppd'
 
@@ -182,7 +166,7 @@ describe Puppet::Type.type(:cups_queue) do
     end
 
     context 'when ensuring a printer' do
-      context 'without providing a printer model, PPD file or a System V interface' do
+      context 'without providing a printer model or PPD file' do
         it 'is able to create an instance' do
           manifest = {
             ensure: 'printer',
@@ -216,18 +200,6 @@ describe Puppet::Type.type(:cups_queue) do
           expect(type.new(manifest)).not_to be_nil
         end
       end
-
-      context 'providing only name and interface' do
-        it 'is able to create an instance' do
-          manifest = {
-            ensure: 'printer',
-            name: 'Office',
-            interface: '/usr/share/cups/model/myprinter.sh'
-          }
-
-          expect(type.new(manifest)).not_to be_nil
-        end
-      end
     end
 
     context 'when ensuring absence' do
@@ -251,46 +223,6 @@ describe Puppet::Type.type(:cups_queue) do
             name: 'Office',
             model: 'drv:///sample.drv/generic.ppd',
             ppd: '/usr/share/cups/model/myprinter.ppd'
-          }
-
-          expect { type.new(manifest) }.to raise_error(/mutually/)
-        end
-      end
-
-      context 'providing model and interface' do
-        it 'fails to create an instance' do
-          manifest = {
-            ensure: 'printer',
-            name: 'Office',
-            model: 'drv:///sample.drv/generic.ppd',
-            interface: '/usr/share/cups/model/myprinter.sh'
-          }
-
-          expect { type.new(manifest) }.to raise_error(/mutually/)
-        end
-      end
-
-      context 'providing ppd and interface' do
-        it 'fails to create an instance' do
-          manifest = {
-            ensure: 'printer',
-            name: 'Office',
-            ppd: '/usr/share/cups/model/myprinter.ppd',
-            interface: '/usr/share/cups/model/myprinter.sh'
-          }
-
-          expect { type.new(manifest) }.to raise_error(/mutually/)
-        end
-      end
-
-      context 'providing model, ppd, and interface' do
-        it 'fails to create an instance' do
-          manifest = {
-            ensure: 'printer',
-            name: 'Office',
-            model: 'drv:///sample.drv/generic.ppd',
-            ppd: '/usr/share/cups/model/myprinter.ppd',
-            interface: '/usr/share/cups/model/myprinter.sh'
           }
 
           expect { type.new(manifest) }.to raise_error(/mutually/)
@@ -321,19 +253,6 @@ describe Puppet::Type.type(:cups_queue) do
             name: 'GroundFloor',
             members: %w[Office Warehouse],
             ppd: '/usr/share/cups/model/myprinter.ppd'
-          }
-
-          expect { type.new(manifest) }.to raise_error(/support/)
-        end
-      end
-
-      context 'providing a System V interface script' do
-        it 'fails to create an instance' do
-          manifest = {
-            ensure: 'class',
-            name: 'GroundFloor',
-            members: %w[Office Warehouse],
-            interface: '/usr/share/cups/model/myprinter.sh'
           }
 
           expect { type.new(manifest) }.to raise_error(/support/)
@@ -392,18 +311,6 @@ describe Puppet::Type.type(:cups_queue) do
       }
 
       @resource = type.new(manifest)
-    end
-
-    describe 'interface' do
-      it 'has documentation' do
-        expect(type.attrclass(:interface).doc).to be_instance_of(String)
-        expect(type.attrclass(:interface).doc.length).to be > 20
-      end
-
-      it 'accepts an absolute UNIX file path' do
-        @resource[:interface] = '/usr/share/cups/model/myprinter.sh'
-        expect(@resource[:interface]).to eq('/usr/share/cups/model/myprinter.sh')
-      end
     end
 
     describe 'model' do

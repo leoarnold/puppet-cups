@@ -24,9 +24,3 @@ cups_queue { 'MinimalPPD':
   ppd    => '/usr/share/cups/model/myprinter.ppd',
   uri    => 'lpd://192.168.2.105/binary_p1'
 }
-
-cups_queue { 'MinimalInterface':
-  ensure    => 'printer',
-  interface => '/usr/share/cups/model/myprinter.sh',
-  uri       => 'lpd://192.168.2.105/binary_p1'
-}

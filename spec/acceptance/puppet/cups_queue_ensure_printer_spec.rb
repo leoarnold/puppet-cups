@@ -113,28 +113,6 @@ describe 'Custom type `cups_queue`' do
       include_examples 'installing a printer', [manifest, 'Generic text-only printer']
     end
 
-    describe 'using a System V interface script' do
-      before(:all) do
-        manifest = %q(
-          file { '/usr/share/cups/model/myprinter.sh':
-            ensure  => file,
-            content => "#!/bin/sh\nshift;shift;shift;shift;shift\ncat $*\necho -e \"\\f\\c\"\n"
-          }
-        )
-
-        apply_manifest(manifest)
-      end
-
-      manifest = <<-EOM
-        cups_queue { '#{name}':
-          ensure    => 'printer',
-          interface => '/usr/share/cups/model/myprinter.sh',
-        }
-      EOM
-
-      include_examples 'installing a printer', [manifest, 'Local System V Printer']
-    end
-
     describe 'as raw queue and specifying `make_and_model`' do
       manifest = <<-EOM
         cups_queue { '#{name}':
@@ -168,29 +146,6 @@ describe 'Custom type `cups_queue`' do
       EOM
 
       include_examples 'modifying a printer', [manifest, 'Generic text-only printer']
-    end
-
-    describe 'using a System V interface script and specifying `make_and_model`' do
-      before(:all) do
-        manifest = %q(
-          file { '/usr/share/cups/model/myprinter.sh':
-            ensure  => file,
-            content => "#!/bin/sh\nshift;shift;shift;shift;shift\ncat $*\necho -e \"\\f\\c\"\n"
-          }
-        )
-
-        apply_manifest(manifest)
-      end
-
-      manifest = <<-EOM
-        cups_queue { '#{name}':
-          ensure         => 'printer',
-          interface      => '/usr/share/cups/model/myprinter.sh',
-          make_and_model => 'Local System V Printer',
-        }
-      EOM
-
-      include_examples 'modifying a printer', [manifest, 'Local System V Printer']
     end
 
     context 'using a full-fledged manifest' do

@@ -155,32 +155,7 @@ Minimal printer manifests:
   }
   ```
 
-  which will automatically be required by `Cups_queue['MinimalPrinter']`.
-
-* Using a System V interface script:
-
-  ```puppet
-  include '::cups'
-
-  cups_queue { 'MinimalInterface':
-    ensure    => 'printer',
-    interface => '/usr/share/cups/model/myprinter.sh',
-    uri       => 'lpd://192.168.2.105/binary_p1' # Replace with your printer's URI
-  }
-  ```
-
-  To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
-
-  In a master-agent setting, you could transfer the interface script to the client using a `file` resource
-
-  ```puppet
-  file { '/usr/share/cups/model/myprinter.sh':
-    ensure => 'file',
-    source => 'puppet:///modules/myModule/myprinter.sh'
-  }
-  ```
-
-  which will automatically be required by `Cups_queue['MinimalPrinter']`.
+  which will automatically be required by `Cups_queue['MinimalPPD']`.
 
 #### Changing the driver
 
@@ -194,8 +169,6 @@ through syncing the `make_and_model` property, which defaults to
 
 * the `NickName` (fallback `ModelName`) value from the printer's PPD file in `/etc/cups/ppd/`
   if the printer was installed using a PPD file or a model.
-
-* `Local System V Printer` if the printer uses a System V interface script.
 
 * `Local Raw Printer` for raw print queues.
 
@@ -245,39 +218,6 @@ and you would like to
     ensure         => 'printer',
     ppd            => '/usr/share/cups/model/hp4730v2.ppd',
     make_and_model => 'HP Color LaserJet 4730mfp Postscript (MyCompany v2)',
-    # ...
-  }
-  ```
-
-* use a System V interface script, then you just need to adapt the manifest from above to
-
-  ```puppet
-  cups_queue { 'Office':
-    ensure         => 'printer',
-    interface      => '/usr/share/cups/model/myprinter.sh',
-    make_and_model => 'Local System V Printer',
-    # ...
-  }
-  ```
-
-  This will, however, **not** work if the printer was already using a System V interface script
-  (and hence the `make_and_model` would not change).
-  Instead, you can just sync the script right to the place where CUPS expects it:
-
-  ```puppet
-  include '::cups'
-
-  file { '/etc/cups/interfaces/Office':
-    ensure => 'file',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
-    source => 'puppet:///modules/myModule/myprinter.sh'
-  }
-
-  cups_queue { 'Office':
-    ensure    => 'printer',
-    interface => '/etc/cups/interfaces/Office',
     # ...
   }
   ```
@@ -591,9 +531,6 @@ Installs and manages CUPS print queues.
   If the catalog contains `cups_queue` resources for these queues, they will be required automatically.
 
 ##### Printers-only attributes
-
-* `interface`: The absolute path to a System V interface script on the node.
-  If the catalog contains a `file` resource with this path as title, it will automatically be required.
 
 * `make_and_model`: This value is used for [driver updates and changes](#changing-the-driver).
   Matches the `NickName` (fallback `ModelName`) value from the printer's PPD file

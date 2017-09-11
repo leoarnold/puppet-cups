@@ -29,14 +29,6 @@ Puppet::Type.newtype(:cups_queue) do
           uri    => 'lpd://192.168.2.105/binary_p1'
         }
 
-      OR
-
-        cups_queue { 'MinimalInterface':
-          ensure    => 'printer',
-          interface => '/usr/share/cups/model/myprinter.sh',
-          uri       => 'lpd://192.168.2.105/binary_p1'
-        }
-
     Classes: Providing only the mandatory attributes
 
         cups_queue { 'MinimalClass':
@@ -58,8 +50,8 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   def validate_class_attributes
-    raise('Classes do NOT support the following attributes: `model`, `ppd`, `interface`, `make_and_model`, `uri`') \
-      if value(:model) || value(:ppd) || value(:interface) || should(:make_and_model) || should(:uri)
+    raise('Classes do NOT support the following attributes: `model`, `ppd`, `make_and_model`, `uri`') \
+      if value(:model) || value(:ppd) || should(:make_and_model) || should(:uri)
   end
   private :validate_class_attributes
 
@@ -74,8 +66,7 @@ Puppet::Type.newtype(:cups_queue) do
   private :validate_printer_attributes
 
   def validate_printer_creation
-    raise('The attributes `interface`, `model` and `ppd` are mutually exclusive. Please specify at most one of them.') \
-      if [value(:interface).nil?, value(:model).nil?, value(:ppd).nil?].count(false) > 1
+    raise('The attributes `model` and `ppd` are mutually exclusive. Please specify at most one of them.') if value(:model) && value(:ppd)
   end
   private :validate_printer_creation
 
@@ -85,7 +76,6 @@ Puppet::Type.newtype(:cups_queue) do
 
   autorequire(:file) do
     answer = ['/etc/cups/lpoptions']
-    answer << value(:interface) if value(:interface)
     answer << value(:ppd) if value(:ppd)
     answer << "/usr/share/cups/model/#{value(:model)}" if value(:model)
     answer
@@ -182,15 +172,6 @@ Puppet::Type.newtype(:cups_queue) do
     desc 'A held queue will print all jobs in print or pending, but all new jobs will be held. Setting `false` will release them.'
 
     newvalues(:true, :false)
-  end
-
-  newparam(:interface) do
-    desc '(printer-only) The absolute path to a System V interface script on the node.' \
-      ' If the catalog contains a `file` resource with this path as title, it will automatically be required.'
-
-    validate do |value|
-      raise ArgumentError, "The absolute local file path '#{value}' seems malformed." unless Pathname(value).absolute?
-    end
   end
 
   newproperty(:location) do

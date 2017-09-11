@@ -70,7 +70,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     # Create a minimal raw queue first, then adapt it
     lpadmin('-E', '-p', name, '-v', 'file:///dev/null')
 
-    run_parameter_setter(:interface, :model, :ppd)
+    run_parameter_setter(:model, :ppd)
 
     run_property_setter(:uri,
                         :access, :description, :location, :options, :shared,
@@ -159,10 +159,6 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     else
       cupsenable('-E', '--release', name)
     end
-  end
-
-  def interface=(value)
-    lpadmin('-E', '-p', name, '-i', value)
   end
 
   def location

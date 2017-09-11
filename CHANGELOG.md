@@ -7,7 +7,7 @@ and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.0.0).
 
 ### Summary
 
-The new major release drops support for legacy Puppet installations
+The new major release drops support for Puppet 3 installations
 and introduces some breaking changes in the API.
 Please adjust your manifests according to the [upgrade instructions](UPGRADING.md).
 
@@ -18,6 +18,8 @@ Please adjust your manifests according to the [upgrade instructions](UPGRADING.m
 - All facts were removed
 - Some attributes were removed from the `cups` class
 - The defined type `cups::ctl` was removed
+- System V interface scripts are no longer supported
+  since CUPS droped support for them in [V2.2b1](https://github.com/apple/cups/blob/v2.2.0/CHANGES.txt#L67)
 
 ### Features
 
