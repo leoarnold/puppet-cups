@@ -106,7 +106,7 @@ describe 'Custom type `cups_queue`' do
       manifest = <<-EOM
         cups_queue { '#{name}':
           ensure => 'printer',
-          ppd    => '/usr/share/ppd/cupsfilters/textonly.ppd',
+          ppd    => '/tmp/textonly.ppd',
         }
       EOM
 
@@ -162,7 +162,7 @@ describe 'Custom type `cups_queue`' do
       manifest = <<-EOM
         cups_queue { '#{name}':
           ensure         => 'printer',
-          ppd            => '/usr/share/ppd/cupsfilters/textonly.ppd',
+          ppd            => '/tmp/textonly.ppd',
           make_and_model => 'Generic text-only printer',
         }
       EOM

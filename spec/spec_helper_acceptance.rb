@@ -19,6 +19,7 @@ RSpec.configure do |c|
     hosts.each do |host|
       install_puppet_agent_on(host)
       copy_module_to(host, source: project_root, module_name: 'cups')
+      scp_to(host, File.join(project_root, 'spec/fixtures/ppd/textonly.ppd'), '/tmp/')
     end
   end
 end
