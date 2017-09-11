@@ -1,9 +1,9 @@
 HOSTS:
-  centos-7-x64:
+  debian-9-x64:
     roles:
       - master
-    platform: centos-7-x64
-    box: bento/centos-7.3
+    platform: debian-9-x64
+    box: debian/stretch64
     hypervisor: vagrant
 CONFIG:
   type: foss
