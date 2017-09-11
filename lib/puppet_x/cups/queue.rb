@@ -4,6 +4,8 @@ require_relative 'ipp'
 
 module PuppetX
   module Cups
+    # Namespace encapsulating helper functions
+    # to query the CUPS server for print queue attributes
     module Queue
       def self.attribute(queue, property)
         attribute = Attribute.new(queue, property)
@@ -11,8 +13,7 @@ module PuppetX
         attribute.value
       end
 
-      # Namespace encapsulating helper functions
-      # to query the CUPS server for print queue attributes
+      # Wrapper class for queue attribute queries
       class Attribute
         def initialize(queue, name)
           @queue = queue

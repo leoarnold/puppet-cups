@@ -2,11 +2,14 @@ require 'open3'
 
 module PuppetX
   module Cups
+    # Namespace encapsulating helper functions
+    # for command line executions
     module Shell
       def self.ipptool(switch, resource, request)
         ShellOut.new("ipptool #{switch} ipp://localhost#{resource} /dev/stdin", request)
       end
 
+      # Wrapper class for command line executions
       class ShellOut
         attr_reader :command, :stdin, :stdout, :stderr, :exitcode
 

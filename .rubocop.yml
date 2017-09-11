@@ -19,5 +19,3 @@ Metrics/LineLength:
     - puppet
 Metrics/BlockLength:
   Enabled: false
-Style/Documentation:
-  Enabled: false

@@ -2,7 +2,7 @@ require_relative 'shell'
 
 module PuppetX
   module Cups
-    # Namespace encapsulating helper functions
+    # Namespace encapsulating helpers
     # to query the CUPS server
     module Ipp
       def self.query(resource, request)
@@ -12,6 +12,8 @@ module PuppetX
         QueryT.new(resource, request)
       end
 
+      # The abstract superclass for IPP Queries
+      # using the `ipptool` command line utility
       class Query
         def initialize(resource, request)
           @shellout = PuppetX::Cups::Shell.ipptool(switch, resource, request)
@@ -34,6 +36,7 @@ module PuppetX
         end
       end
 
+      # Wrapper class for queries using `ipptool -c`
       class QueryC < Query
         def results
           lines = @shellout.stdout.split("\n")
@@ -48,6 +51,7 @@ module PuppetX
         end
       end
 
+      # Wrapper class for queries using `ipptool -t`
       class QueryT < Query
         def results
           result = /\bDISPLAY\s+(?<attribute>\S+)/i.match(@shellout.stdin)
