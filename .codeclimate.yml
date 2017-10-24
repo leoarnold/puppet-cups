@@ -11,6 +11,9 @@ engines:
     enabled: true
   rubocop:
     enabled: true
+    checks:
+      Rubocop/Style/PercentLiteralDelimiters:
+        enabled: false
 ratings:
   paths:
   - "lib/**/*.rb"
