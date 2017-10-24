@@ -1,0 +1,10 @@
+HOSTS:
+  fedora-26-x64:
+    roles:
+      - master
+    platform: fedora-26-x64
+    box: bento/fedora-26
+    hypervisor: vagrant
+CONFIG:
+  type: foss
+  log_level: debug

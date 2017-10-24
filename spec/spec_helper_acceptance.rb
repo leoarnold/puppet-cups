@@ -17,6 +17,10 @@ RSpec.configure do |c|
   project_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
   c.before(:suite) do
     hosts.each do |host|
+      if host.name =~ /^fedora/
+        install_package(host, 'ruby')
+        install_package(host, 'rubygem-json')
+      end
       install_puppet_from_gem_on(host, version: ENV['PUPPET_GEM_VERSION'] || '~> 5')
       copy_module_to(host, module_name: 'cups', source: project_root, target_module_path: '/etc/puppetlabs/code/modules')
       scp_to(host, File.join(project_root, 'spec/fixtures/ppd/textonly.ppd'), '/tmp/')
