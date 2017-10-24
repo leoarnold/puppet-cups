@@ -2,5 +2,5 @@
 /.mdl/* linguist-vendored
 /bin/* linguist-vendored
 /spec/* linguist-vendored
-Gemfile linguist-vendored
-Rakefile linguist-vendored
+gems.rb linguist-vendored
+rakefile.rb linguist-vendored
