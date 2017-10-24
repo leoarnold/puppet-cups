@@ -40,9 +40,9 @@ describe PuppetX::Cups::Ipp::QueryC do
   describe '#results' do
     context 'when stdout is a header-only CSV table' do
       it 'returns an empty array' do
-        stdout = <<~EOT
+        stdout = <<~OUTPUT
           printer-name
-        EOT
+        OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
 
@@ -56,10 +56,10 @@ describe PuppetX::Cups::Ipp::QueryC do
 
     context 'when stdout is a single-row CSV table' do
       it 'returns an array containing the row' do
-        stdout = <<~EOT
+        stdout = <<~OUTPUT
             printer-name
             Office
-          EOT
+          OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
 
@@ -73,12 +73,12 @@ describe PuppetX::Cups::Ipp::QueryC do
 
     context 'when stdout is a multi-row CSV table' do
       it 'returns an array containing the rows' do
-        stdout = <<~EOT
+        stdout = <<~OUTPUT
             printer-name
             BackOffice
             Office
             Warehouse
-          EOT
+          OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
 
@@ -157,10 +157,10 @@ describe PuppetX::Cups::Ipp::QueryT do
       it 'returns an empty array' do
         request = PuppetX::Cups::Instances::Queues.request
 
-        stdout = <<~EOT
+        stdout = <<~OUTPUT
             "CUPS-Get-Printers.ipp":
                 CUPS-Get-Printers                                                    [PASS]
-          EOT
+          OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdin: request, stdout: stdout, exitcode: 0)
 
@@ -176,7 +176,7 @@ describe PuppetX::Cups::Ipp::QueryT do
       it 'returns an array containing the attribute value' do
         request = PuppetX::Cups::Instances::Queues.request
 
-        stdout = <<~EOT
+        stdout = <<~OUTPUT
             "CUPS-Get-Printers.ipp":
                 CUPS-Get-Printers                                                    [FAIL]
                     RECEIVED: 8084 bytes in response
@@ -184,7 +184,7 @@ describe PuppetX::Cups::Ipp::QueryT do
                     Duplicate "pwg-raster-document-type-supported" attribute in printer-attributes-tag group
                     Duplicate "pwg-raster-document-resolution-supported" attribute in printer-attributes-tag group
                     printer-name (nameWithoutLanguage) = Office
-          EOT
+          OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdin: request, stdout: stdout, exitcode: 0)
 
@@ -200,7 +200,7 @@ describe PuppetX::Cups::Ipp::QueryT do
       it 'returns an array containing the attribute values' do
         request = PuppetX::Cups::Instances::Queues.request
 
-        stdout = <<~EOT
+        stdout = <<~OUTPUT
             "CUPS-Get-Printers.ipp":
                 CUPS-Get-Printers                                                    [FAIL]
                     RECEIVED: 24143 bytes in response
@@ -214,7 +214,7 @@ describe PuppetX::Cups::Ipp::QueryT do
                     printer-name (nameWithoutLanguage) = BackOffice
                     printer-name (nameWithoutLanguage) = Office
                     printer-name (nameWithoutLanguage) = Warehouse
-          EOT
+          OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdin: request, stdout: stdout, exitcode: 0)
 

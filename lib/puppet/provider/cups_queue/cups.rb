@@ -29,7 +29,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def self.prefetch(specified)
     discovered = instances
-    specified.keys.each do |name|
+    specified.each_key do |name|
       provider = discovered.find { |instance| instance.name == name }
       specified[name].provider = provider if provider
     end
@@ -233,7 +233,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     answer = {}
     supported_options_is = all_options_is
 
-    options_should.keys.each do |key|
+    options_should.each_key do |key|
       raise("Managing the option '#{key}' is unsupported.") unless supported_options_is.key? key
       answer[key] = supported_options_is[key]
     end

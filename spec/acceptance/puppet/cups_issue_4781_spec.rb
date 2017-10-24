@@ -22,12 +22,12 @@ describe 'Circumventing CUPS issue #4781' do
           purge_all_queues
         end
 
-        manifest = <<-EOM
+        manifest = <<-MANIFEST
           cups_queue { 'Office':
             ensure  => 'printer',
             enabled => 'true',
           }
-        EOM
+        MANIFEST
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
@@ -118,12 +118,12 @@ describe 'Circumventing CUPS issue #4781' do
           shell('cupsdisable -E Office')
         end
 
-        manifest = <<-EOM
+        manifest = <<-MANIFEST
           cups_queue { 'Office':
             ensure  => 'printer',
             enabled => 'true',
           }
-        EOM
+        MANIFEST
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)

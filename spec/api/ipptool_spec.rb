@@ -25,7 +25,7 @@ describe 'Ipptool' do
       context 'with STATUS successful-ok' do
         before(:all) do
           @ipp_resource = '/printers/Office'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION Get-Printer-Attributes
               GROUP operation
@@ -35,7 +35,7 @@ describe 'Ipptool' do
               STATUS successful-ok
               DISPLAY printer-is-shared
             }
-          EOR
+          REQUEST
         end
 
         describe 'ipptool -c' do
@@ -109,7 +109,7 @@ describe 'Ipptool' do
       context 'with STATUS successful-ok' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Classes
               GROUP operation
@@ -119,7 +119,7 @@ describe 'Ipptool' do
               DISPLAY printer-name
               DISPLAY member-names
             }
-          EOR
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -133,10 +133,10 @@ describe 'Ipptool' do
 
           describe 'stdout' do
             it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<-EOT
+              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<-OUTPUT
         EXPECTED: STATUS successful-ok (got client-error-not-found)
         status-message="No destinations added."
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to eq expected
             end
@@ -173,7 +173,7 @@ describe 'Ipptool' do
       context 'without STATUS clause' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Classes
               GROUP operation
@@ -182,7 +182,7 @@ describe 'Ipptool' do
               DISPLAY printer-name
               DISPLAY member-names
             }
-          EOR
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -229,7 +229,7 @@ describe 'Ipptool' do
       context 'with STATUS successful-ok' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Printers
               GROUP operation
@@ -238,7 +238,7 @@ describe 'Ipptool' do
               STATUS successful-ok
               DISPLAY printer-name
             }
-          EOR
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -252,10 +252,10 @@ describe 'Ipptool' do
 
           describe 'stdout' do
             it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<-EOT
+              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<-OUTPUT
         EXPECTED: STATUS successful-ok (got client-error-not-found)
         status-message="No destinations added."
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to eq expected
             end
@@ -292,7 +292,7 @@ describe 'Ipptool' do
       context 'without STATUS clause' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Printers
               GROUP operation
@@ -300,7 +300,7 @@ describe 'Ipptool' do
               ATTR language attributes-natural-language en
               DISPLAY printer-name
             }
-          EOR
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -355,7 +355,7 @@ describe 'Ipptool' do
       context 'with STATUS successful-ok' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Classes
               GROUP operation
@@ -365,7 +365,7 @@ describe 'Ipptool' do
               DISPLAY printer-name
               DISPLAY member-names
             }
-            EOR
+            REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -410,7 +410,7 @@ describe 'Ipptool' do
       context 'without STATUS clause' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Classes
               GROUP operation
@@ -419,7 +419,7 @@ describe 'Ipptool' do
               DISPLAY printer-name
               DISPLAY member-names
             }
-            EOR
+            REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -466,7 +466,7 @@ describe 'Ipptool' do
       context 'with STATUS successful-ok' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Printers
               GROUP operation
@@ -475,7 +475,7 @@ describe 'Ipptool' do
               STATUS successful-ok
               DISPLAY printer-name
             }
-            EOR
+            REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -493,12 +493,12 @@ describe 'Ipptool' do
 
           describe 'stdout' do
             it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~EOT
+              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
                 printer-name
                 BackOffice
                 Office
                 Warehouse
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to eq expected
             end
@@ -551,7 +551,7 @@ describe 'Ipptool' do
       context 'without STATUS clause' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Printers
               GROUP operation
@@ -559,7 +559,7 @@ describe 'Ipptool' do
               ATTR language attributes-natural-language en
               DISPLAY printer-name
             }
-            EOR
+            REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -577,12 +577,12 @@ describe 'Ipptool' do
 
           describe 'stdout' do
             it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~EOT
+              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
                 printer-name
                 BackOffice
                 Office
                 Warehouse
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to eq expected
             end
@@ -649,7 +649,7 @@ describe 'Ipptool' do
       context 'with STATUS successful-ok' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Classes
               GROUP operation
@@ -659,7 +659,7 @@ describe 'Ipptool' do
               DISPLAY printer-name
               DISPLAY member-names
             }
-            EOR
+            REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -673,12 +673,12 @@ describe 'Ipptool' do
 
           describe 'stdout' do
             it do
-              expected = <<~EOT
+              expected = <<~OUTPUT
                 printer-name,member-names
                 CrawlSpace,
                 GroundFloor,"Office,Warehouse"
                 UpperFloor,BackOffice
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to eq expected
             end
@@ -704,19 +704,19 @@ describe 'Ipptool' do
             it { expect(@result.stdout).to include 'printer-name (nameWithoutLanguage) = CrawlSpace' }
 
             it do
-              expected = <<-EOT
+              expected = <<-OUTPUT
         printer-name (nameWithoutLanguage) = GroundFloor
         member-names (1setOf nameWithoutLanguage) = Office,Warehouse
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to include expected
             end
 
             it do
-              expected = <<-EOT
+              expected = <<-OUTPUT
         printer-name (nameWithoutLanguage) = UpperFloor
         member-names (nameWithoutLanguage) = BackOffice
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to include expected
             end
@@ -731,7 +731,7 @@ describe 'Ipptool' do
       context 'without STATUS clause' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Classes
               GROUP operation
@@ -740,7 +740,7 @@ describe 'Ipptool' do
               DISPLAY printer-name
               DISPLAY member-names
             }
-            EOR
+            REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -754,12 +754,12 @@ describe 'Ipptool' do
 
           describe 'stdout' do
             it do
-              expected = <<~EOT
+              expected = <<~OUTPUT
                 printer-name,member-names
                 CrawlSpace,
                 GroundFloor,"Office,Warehouse"
                 UpperFloor,BackOffice
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to eq expected
             end
@@ -785,19 +785,19 @@ describe 'Ipptool' do
             it { expect(@result.stdout).to include 'printer-name (nameWithoutLanguage) = CrawlSpace' }
 
             it do
-              expected = <<-EOT
+              expected = <<-OUTPUT
         printer-name (nameWithoutLanguage) = GroundFloor
         member-names (1setOf nameWithoutLanguage) = Office,Warehouse
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to include expected
             end
 
             it do
-              expected = <<-EOT
+              expected = <<-OUTPUT
         printer-name (nameWithoutLanguage) = UpperFloor
         member-names (nameWithoutLanguage) = BackOffice
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to include expected
             end
@@ -814,7 +814,7 @@ describe 'Ipptool' do
       context 'with STATUS successful-ok' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Printers
               GROUP operation
@@ -823,7 +823,7 @@ describe 'Ipptool' do
               STATUS successful-ok
               DISPLAY printer-name
             }
-            EOR
+            REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -841,7 +841,7 @@ describe 'Ipptool' do
 
           describe 'stdout' do
             it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~EOT
+              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
                 printer-name
                 BackOffice
                 CrawlSpace
@@ -849,7 +849,7 @@ describe 'Ipptool' do
                 Office
                 UpperFloor
                 Warehouse
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to eq expected
             end
@@ -908,7 +908,7 @@ describe 'Ipptool' do
       context 'without STATUS clause' do
         before(:all) do
           @ipp_resource = '/'
-          @ipp_request = <<~EOR
+          @ipp_request = <<~REQUEST
             {
               OPERATION CUPS-Get-Printers
               GROUP operation
@@ -916,7 +916,7 @@ describe 'Ipptool' do
               ATTR language attributes-natural-language en
               DISPLAY printer-name
             }
-            EOR
+            REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -934,7 +934,7 @@ describe 'Ipptool' do
 
           describe 'stdout' do
             it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~EOT
+              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
                 printer-name
                 BackOffice
                 CrawlSpace
@@ -942,7 +942,7 @@ describe 'Ipptool' do
                 Office
                 UpperFloor
                 Warehouse
-              EOT
+              OUTPUT
 
               expect(@result.stdout).to eq expected
             end

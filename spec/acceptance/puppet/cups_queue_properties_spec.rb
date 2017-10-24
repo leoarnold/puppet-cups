@@ -22,7 +22,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         context 'with policy => allow' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               access => {
@@ -30,7 +30,7 @@ describe 'Custom type `cups_queue`' do
                 'users'  => ['nina', 'lumbergh', '@council', 'nina'],
               }
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -42,7 +42,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         context 'with policy => allow and changing users' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               access => {
@@ -50,7 +50,7 @@ describe 'Custom type `cups_queue`' do
                 'users'  => ['lumbergh', 'bolton'],
               }
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -62,7 +62,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         context 'with policy => deny' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               access => {
@@ -70,7 +70,7 @@ describe 'Custom type `cups_queue`' do
                 'users'  => ['nina', 'lumbergh', '@council', 'nina'],
               }
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -82,7 +82,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         context 'with policy => deny and changing users' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               access => {
@@ -90,7 +90,7 @@ describe 'Custom type `cups_queue`' do
                 'users'  => ['lumbergh', 'bolton'],
               }
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -102,7 +102,7 @@ describe 'Custom type `cups_queue`' do
         end
 
         context 'unsetting all restrictions' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               access => {
@@ -110,7 +110,7 @@ describe 'Custom type `cups_queue`' do
                 'users'  => ['all'],
               }
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -128,12 +128,12 @@ describe 'Custom type `cups_queue`' do
         end
 
         context '=> true' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure    => 'printer',
               accepting => 'true'
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -149,12 +149,12 @@ describe 'Custom type `cups_queue`' do
         end
 
         context '=> false' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure    => 'printer',
               accepting => 'false'
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -175,12 +175,12 @@ describe 'Custom type `cups_queue`' do
           shell("lpadmin -E -p #{Shellwords.escape(name)} -D 'color'")
         end
 
-        manifest = <<-EOM
+        manifest = <<-MANIFEST
           cups_queue { '#{name}':
             ensure      => 'printer',
             description => 'duplex'
           }
-        EOM
+        MANIFEST
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
@@ -201,12 +201,12 @@ describe 'Custom type `cups_queue`' do
         end
 
         context '=> true' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure  => 'printer',
               enabled => 'true'
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -222,12 +222,12 @@ describe 'Custom type `cups_queue`' do
         end
 
         context '=> false' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure  => 'printer',
               enabled => 'false'
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -249,12 +249,12 @@ describe 'Custom type `cups_queue`' do
         end
 
         context '=> true' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               held   => 'true'
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -270,12 +270,12 @@ describe 'Custom type `cups_queue`' do
         end
 
         context '=> false' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               held   => 'false'
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -296,12 +296,12 @@ describe 'Custom type `cups_queue`' do
           shell("lpadmin -E -p #{Shellwords.escape(name)} -L 'Room 451'")
         end
 
-        manifest = <<-EOM
+        manifest = <<-MANIFEST
           cups_queue { '#{name}':
             ensure   => 'printer',
             location => 'Room 101'
           }
-        EOM
+        MANIFEST
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
@@ -325,7 +325,7 @@ describe 'Custom type `cups_queue`' do
               ' -o printer-error-policy=retry-current-job')
           end
 
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure  => 'printer',
               options => {
@@ -334,7 +334,7 @@ describe 'Custom type `cups_queue`' do
                 'job-sheets-default'   => 'none,none'
               }
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -350,7 +350,7 @@ describe 'Custom type `cups_queue`' do
             shell("lpadmin -E -p #{Shellwords.escape(name)} -o Duplex=None -o PageSize=Letter")
           end
 
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure  => 'printer',
               options => {
@@ -358,7 +358,7 @@ describe 'Custom type `cups_queue`' do
                 'PageSize' => 'A4'
               }
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -382,12 +382,12 @@ describe 'Custom type `cups_queue`' do
         end
 
         context '=> true' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               shared => 'true'
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -399,12 +399,12 @@ describe 'Custom type `cups_queue`' do
         end
 
         context '=> false' do
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               shared => 'false'
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)

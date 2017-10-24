@@ -1,10 +1,12 @@
 ---
 AllCops:
-  TargetRubyVersion: 2.0
+  TargetRubyVersion: 2.1
   Exclude:
     - 'spec/fixtures/**/*'
     - 'vendor/**/*'
 Layout/IndentHeredoc:
+  Enabled: false
+Lint/BooleanSymbol:
   Enabled: false
 Metrics/LineLength:
   Max: 144

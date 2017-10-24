@@ -621,12 +621,12 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
       context 'for a queue using a PPD file' do
         it 'should return a hash of vendor options and their current values' do
-          input = <<~EOT
+          input = <<~INPUT
             PageSize/Who: Custom.WIDTHxHEIGHT Letter Legal Executive FanFoldGermanLegal *A4 A5 A6 Env10 EnvMonarch EnvDL EnvC5
             MediaType/cares: *PLAIN THIN THICK THICKERPAPER2 BOND ENV ENVTHICK ENVTHIN RECYCLED
             InputSlot/about: MANUAL *TRAY1
             Duplex/this: DuplexTumble DuplexNoTumble *None
-          EOT
+          INPUT
 
           expected = {
             'PageSize' => 'A4',

@@ -21,7 +21,7 @@ group :development do
   gem 'puppet-blacksmith', '~> 3.3'
   gem 'puppetlabs_spec_helper', '~> 2.0'
   gem 'rspec-puppet-facts', '~> 1.7'
-  gem 'rubocop', '~> 0.37'
+  gem 'rubocop', '~> 0.51'
   gem 'semantic_puppet' if puppetversion.to_f < 4.9
   gem 'simplecov', '~> 0.13'
   gem 'simplecov-murmur', '~> 0.8'

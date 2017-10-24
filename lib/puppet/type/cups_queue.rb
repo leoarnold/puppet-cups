@@ -106,11 +106,11 @@ Puppet::Type.newtype(:cups_queue) do
       "changed from #{is_to_s(currentvalue)} to #{should_to_s(newvalue)}"
     end
 
-    # rubocop:disable Style/PredicateName
+    # rubocop:disable Naming/PredicateName
     def is_to_s(value)
       value.to_s
     end
-    # rubocop:enable Style/PredicateName
+    # rubocop:enable Naming/PredicateName
 
     def should_to_s(value)
       value.to_s
@@ -151,6 +151,16 @@ Puppet::Type.newtype(:cups_queue) do
     munge do |value|
       value['users'] = value['users'].sort.uniq
       value
+    end
+
+    # rubocop:disable Naming/PredicateName
+    def is_to_s(value)
+      value.to_s
+    end
+    # rubocop:enable Naming/PredicateName
+
+    def should_to_s(value)
+      value.to_s
     end
   end
 
@@ -202,6 +212,16 @@ Puppet::Type.newtype(:cups_queue) do
       raise ArgumentError, 'The list of members must not be empty.' if value.empty?
       raise ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if value =~ %r{[\s/#]}
     end
+
+    # rubocop:disable Naming/PredicateName
+    def is_to_s(value)
+      value.to_s
+    end
+    # rubocop:enable Naming/PredicateName
+
+    def should_to_s(value)
+      value.to_s
+    end
   end
 
   newparam(:model) do
@@ -228,18 +248,18 @@ Puppet::Type.newtype(:cups_queue) do
         'device-uri' => 'uri'
       }
 
-      value.keys.each do |key|
+      value.each_key do |key|
         if properties.key? key
           raise ArgumentError, "Please use the `cups_queue` property '#{properties[value]}' instead of setting the option '#{value}'."
         end
       end
     end
 
-    # rubocop:disable Style/PredicateName
+    # rubocop:disable Naming/PredicateName
     def is_to_s(currentvalue)
       currentvalue.sort.to_h.to_s
     end
-    # rubocop:enable Style/PredicateName
+    # rubocop:enable Naming/PredicateName
 
     def should_to_s(newvalue)
       newvalue.sort.to_h.to_s
@@ -269,7 +289,7 @@ Puppet::Type.newtype(:cups_queue) do
     desc '(printer-only) The device URI of the printer. Use `lpinfo -v` on the node to scan for printer URIs.'
 
     validate do |value|
-      raise ArgumentError, "The URI '#{value}' seems malformed." unless (value =~ URI.regexp) || Pathname(value).absolute?
+      raise ArgumentError, "The URI '#{value}' seems malformed." unless (value =~ URI::DEFAULT_PARSER.make_regexp) || Pathname(value).absolute?
     end
   end
 end

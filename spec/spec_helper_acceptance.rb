@@ -38,7 +38,7 @@ end
 
 def add_printers_to_classes(classmembers)
   add_printers('Dummy')
-  classmembers.keys.each do |classname|
+  classmembers.each_key do |classname|
     members = classmembers[classname]
     members = %w[Dummy] if members.empty?
     members.each do |printername|

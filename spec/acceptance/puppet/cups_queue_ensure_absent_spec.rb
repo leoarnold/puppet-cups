@@ -10,11 +10,11 @@ describe 'Custom type `cups_queue`' do
   context 'ensuring absence' do
     queue = 'Office'
 
-    manifest = <<-EOM
+    manifest = <<-MANIFEST
       cups_queue { '#{queue}':
         ensure => 'absent'
       }
-    EOM
+    MANIFEST
 
     context 'when the queue is absent' do
       before(:all) do

@@ -16,12 +16,12 @@ describe 'Custom type `cups_queue`' do
             add_printers('Office', 'Warehouse')
           end
 
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { 'GroundFloor':
               ensure  => 'class',
               members => ['Office', 'Warehouse']
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -38,7 +38,7 @@ describe 'Custom type `cups_queue`' do
             add_printers('Office', 'Warehouse')
           end
 
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { 'GroundFloor':
               ensure         => 'class',
               members        => ['Office', 'Warehouse'],
@@ -51,7 +51,7 @@ describe 'Custom type `cups_queue`' do
               options        => { 'job-quota-period' => '604800', 'job-page-limit' => '100' },
               shared         => 'false'
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -69,12 +69,12 @@ describe 'Custom type `cups_queue`' do
             purge_all_queues
           end
 
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { 'GroundFloor':
               ensure  => 'class',
               members => ['Office', 'Warehouse']
             }
-          EOM
+          MANIFEST
 
           it 'applying the manifest fails' do
             apply_manifest(manifest, expect_failures: true)
@@ -86,7 +86,7 @@ describe 'Custom type `cups_queue`' do
             purge_all_queues
           end
 
-          manifest = <<-EOM
+          manifest = <<-MANIFEST
             cups_queue { 'GroundFloor':
               ensure  => 'class',
               members => ['Office', 'Warehouse']
@@ -96,7 +96,7 @@ describe 'Custom type `cups_queue`' do
               ensure => 'printer',
               model  => 'drv:///sample.drv/generic.ppd',
             }
-          EOM
+          MANIFEST
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -111,12 +111,12 @@ describe 'Custom type `cups_queue`' do
 
     context 'when the queue is present as class' do
       context 'and all designated members are present' do
-        manifest = <<-EOM
+        manifest = <<-MANIFEST
           cups_queue { 'GroundFloor':
             ensure  => 'class',
             members => ['Office', 'Warehouse']
           }
-        EOM
+        MANIFEST
 
         context 'but some are not members yet' do
           before(:all) do
@@ -172,7 +172,7 @@ describe 'Custom type `cups_queue`' do
       end
 
       context 'and some of the designated members are absent' do
-        manifest = <<-EOM
+        manifest = <<-MANIFEST
           cups_queue { 'GroundFloor':
             ensure  => 'class',
             members => ['Office', 'Warehouse']
@@ -182,7 +182,7 @@ describe 'Custom type `cups_queue`' do
             ensure => 'printer',
             model  => 'drv:///sample.drv/generic.ppd',
           }
-        EOM
+        MANIFEST
 
         context 'and there are NO unwanted members' do
           before(:all) do
@@ -228,12 +228,12 @@ describe 'Custom type `cups_queue`' do
         add_printers('GroundFloor', 'Office', 'Warehouse')
       end
 
-      manifest = <<-EOM
+      manifest = <<-MANIFEST
         cups_queue { 'GroundFloor':
           ensure  => 'class',
           members => ['Office', 'Warehouse']
         }
-      EOM
+      MANIFEST
 
       it 'applies changes' do
         apply_manifest(manifest, expect_changes: true)

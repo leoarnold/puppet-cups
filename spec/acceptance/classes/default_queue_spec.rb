@@ -15,11 +15,11 @@ describe 'Including class "cups"' do
         purge_all_queues
       end
 
-      manifest = <<-EOM
+      manifest = <<-MANIFEST
         class { '::cups':
           default_queue => '#{name}'
         }
-      EOM
+      MANIFEST
 
       it 'fails to apply' do
         apply_manifest(manifest, expect_failures: true)
@@ -32,7 +32,7 @@ describe 'Including class "cups"' do
         shell('lpadmin -d BackOffice')
       end
 
-      manifest = <<-EOM
+      manifest = <<-MANIFEST
         class { '::cups':
           default_queue => '#{name}'
         }
@@ -42,7 +42,7 @@ describe 'Including class "cups"' do
           model  => 'drv:///sample.drv/generic.ppd',
           uri    => 'lpd://192.168.2.105/binary_p1'
         }
-      EOM
+      MANIFEST
 
       it 'applies changes' do
         apply_manifest(manifest, expect_changes: true)
