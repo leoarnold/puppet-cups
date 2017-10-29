@@ -22,7 +22,6 @@ matrix:
 script: bundle exec rake static_checks
 after_script: bundle exec codeclimate-test-reporter
 notifications:
-  email: false
   webhooks:
     urls:
     - https://webhooks.gitter.im/e/3402fe31d5b814c57316
