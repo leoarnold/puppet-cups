@@ -9,7 +9,11 @@ end
 describe 'nina.initech.com' do
   let(:facts) { any_supported_os(certname: 'nina.initech.com') }
 
-  let(:hiera_config) { 'spec/fixtures/hiera.yaml' }
+  if Puppet::PUPPETVERSION.to_f < 4.9
+    let(:hiera_config) { 'spec/fixtures/hiera3.yaml' }
+  else
+    let(:hiera_config) { 'spec/fixtures/hiera5.yaml' }
+  end
 
   context 'using a hiera example' do
     it { should contain_class('cups').with(web_interface: true) }
