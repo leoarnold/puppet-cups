@@ -130,7 +130,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
       end
 
       describe '#create_printer' do
-        it 'installs the printer with default values' do
+        it 'installs the printer with default values and checks for correct make_and_model' do
           switch = { model: '-m', ppd: '-P' }
           method = (manifest.keys & switch.keys)[0]
 
@@ -138,6 +138,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', 'file:///dev/null')
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', switch[method], manifest[method]) if method
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'printer-is-shared=false')
+          expect(@provider).to receive(:check_make_and_model)
 
           @provider.create_printer
         end
@@ -405,10 +406,17 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     describe '#make_and_model=(_value)' do
       context 'when ensuring a printer' do
         it 'calls #create_printer' do
-          allow(@provider).to receive(:printer_exists?).and_return(true)
           expect(@provider).to receive(:create_printer)
 
           @provider.make_and_model = 'Local Raw Printer'
+        end
+
+        it 'calls #check_make_and_model' do
+          allow(@provider).to receive(:create_printer)
+
+          expect(@provider).to receive(:check_make_and_model)
+
+          @provider.make_and_model = 'HP DeskJet 550c'
         end
       end
     end
@@ -532,6 +540,43 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         expect(PuppetX::Cups::Queue).to receive(:attribute).with('Office', 'printer-location')
 
         @provider.send(:query, 'printer-location')
+      end
+    end
+
+    describe '#check_make_and_model' do
+      context 'when NO make_and_model was provided' do
+        it 'does not raise an error' do
+          expect { @provider.send(:check_make_and_model) }.not_to raise_error
+        end
+      end
+
+      context 'when a make_and_model was provided' do
+        before(:each) do
+          manifest = {
+            ensure: 'printer',
+            name: 'Office',
+            make_and_model: 'HP DeskJet 550C'
+          }
+
+          @resource = type.new(manifest)
+          @provider = provider.new(@resource)
+        end
+
+        context 'and the `model` / `ppd` was suitable to achieve this make_and_model' do
+          it 'does not raise an error' do
+            allow(@provider).to receive(:make_and_model).and_return('HP DeskJet 550C')
+
+            expect { @provider.send(:check_make_and_model) }.not_to raise_error
+          end
+        end
+
+        context 'and the `model` / `ppd` did NOT yield this make_and_model' do
+          it 'does not raise an error' do
+            allow(@provider).to receive(:make_and_model).and_return('Local Raw Printer')
+
+            expect { @provider.send(:check_make_and_model) }.to raise_error(/make_and_model/)
+          end
+        end
       end
     end
 

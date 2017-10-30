@@ -75,6 +75,8 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     run_property_setter(:uri,
                         :access, :description, :location, :options, :shared,
                         :enabled, :held, :accepting)
+
+    check_make_and_model
   end
 
   def run_parameter_setter(*parameters)
@@ -175,6 +177,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def make_and_model=(_value)
     create_printer
+    check_make_and_model
   end
 
   def model=(value)
@@ -225,6 +228,13 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def query(property)
     PuppetX::Cups::Queue.attribute(name, property)
+  end
+
+  def check_make_and_model
+    expected = resource.should(:make_and_model)
+
+    raise "Cannot set make_and_model to '#{expected}' for queue '#{name}'. Please revise the value you provided for 'model' or 'ppd'." \
+      if expected && make_and_model != expected
   end
 
   ### Helper functions for #options
