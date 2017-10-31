@@ -34,16 +34,16 @@ but also the complete situation it arises in. We highly recommend [Cucumber](htt
   at /etc/puppetlabs/code/environments/production/modules/cups/manifests/params.pp:17 on node nina.initech.com
   ```
 
-Please make sure that you described what you **expected to happen**, preferable in the "**In order to**" step.
+Please make sure that you describe what you **expected to happen**, preferably in the "**In order to**" step.
 
 ## Pull requests
 
-Did you already open an issue? Opening an issue and discussion shortcomings first can save you a lot of time and trouble.
-Maybe there is already uncommited work in progress to solve your issue.
+Did you already open an issue? Opening an issue and discussing shortcomings first can save you a lot of time and trouble.
+Maybe there is already uncommitted work in progress to solve your issue.
 Maybe there is a reason this module does not offer your desired functionality.
 Or maybe there is just a misunderstanding and we need to improve the documentation.
 
-### Development system setup
+### Development environment setup
 
 For test driven development it is imperative to be able to run acceptance tests.
 Assuming [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/)
@@ -66,13 +66,13 @@ and other Ruby gems:
 You will also need [Bundler](http://bundler.io/) to install the required gems. One way to install Bundler is:
 
   ```Shell
-  sudo gem install bundler
+  gem install bundler
   ```
 
 Now change to the directory you cloned this git repository to and run
 
   ```Shell
-  bundle install --path .vendor/bundle
+  bundle install --path vendor/bundle
   ```
 
 ### Code Style
@@ -84,14 +84,14 @@ Mandatory file format:
 * Unix style linebreaks
 * New line at end of file
 
-The Ruby code style is considered acceptable when [RuboCop](https://github.com/bbatsov/rubocop)
-does not report offenses when running
+The Ruby code style is considered acceptable if [RuboCop](https://github.com/bbatsov/rubocop)
+does not report any offenses when running
 
   ```Shell
   bundle exec rubocop -a
   ```
 
-Furthermore the overall code style is considered acceptable when linting and validation pass
+Furthermore the overall code style is considered acceptable if linting and validation pass
 
   ```Shell
   bundle exec rake lint
@@ -111,21 +111,20 @@ The next sections explain how to write and run tests.
 #### RSpec unit tests
 
 As a rule of thumb, every line of code in `lib` should have tests in `spec/unit`.
-The structure of both directories is the same, e.g. the tests for the code in
-`lib/facter/cups_facts.rb` go into the file `spec/unit/facter/cups_facts_spec.rb` and so on.
+The structure of both directories is similar, i.e. the tests for the code in
+`lib/puppet_x/cups/instances.rb` go into the file `spec/unit/puppet_x/cups/instances_spec.rb` and so on.
 
-Every unit test file should begin with the lines
+Every unit test file should begin with the line
 
   ```Ruby
-  # encoding: UTF-8
   require 'spec_helper'
   ```
 
 Tests are written in RSpec 3 syntax following their excellent [documentation](https://relishapp.com/rspec)
-and can be run per file
+and can be run on a per file basis
 
   ```Shell
-  bundle exec rspec spec/unit/facter/cups_facts_spec.rb
+  bundle exec rspec spec/unit/puppet_x/cups/instances_spec.rb
   ```
 
 or all at once using
@@ -134,24 +133,26 @@ or all at once using
   bundle exec rake spec
   ```
 
-#### RSpec-Puppet regression tests
+Appending `--only-failures` will only rerun those tests which failed in the previous run.
 
-All classes and defined types in `manifests` should have tests in `spec/classes`
-or `spec/defines` respectivly, and a minimal usage example in `tests`.
+#### RSpec-Puppet catalog tests
+
+All classes and defined types in the `manifests` folder should have tests in `spec/classes`
+or `spec/defines` respectively, and a usage examples in the `examples` folder.
 
 For example the tests for the class `manifests/default_queue.pp` go into
-`spec/classes/default_queue_spec.rb` and the usage example goes into `tests/default_queue.pp`.
+`spec/classes/default_queue_spec.rb` and usage examples go into `examples/default_queue.pp`.
 
-Every unit test file should begin with the lines
+Every catalog test file should begin with the line
 
   ```Ruby
-  # encoding: UTF-8
   require 'spec_helper'
   ```
 
 Tests are written in RSpec-Puppet following their excellent [documentation](http://rspec-puppet.com/)
-and are ment to ensure that future code extensions do not break existing functionality,
-i.e. prevent regression. They can be run per file
+and are meant to ensure that the Puppet catalog contains the desired resources, as well as to prevent
+future code extensions from break existing functionality, i.e. to prevent regression.
+They can be run a per file basis
 
   ```Shell
   bundle exec rspec spec/classes/default_queue_spec.rb
@@ -163,16 +164,17 @@ or all at once using
   bundle exec rake spec
   ```
 
+Appending `--only-failures` will only rerun those tests which failed in the previous run.
+
 #### Beaker acceptance tests
 
-To ensure that the module actually does what it is supposed do,
-we try to check every aspect by applying corresponding manifests to a test system.
+To ensure that the module actually does what it is supposed to,
+we try to check every aspect by applying the corresponding manifests on a test system.
 
 Acceptance tests are written in [Beaker DSL](http://www.rubydoc.info/github/puppetlabs/beaker/)
-and go into `spec/acceptance`. Every unit test file should begin with the lines
+and go into the `spec/acceptance` folder. Every unit test file should begin with the line
 
   ```Ruby
-  # encoding: UTF-8
   require 'spec_helper_acceptance'
   ```
 
@@ -182,7 +184,7 @@ The recommended skeleton for acceptance tests is
 context 'when using my new feature' do
   before(:all) do
     # Your new feature is meant to ensure a certain system state.
-    # This section sets up the wrong state to provoke change.
+    # This section sets up the wrong state in order to make changes necessary.
   end
 
   manifest = <<-EOM
@@ -194,7 +196,7 @@ context 'when using my new feature' do
   end
 
   it 'sets the correct value' do
-    # Check that the system now is in the desired state
+    # Check that the system now is in the desired state.
   end
 
   it 'is idempotent' do
@@ -203,10 +205,10 @@ context 'when using my new feature' do
 end
 ```
 
-The tests can be run per file
+The tests can be run on a per file basis
 
   ```Shell
-  bundle exec rspec spec/acceptance/facter/cups_facts_spec.rb
+  bundle exec rspec spec/acceptance/classes/init_spec.rb
   ```
 
 or all at once using
@@ -219,13 +221,13 @@ on the default testing system defined in `spec/acceptance/nodesets/default.yml`.
 To use a different test system, pick a name from the list returned by
 
   ```Shell
-  bundle exec rake beaker_nodes
+  bundle exec rake beaker:sets
   ```
 
-e.g. `fedora-20-i386` and set the environment variable
+e.g. `ubuntu-17.04-x64` and set the environment variable
 
   ```Shell
-  export BEAKER_set='fedora-20-i386'
+  export BEAKER_set='ubuntu-17.04-x64'
   ```
 
 Beaker will create and provision the test system on every run and destroy it afterwards.
@@ -277,21 +279,18 @@ Commit message checklist:
   description (50 characters is the soft limit, excluding ticket
   number(s)), and should skip the full stop.
 
-* Associate the issue in the message. The first line should include
-  the issue number in the form "(#XXXX) Rest of message".
-
 * The body should provide a meaningful commit message, which:
   * uses the imperative, present tense: "change", not "changed" or "changes".
   * includes motivation for the change, and contrasts its implementation with the previous behavior.
 
-* Describe the technical detail of the change(s).  If your
+* Describe the technical detail of the change(s). If your
   description starts to get too long, that is a good sign that you
   probably need to split up your commit into more finely grained pieces.
 
 * Commits which plainly describe the things which help
   reviewers check the patch and future developers understand the
   code are much more likely to be merged in with a minimum of
-  bike-shedding or requested changes.  Ideally, the commit message
+  bike-shedding or requested changes. Ideally, the commit message
   would include information, and be in a form suitable for
   inclusion in the release notes for the version of Puppet that includes them.
 
@@ -300,9 +299,9 @@ Commit message checklist:
 Open Source software inspires creativity, learning and collaboration.
 Legal troubles will kill all of these in an instant.
 
-This module is provided free of charge and open to everyone (see [LICENSE](LICENSE), tldr: use at your own risk).
+This module is provided free of charge and open to everyone (see [LICENSE](LICENSE.txt), *tl;dr* use at your own risk).
 To keep it this way and avoid legal trouble of any kind, we kindly ask every contributer to include
-the following statement verbatimly in their commit messages:
+the following statement verbatim in their commit messages:
 
 > By committing to this project I transfer the full copyright for my contributions
 > to the current project maintainer as per the project's LICENSE file.

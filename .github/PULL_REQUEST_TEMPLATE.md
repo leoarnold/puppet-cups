@@ -2,7 +2,7 @@ _Pull Request template_.
 
 This Pull Request fixes/adds ... (about 2 sentences)
 
-This is what I added/changed/removed and why I did ... (help the maintainer understand your PR)
+This is what I added/changed/removed and why I did it ... (help the maintainer understand your PR)
 
 Related issue: (Your issue number goes here)
 

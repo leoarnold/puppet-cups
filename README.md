@@ -51,13 +51,15 @@ Key design goals include *locale independence* and *test driven development*.
 
 * The files in `/etc/cups/` will be modified using CUPS command line utilities.
 
+* The entire content of the file `/etc/cups/cupsd.conf` will be managed by the module.
+
 * The file `/etc/cups/lpoptions` will be deleted. See the section on [limitations](#option-defaults) for details.
 
 ### Setup Requirements
 
 This module is written for and tested on Linux systems with
 
-* Puppet Agent `~> 4.0`
+* Puppet 4 or 5
 
 * CUPS `~> 1.5` or `~> 2.x`
 
@@ -73,7 +75,16 @@ All resources in this module require the CUPS daemon to be installed and configu
 To ensure these preconditions you should include the main `cups` class wherever you use this module:
 
 ```puppet
-class { 'cups': }
+# General inclusion
+include '::cups'
+
+# OR
+
+# Explicit class configuration
+# (May only be defined once per catalog)
+class { '::cups':
+  # Your settings custom here
+}
 ```
 
 See the [section](#class-cups) on the `cups` class for details.
@@ -95,8 +106,8 @@ and adjust it following the instructions on [configuring queues](#configuring-qu
 There are several ways to set up a printer queue in CUPS.
 This section provides the minimal manifest for each method.
 
-**Note** These minimal manifests will *not* update or change the PPD file on already existing queues,
-as CUPS does not provide a robust way to determine how the queue was installed.
+**Note** These minimal manifests will *NOT* update or change the PPD file on already existing queues,
+as CUPS does not provide a robust way to determine how a given queue was installed.
 See however the section on [changing the driver](#changing-the-driver) for a workaround.
 
 If you are unsure which way to choose, we recommend to set up the printer
@@ -116,7 +127,7 @@ Minimal printer manifests:
   }
   ```
 
-  To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
+  To configure this queue see the section on [setting the usual options](#configuring-queues) or the `cups_queue` [type reference](#type-cups_queue).
 
 * Using a suitable model from the output of the command `lpinfo -m` on the node:
 
@@ -130,7 +141,7 @@ Minimal printer manifests:
   }
   ```
 
-  To configure this queue see the section on [setting the usual options](#configuring-queues) or the [type reference](#type-cups_queue).
+  To configure this queue see the section on [setting the usual options](#configuring-queues) or the `cups_queue` [type reference](#type-cups_queue).
 
 * Using a custom PPD file:
 
@@ -272,6 +283,15 @@ The corresponding `cups_queue` properties are:
 
 If you want your print queues to "just work", you should set both to `true`.
 This module does not set default values by itself, since it might be of disadvantage in a professional copy shop environment.
+
+Most users will prefer to set both options to `true` for all queues using
+
+   ```puppet
+   Cups_queue {
+     accepting => true,
+     enabled   => true
+   }
+   ```
 
 **Option defaults:**
 Sometimes you need to set some default values for CUPS or vendor options of a print queue,

@@ -1,6 +1,6 @@
 _Issue template: Please fill in the gaps_.
 
-**Given** [Your operating system and Version] with Puppet Agent [Your version] and CUPS [Your version].
+**Given** [Your operating system and version] with Puppet [Your Puppet version] and CUPS [Your CUPS version].
 
 **When** I apply the manifest
 
@@ -9,7 +9,7 @@ include '::cups'
 
 # Your manifest here
 ```
-
+e
 **In order to** [What did you intend to do?]
 
 **Then** I get the error message:
