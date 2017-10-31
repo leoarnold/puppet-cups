@@ -13,6 +13,7 @@ end
 # rubocop:enable Bundler/DuplicatedGem
 
 group :development do
+  gem 'bundler', '>= 1.16.0.beta', '< 2'
   gem 'codacy-coverage', '~> 1.0'
   gem 'coderay', '~> 1.1'
   gem 'mdl', '~> 0.3'
