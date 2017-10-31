@@ -233,8 +233,10 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newproperty(:options) do
-    desc 'A hash of options (as keys) and their target value.' \
-      ' Use `lpoptions -p [queue_name] -l` on the node for a list of all options available for the queue and their supported values.'
+    desc 'A hash of options (as keys) and their target value. Almost every option you can set with' \
+      ' `lpadmin -p [queue_name] -o key=value` is supported here. Use `puppet resource cups_queue [queue_name]`' \
+      ' on the node for a list of all supported options for the given queue, and `lpoptions -p [queue_name] -l`' \
+      ' to see a list of available values for the most commonly used printer specific options.'
 
     validate do |value|
       raise ArgumentError, 'Please provide a hash value.' unless value.is_a? Hash

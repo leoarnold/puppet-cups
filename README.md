@@ -517,10 +517,12 @@ Installs and manages CUPS print queues.
 * `held`: A held queue will print all jobs in print or pending, but all new jobs will be held.
   Setting `false` will release them.
 
-* `location`: A short information where to find the hardcopies.
+* `location`: A short information where to find the hard copies.
 
-* `options`: A hash of options (as keys) and their target value. Use `lpoptions -p [queue_name] -l`
-  on the node for a list of all options available for the queue and their supported values.
+* `options`: A hash of options (as keys) and their target value. Almost every option you can set with
+  `lpadmin -p [queue_name] -o key=value` is supported here. Use `puppet resource cups_queue [queue_name]`
+  on the node for a list of all supported options for the given queue, and `lpoptions -p [queue_name] -l`
+  to see a list of available values for the most commonly used printer specific options.
 
 * `shared`: Boolean value specifying whether to share this queue on the network. Default is `false`.
 
