@@ -9,7 +9,7 @@ include '::cups'
 
 # Your manifest here
 ```
-e
+
 **In order to** [What did you intend to do?]
 
 **Then** I get the error message:
