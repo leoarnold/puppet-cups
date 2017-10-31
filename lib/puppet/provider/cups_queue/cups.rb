@@ -231,10 +231,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def check_make_and_model
+    actual = query('printer-make-and-model')
     expected = resource.should(:make_and_model)
 
     raise "Cannot set make_and_model to '#{expected}' for queue '#{name}'. Please revise the value you provided for 'model' or 'ppd'." \
-      if expected && make_and_model != expected
+      if expected && (actual != expected)
   end
 
   ### Helper functions for #options

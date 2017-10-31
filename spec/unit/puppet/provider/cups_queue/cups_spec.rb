@@ -405,18 +405,11 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
     describe '#make_and_model=(_value)' do
       context 'when ensuring a printer' do
-        it 'calls #create_printer' do
+        it 'calls #create_printer and #check_make_and_model' do
           expect(@provider).to receive(:create_printer)
-
-          @provider.make_and_model = 'Local Raw Printer'
-        end
-
-        it 'calls #check_make_and_model' do
-          allow(@provider).to receive(:create_printer)
-
           expect(@provider).to receive(:check_make_and_model)
 
-          @provider.make_and_model = 'HP DeskJet 550c'
+          @provider.make_and_model = 'Local Raw Printer'
         end
       end
     end
@@ -546,6 +539,8 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     describe '#check_make_and_model' do
       context 'when NO make_and_model was provided' do
         it 'does not raise an error' do
+          allow(@provider).to receive(:query).with('printer-make-and-model').and_return('Local Raw Printer')
+
           expect { @provider.send(:check_make_and_model) }.not_to raise_error
         end
       end
@@ -564,7 +559,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
         context 'and the `model` / `ppd` was suitable to achieve this make_and_model' do
           it 'does not raise an error' do
-            allow(@provider).to receive(:make_and_model).and_return('HP DeskJet 550C')
+            allow(@provider).to receive(:query).with('printer-make-and-model').and_return('HP DeskJet 550C')
 
             expect { @provider.send(:check_make_and_model) }.not_to raise_error
           end
@@ -572,7 +567,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
 
         context 'and the `model` / `ppd` did NOT yield this make_and_model' do
           it 'does not raise an error' do
-            allow(@provider).to receive(:make_and_model).and_return('Local Raw Printer')
+            allow(@provider).to receive(:query).with('printer-make-and-model').and_return('Local Raw Printer')
 
             expect { @provider.send(:check_make_and_model) }.to raise_error(/make_and_model/)
           end
