@@ -40,6 +40,7 @@ RSpec.configure do |c|
   c.color = true
   c.formatter = :documentation
   c.mock_with(:rspec)
+  c.example_status_persistence_file_path = ".rspec_status"
 end
 
 # RSpec-Puppet configuration
