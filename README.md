@@ -463,6 +463,7 @@ Installs, configures, and manages the CUPS service.
   Accepts (an array of) strings.
   Defaults to `['localhost:631', '/var/run/cups/cups.sock']`.
   Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
+  *Warning*: For this module to work, it is *mandatory* that CUPS is listening on `localhost:631`.
 
 * `package_ensure`: Whether CUPS packages should be `present` or `absent`. Defaults to `present`.
 
