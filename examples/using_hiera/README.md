@@ -1,4 +1,4 @@
-# Example Hiera usage
+# Hiera 5 usage example
 
 Hiera is an External Node Classifier (ENC).
 The idea behind this is to keep (node specific) data
@@ -14,7 +14,7 @@ include cups
 and use Hiera to provide the actual data
 
 ```yaml
-# hieradata/common.yaml
+# data/common.yaml
 ---
   # Configure Class['cups']
   cups::default_queue: Warehouse
