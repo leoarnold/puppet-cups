@@ -1,6 +1,6 @@
 # Changelog
 
-## 2017-11-03 - Release 2.0.0
+## 2017-11-01 - Release 2.0.0
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.0.0)
 and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.0.0).
@@ -31,7 +31,7 @@ Please adjust your manifests according to the [upgrade instructions](UPGRADING.m
 
 - Execution of `ipptool` now enjoys more comprehensive error handling
 - A fallback method for IPP queries was added to enable correct execution
-  even on systems with a erroneous CUPS installation (e.g. Ubuntu 16.10 and 17.04)
+  even on systems with an erroneous CUPS installation (e.g. Ubuntu 16.10 and 17.04)
 - Queue names with special characters (e.g. ampersands) are now handled correctly
 - Handling of queue option `job-sheets-default` was fixed
 
