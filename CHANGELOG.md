@@ -1,6 +1,6 @@
 # Changelog
 
-## 2017-??-?? - Release 2.0.0
+## 2017-11-03 - Release 2.0.0
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.0.0)
 and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.0.0).
@@ -19,18 +19,21 @@ Please adjust your manifests according to the [upgrade instructions](UPGRADING.m
 - Some attributes were removed from the `cups` class
 - The defined type `cups::ctl` was removed
 - System V interface scripts are no longer supported
-  since CUPS droped support for them in [V2.2b1](https://github.com/apple/cups/blob/v2.2.0/CHANGES.txt#L67)
+  since CUPS dropped support for them in [V2.2b1](https://github.com/apple/cups/blob/v2.2.0/CHANGES.txt#L67)
 
 ### Features
 
-- `Class[cups]` now has tunables for package and service management
-- The CUPS server can now be managed using the new defined type `cups::server`
+- `Class[cups]` now features tunables for package and service management
+- The `Listen` directive of `cupsd.conf` can now be managed through `Class[cups]`
 - `cups_queue` now supports managing the option `auth-info-required`
 
 ### Bugfixes
 
 - Execution of `ipptool` now enjoys more comprehensive error handling
+- A fallback method for IPP queries was added to enable correct execution
+  even on systems with a erroneous CUPS installation (e.g. Ubuntu 16.10 and 17.04)
 - Queue names with special characters (e.g. ampersands) are now handled correctly
+- Handling of queue option `job-sheets-default` was fixed
 
 ## 2016-05-24 - Maintenance release 1.2.2
 
