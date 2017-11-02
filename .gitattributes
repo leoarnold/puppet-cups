@@ -1,6 +1,7 @@
-/.ipp/* linguist-vendored
-/.mdl/* linguist-vendored
-/bin/* linguist-vendored
-/spec/* linguist-vendored
+.ipp/* linguist-vendored
+.mdl/* linguist-vendored
+bin/* linguist-vendored
+rakelib/* linguist-vendored
+spec/* linguist-vendored
 gems.rb linguist-vendored
 rakefile.rb linguist-vendored

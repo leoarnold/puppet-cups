@@ -8,4 +8,9 @@ namespace :github do
     system('puppet strings')
     FileUtils.mv('doc', 'docs')
   end
+
+  desc 'Break down language statistics'
+  task :linguist do
+    system('linguist --breakdown')
+  end
 end
