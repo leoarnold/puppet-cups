@@ -1,6 +1,7 @@
 .bundle/
 .idea/
 .vagrant/
+.yardoc/
 vendor/
 coverage/
 junit/

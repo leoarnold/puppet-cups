@@ -38,6 +38,11 @@ group :ci do
   gem 'codeclimate-test-reporter', '~> 1.0'
 end
 
+group :documentation do
+  gem 'puppet-strings', '~> 1.1'
+  gem 'rgen', '~> 0.8'
+end
+
 group :metatools do
   gem 'github-linguist', '~> 5.0'
   gem 'travis', '~> 1.8'
