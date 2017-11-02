@@ -4,11 +4,8 @@ language: ruby
 before_install:
 - gem update --system
 - gem update bundler --pre
-# Travis CI does not detect `gems.rb` yet
-# so we run bundler explicitly
-install: bundle install --jobs=3 --retry=3 --without acceptance_testing metatools
 cache: bundler
-# bundler_args: --without acceptance_testing metatools
+bundler_args: --without acceptance_testing documentation metatools
 env:
 - PUPPET_GEM_VERSION='4.0.0' STRICT_VARIABLES='yes'
 - PUPPET_GEM_VERSION='~> 4.0' STRICT_VARIABLES='yes'

@@ -6,6 +6,7 @@ pkg/
 rakelib/
 spec/
 vendor/
+Gemfile
 gems.rb
 gems.locked
 rakefile.rb
