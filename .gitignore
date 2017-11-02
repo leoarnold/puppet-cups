@@ -2,12 +2,13 @@
 .idea/
 .vagrant/
 .yardoc/
-vendor/
 coverage/
+doc/
 junit/
 log/
 pkg/
 spec/fixtures/modules/
+vendor/
 .puppetforge.yml
 .rspec_status
 .ruby-version
