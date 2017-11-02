@@ -3,6 +3,7 @@ coverage/
 junit/
 log/
 pkg/
+rakelib/
 spec/
 vendor/
 gems.rb

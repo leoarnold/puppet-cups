@@ -21,6 +21,7 @@ group :development do
   gem 'parallel_tests', '~> 2.13'
   gem 'puppet-blacksmith', '~> 3.3'
   gem 'puppetlabs_spec_helper', '~> 2.0'
+  gem 'rake', '~> 12.2'
   gem 'rspec-puppet-facts', '~> 1.7'
   gem 'rubocop', '~> 0.51'
   gem 'semantic_puppet' if puppetversion.to_f < 4.9
