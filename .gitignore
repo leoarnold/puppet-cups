@@ -1,11 +1,12 @@
 .bundle/
+.idea/
 .vagrant/
 vendor/
 coverage/
 junit/
 log/
 pkg/
-spec/fixtures/modules
+spec/fixtures/modules/
 .puppetforge.yml
 .rspec_status
 .ruby-version
