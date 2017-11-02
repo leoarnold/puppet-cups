@@ -19,7 +19,7 @@ group :development do
   gem 'mdl', '~> 0.3'
   gem 'metadata-json-lint', '~> 2.0'
   gem 'parallel_tests', '~> 2.13'
-  gem 'puppet-blacksmith', '~> 3.3'
+  gem 'puppet-blacksmith', '~> 4.0'
   gem 'puppetlabs_spec_helper', '~> 2.0'
   gem 'rake', '~> 12.2'
   gem 'rspec-puppet-facts', '~> 1.7'
