@@ -4,8 +4,6 @@ namespace :github do
     system('linguist --breakdown')
   end
 
-  desc 'Generate online documentation'
-  task :pages do
-    system('puppet strings')
-  end
+  desc 'Publish online documentation'
+  task pages: 'strings:gh_pages:update'
 end
