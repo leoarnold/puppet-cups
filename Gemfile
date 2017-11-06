@@ -13,13 +13,12 @@ end
 # rubocop:enable Bundler/DuplicatedGem
 
 group :development do
-  gem 'bundler', '>= 1.16.0.beta', '< 2'
+  gem 'bundler', '~> 1.16'
   gem 'codacy-coverage', '~> 1.0'
   gem 'coderay', '~> 1.1'
   gem 'mdl', '~> 0.3'
   gem 'metadata-json-lint', '~> 2.0'
   gem 'parallel_tests', '~> 2.13'
-  gem 'puppet-blacksmith', '~> 4.0'
   gem 'puppetlabs_spec_helper', '~> 2.0'
   gem 'rake', '~> 12.2'
   gem 'rspec-puppet-facts', '~> 1.7'
@@ -41,6 +40,11 @@ end
 group :documentation do
   gem 'puppet-strings', '~> 1.1'
   gem 'rgen', '~> 0.8'
+end
+
+group :release do
+  gem 'github_api', '~> 0.18'
+  gem 'puppet-blacksmith', '~> 4.0'
 end
 
 group :metatools do

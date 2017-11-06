@@ -9,6 +9,7 @@ log/
 pkg/
 spec/fixtures/modules/
 vendor/
+.github.yml
 .puppetforge.yml
 .rspec_status
 .ruby-version
