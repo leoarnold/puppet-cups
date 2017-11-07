@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.9
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="puppet_class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="puppet_class_list_link"
+        href="puppet_class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'><h1>The CUPS module</h1>
+
+<!-- release:exclude -->
+
+<p><a href="https://travis-ci.org/leoarnold/puppet-cups"><img src="https://travis-ci.org/leoarnold/puppet-cups.svg" alt="Build Status"></a>
+<a href="https://codeclimate.com/github/leoarnold/puppet-cups"><img src="https://codeclimate.com/github/leoarnold/puppet-cups/badges/gpa.svg" alt="Code Climate"></a>
+<a href="https://www.codacy.com/app/leoarnold/puppet-cups"><img src="https://img.shields.io/codacy/0404c3f7b7b345859d5eb9d2cbeecc39.svg" alt="Code Quality"></a>
+<a href="https://codeclimate.com/github/leoarnold/puppet-cups/coverage"><img src="https://codeclimate.com/github/leoarnold/puppet-cups/badges/coverage.svg" alt="Coverage"></a>
+<a href="https://gemnasium.com/leoarnold/puppet-cups"><img src="https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg" alt="Dependencies"></a></p>
+
+<!-- release:include -->
+
+<p><a href="https://forge.puppet.com/leoarnold/cups"><img src="https://img.shields.io/puppetforge/v/leoarnold/cups.svg" alt="Puppet Forge Version"></a>
+<a href="https://forge.puppet.com/leoarnold/cups"><img src="http://img.shields.io/puppetforge/dt/leoarnold/cups.svg" alt="Puppet Forge Downloads"></a>
+<a href="https://leoarnold.github.io/puppet-cups"><img src="https://img.shields.io/badge/yard-docs-blue.svg" alt="Yard Docs"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="MIT License"></a>
+<a href="https://gitter.im/leoarnold/puppet-cups"><img src="https://badges.gitter.im/leoarnold/puppet-cups.svg" alt="Gitter"></a></p>
+
+<h2>Table of Contents</h2>
+
+<ol>
+<li><a href="#description">Description</a></li>
+<li><a href="#setup">Setup</a>
+
+<ul>
+<li><a href="#what-cups-affects">What cups affects</a></li>
+<li><a href="#setup-requirements">Setup requirements</a></li>
+<li><a href="#beginning-with-cups">Beginning with cups</a></li>
+</ul></li>
+<li><a href="#usage">Usage - A quick start guide</a>
+
+<ul>
+<li><a href="#managing-printers">Managing printers</a></li>
+<li><a href="#managing-classes">Managing classes</a></li>
+<li><a href="#configuring-queues">Configuring queues</a></li>
+<li><a href="#configuring-cups">Configuring CUPS</a></li>
+<li><a href="#automatic-dependencies">Automatic dependencies</a></li>
+<li><a href="#using-hiera">Using Hiera (or any other ENC)</a></li>
+</ul></li>
+<li><a href="#reference">Reference - The documentation of all features available</a>
+
+<ul>
+<li><a href="#classes">Classes</a></li>
+<li><a href="#types">Types</a></li>
+</ul></li>
+<li><a href="#limitations">Limitations</a>
+
+<ul>
+<li><a href="#evince-aka-document-viewer">Evince (aka Document Viewer)</a></li>
+<li><a href="#option-defaults">Option defaults</a></li>
+</ul></li>
+<li><a href="#contributing">Contributing - Guidelines for users and developers</a></li>
+</ol>
+
+<h2>Description</h2>
+
+<p>This module installs, configures, and manages the Common Unix Printing System (CUPS) service.</p>
+
+<p>It provides Puppet types to install, configure, and manage CUPS printer queues and classes.</p>
+
+<p>Key design goals include <em>locale independence</em> and <em>test driven development</em>.</p>
+
+<h2>Setup</h2>
+
+<h3>What cups affects</h3>
+
+<ul>
+<li><p>The CUPS packages will be installed.</p></li>
+<li><p>The CUPS service will be enabled and launched.</p></li>
+<li><p>The files in <code>/etc/cups/</code> will be modified using CUPS command line utilities.</p></li>
+<li><p>The entire content of the file <code>/etc/cups/cupsd.conf</code> will be managed by the module.</p></li>
+<li><p>The file <code>/etc/cups/lpoptions</code> will be deleted. See the section on <a href="#option-defaults">limitations</a> for details.</p></li>
+</ul>
+
+<h3>Setup Requirements</h3>
+
+<p>This module is written for and tested on Linux systems with</p>
+
+<ul>
+<li><p>Puppet 4 or 5</p></li>
+<li><p>CUPS <code>~&gt; 1.5</code> or <code>~&gt; 2.x</code></p></li>
+</ul>
+
+<h3>Beginning with CUPS</h3>
+
+<p>First you need to install this module. One way to do this is</p>
+
+<pre class="code puppet"><code class="puppet">puppet module install leoarnold-cups
+</code></pre>
+
+<p>All resources in this module require the CUPS daemon to be installed and configured in a certain way.
+To ensure these preconditions you should include the main <code>cups</code> class wherever you use this module:</p>
+
+<pre class="code puppet"><code class="puppet"># General inclusion
+include &#39;::cups&#39;
+
+# OR
+
+# Explicit class configuration
+# (May only be defined once per catalog)
+class { &#39;::cups&#39;:
+  # Your settings custom here
+}
+</code></pre>
+
+<p>See the <a href="#class-cups">section</a> on the <code>cups</code> class for details.
+Adding printer or class resources is described in the section on <a href="#usage">usage</a>.</p>
+
+<h2>Usage</h2>
+
+<p>In this section, you will learn the straightforward way to set up CUPS queues from scratch.
+If the queues are already installed on the node, you can easily obtain a manifest with their current configuration by running</p>
+
+<pre class="code Text"><code class="Text">  puppet resource cups_queue
+</code></pre>
+
+<p>and adjust it following the instructions on <a href="#configuring-queues">configuring queues</a>.</p>
+
+<h3>Managing Printers</h3>
+
+<p>There are several ways to set up a printer queue in CUPS.
+This section provides the minimal manifest for each method.</p>
+
+<p><strong>Note</strong> These minimal manifests will <em>NOT</em> update or change the PPD file on already existing queues,
+as CUPS does not provide a robust way to determine how a given queue was installed.
+See however the section on <a href="#changing-the-driver">changing the driver</a> for a workaround.</p>
+
+<p>If you are unsure which way to choose, we recommend to set up the printer
+using the tools provided by your operating system (or the <a href="http://localhost:631">CUPS web interface</a>),
+then take the corresponding PPD file from <code>/etc/cups/ppd/</code> and use the <code>ppd</code> method.</p>
+
+<p>Minimal printer manifests:</p>
+
+<ul>
+<li>Creating a local raw printer:</li>
+</ul>
+
+<pre class="code puppet"><code class="puppet">  include &#39;::cups&#39;
+
+  cups_queue { &#39;MinimalRaw&#39;:
+    ensure =&gt; &#39;printer&#39;,
+    uri    =&gt; &#39;lpd://192.168.2.105/binary_p1&#39; # Replace with your printer&#39;s URI
+  }
+</code></pre>
+
+<p>To configure this queue see the section on <a href="#configuring-queues">setting the usual options</a> or the <code>cups_queue</code> <a href="#type-cups_queue">type reference</a>.</p>
+
+<ul>
+<li>Using a suitable model from the output of the command <code>lpinfo -m</code> on the node:</li>
+</ul>
+
+<pre class="code puppet"><code class="puppet">  include &#39;::cups&#39;
+
+  cups_queue { &#39;MinimalModel&#39;:
+    ensure =&gt; &#39;printer&#39;,
+    model  =&gt; &#39;drv:///sample.drv/generic.ppd&#39;,
+    uri    =&gt; &#39;lpd://192.168.2.105/binary_p1&#39; # Replace with your printer&#39;s URI
+  }
+</code></pre>
+
+<p>To configure this queue see the section on <a href="#configuring-queues">setting the usual options</a> or the <code>cups_queue</code> <a href="#type-cups_queue">type reference</a>.</p>
+
+<ul>
+<li>Using a custom PPD file:</li>
+</ul>
+
+<pre class="code puppet"><code class="puppet">  include &#39;::cups&#39;
+
+  cups_queue { &#39;MinimalPPD&#39;:
+    ensure =&gt; &#39;printer&#39;,
+    ppd    =&gt; &#39;/usr/share/cups/model/myprinter.ppd&#39;,
+    uri    =&gt; &#39;lpd://192.168.2.105/binary_p1&#39; # Replace with your printer&#39;s URI
+  }
+</code></pre>
+
+<p>To configure this queue see the section on <a href="#configuring-queues">setting the usual options</a> or the <a href="#type-cups_queue">type reference</a>.</p>
+
+<p>In a master-agent setting, you could transfer the PPD file to the client using a <code>file</code> resource</p>
+
+<pre class="code puppet"><code class="puppet">  file { &#39;/usr/share/cups/model/myprinter.ppd&#39;:
+    ensure =&gt; &#39;file&#39;,
+    source =&gt; &#39;puppet:///modules/myModule/myprinter.ppd&#39;
+  }
+</code></pre>
+
+<p>which will automatically be required by <code>Cups_queue[&#39;MinimalPPD&#39;]</code>.</p>
+
+<h4>Changing the driver</h4>
+
+<p>When a printer queue is already present and managed using a PPD file,
+it is generally hard to tell which model or PPD file was used to install the queue.
+Nevertheless it might become necessary to change the model or update the PPD file
+<em>without</em> changing the queue name, e.g. because the PPD file contains some login credentials.</p>
+
+<p>This module introduces a way to update the driver (i.e. force a reinstall)
+through syncing the <code>make_and_model</code> property, which defaults to</p>
+
+<ul>
+<li><p>the <code>NickName</code> (fallback <code>ModelName</code>) value from the printer&#39;s PPD file in <code>/etc/cups/ppd/</code>
+if the printer was installed using a PPD file or a model.</p></li>
+<li><p><code>Local Raw Printer</code> for raw print queues.</p></li>
+</ul>
+
+<p><strong>Example:</strong> On the node, running <code>puppet resource cups_queue Office</code> returns</p>
+
+<pre class="code puppet"><code class="puppet">  cups_queue { &#39;Office&#39;:
+    ensure         =&gt; &#39;printer&#39;,
+    make_and_model =&gt; &#39;HP Color LaserJet 4730mfp Postscript (recommended)&#39;,
+    # ...
+  }
+</code></pre>
+
+<p>and you would like to</p>
+
+<ul>
+<li>use a different model</li>
+</ul>
+
+<pre class="code Text"><code class="Text">  $ lpinfo -m | grep 4730mfp
+  # ...
+  drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3
+  postscript-hp:0/ppd/hplip/HP/hp-color_laserjet_4730mfp-ps.ppd HP Color LaserJet 4730mfp Postscript (recommended)
+  # ...
+</code></pre>
+
+<p>then you just need to adapt the manifest from above to</p>
+
+<pre class="code puppet"><code class="puppet">  cups_queue { &#39;Office&#39;:
+    ensure         =&gt; &#39;printer&#39;,
+    model          =&gt; &#39;drv:///hpcups.drv/hp-color_laserjet_4730mfp-pcl3.ppd&#39;,
+    make_and_model =&gt; &#39;HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3&#39;,
+    # ...
+  }
+</code></pre>
+
+<ul>
+<li>use a custom PPD file instead which contains the line</li>
+</ul>
+
+<pre class="code Text"><code class="Text">  *NickName: &quot;HP Color LaserJet 4730mfp Postscript (MyCompany v2)&quot;
+</code></pre>
+
+<p>then you just need to adapt the manifest from above to</p>
+
+<pre class="code puppet"><code class="puppet">  cups_queue { &#39;Office&#39;:
+    ensure         =&gt; &#39;printer&#39;,
+    ppd            =&gt; &#39;/usr/share/cups/model/hp4730v2.ppd&#39;,
+    make_and_model =&gt; &#39;HP Color LaserJet 4730mfp Postscript (MyCompany v2)&#39;,
+    # ...
+  }
+</code></pre>
+
+<ul>
+<li>make it a raw queue. Then you just need to adapt the manifest from above to</li>
+</ul>
+
+<pre class="code puppet"><code class="puppet">  cups_queue { &#39;Office&#39;:
+    ensure         =&gt; &#39;printer&#39;,
+    make_and_model =&gt; &#39;Local Raw Printer&#39;,
+    # ...
+  }
+</code></pre>
+
+<h3>Managing Classes</h3>
+
+<p>When defining a printer class, it is <em>mandatory</em> to also define its member printers in the same catalog:</p>
+
+<pre class="code puppet"><code class="puppet">  include &#39;::cups&#39;
+
+  cups_queue { &#39;MinimalClass&#39;:
+    ensure  =&gt; &#39;class&#39;,
+    members =&gt; [&#39;Office&#39;, &#39;Warehouse&#39;]
+  }
+
+  cups_queue { &#39;Office&#39;:
+    ensure =&gt; &#39;printer&#39;,
+    # ...
+  }
+
+  cups_queue { &#39;Warehouse&#39;:
+    ensure =&gt; &#39;printer&#39;,
+    # ...
+  }
+</code></pre>
+
+<p>The <code>Cups_queue[&#39;MinimalClass&#39;]</code> resource will automatically require its member resources <code>Cups_queue[&#39;Office&#39;, &#39;Warehouse&#39;]</code>.</p>
+
+<h3>Configuring queues</h3>
+
+<p>Once you have your minimal <a href="#managing-printers">printer</a> or <a href="#managing-classes">class</a> manifest,
+you will need to apply some configuration.</p>
+
+<p><strong>Job handling:</strong>
+In CUPS, newly installed queues are disabled and rejecting by default, which can lead to confusion at times.
+The corresponding <code>cups_queue</code> properties are:</p>
+
+<ul>
+<li><p><code>accepting</code>: Should incoming jobs be enqueued or rejected?</p></li>
+<li><p><code>enabled</code>: Should pending jobs be sent to the device or kept pending?</p></li>
+</ul>
+
+<p>If you want your print queues to &quot;just work&quot;, you should set both to <code>true</code>.
+This module does not set default values by itself, since it might be of disadvantage in a professional copy shop environment.</p>
+
+<p>Most users will prefer to set both options to <code>true</code> for all queues using</p>
+
+<pre class="code puppet"><code class="puppet">   Cups_queue {
+     accepting =&gt; true,
+     enabled   =&gt; true
+   }
+</code></pre>
+
+<p><strong>Option defaults:</strong>
+Sometimes you need to set some default values for CUPS or vendor options of a print queue,
+e.g. to enable Duplex to save trees or because you use A4 paper instead of US Letter.</p>
+
+<p>To see all vendor options and their possible values for the queue <code>Office</code>, you can use <code>lpoptions</code>:</p>
+
+<pre class="code Text"><code class="Text">  $ lpoptions -p Office -l
+  PageSize/Media Size: *Letter Legal Executive Tabloid A3 A4 A5 B5 EnvISOB5 Env10 EnvC5 EnvDL EnvMonarch
+  InputSlot/Media Source: *Default Upper Manual
+  Duplex/2-Sided Printing: *None DuplexNoTumble DuplexTumble
+  Option1/Duplexer: *False True
+</code></pre>
+
+<p>The asterisk (*) indicates the current value. Use this to adapt your manifest</p>
+
+<pre class="code puppet"><code class="puppet">  cups_queue { &#39;Office&#39;:
+    # ...
+    options =&gt; {
+      &#39;Duplex&#39;   =&gt; &#39;DuplexNoTumble&#39;,
+      &#39;PageSize&#39; =&gt; &#39;A4&#39;,
+    }
+  }
+</code></pre>
+
+<p>You only need to provide values for options you actually care about.</p>
+
+<p><strong>Access control:</strong>
+Of course you want your boss Mr. Lumbergh, the secretary Nina and every member of the workers&#39; council
+to be able to print to the office printer from every node. But all others should be denied to use this printer.</p>
+
+<p>Assuming they respectively have the user accounts <code>lumbergh</code>, <code>nina</code>, and the user group <code>council</code>,
+this can be achieved by:</p>
+
+<pre class="code puppet"><code class="puppet">  cups_queue { &#39;Office&#39;:
+    # ...
+    access =&gt; {
+      &#39;policy&#39; =&gt; &#39;allow&#39;,
+      &#39;users&#39;  =&gt; [&#39;lumbergh&#39;, &#39;nina&#39;, &#39;@council&#39;],
+    }
+  }
+</code></pre>
+
+<p>Note that group names must be prefixed with an <code>@</code> sign.</p>
+
+<p>Changing the policy to <code>deny</code> would deny all <code>users</code>, but allow everybody else.
+Furthermore, you can unset all restrictions by using</p>
+
+<pre class="code puppet"><code class="puppet">  cups_queue { &#39;Office&#39;:
+    # ...
+    access =&gt; {
+      &#39;policy&#39; =&gt; &#39;allow&#39;,
+      &#39;users&#39;  =&gt; [&#39;all&#39;],
+    }
+  }
+</code></pre>
+
+<p>because <code>all</code> is interpreted by CUPS as a wildcard, not as an account name.</p>
+
+<h3>Configuring CUPS</h3>
+
+<p>Now that you have created manifest for all your queues, you may want to set the default destination.</p>
+
+<pre class="code puppet"><code class="puppet">  class { &#39;::cups&#39;
+    default_queue =&gt; &#39;Office&#39;,
+  }
+</code></pre>
+
+<p>This will require the resource <code>Cups_queue[&#39;Office&#39;]</code> to be defined in the catalog.</p>
+
+<p>To find out about all options available for <code>Class[&#39;::cups&#39;]</code> see the <a href="#class-cups">section below</a>.</p>
+
+<h3>Automatic dependencies</h3>
+
+<p>For your convenience, this module establishes many resource dependencies automatically.
+For example, on a Debian system the manifest</p>
+
+<pre class="code puppet"><code class="puppet">class { &#39;::cups&#39;:
+  default_queue =&gt; &#39;Warehouse&#39;
+}
+
+cups_queue { &#39;GroundFloor&#39;:
+  ensure  =&gt; &#39;class&#39;,
+  members =&gt; [&#39;Office&#39;, &#39;Warehouse&#39;]
+}
+
+cups_queue { &#39;Office&#39;:
+  ensure =&gt; &#39;printer&#39;,
+  # ...
+}
+
+cups_queue { &#39;Warehouse&#39;:
+  ensure =&gt; &#39;printer&#39;,
+  # ...
+}
+</code></pre>
+
+<p>by default generates the dependencies</p>
+
+<pre class="code Text"><code class="Text">                     Class[&#39;cups&#39;]
+                    /             \
+Cups_queue[&#39;Office&#39;]               Cups_queue[&#39;Warehouse&#39;]
+                    \             /                       \
+               Cups_queue[&#39;GroundFloor&#39;]                   Class[&#39;cups::queues::default&#39;]
+</code></pre>
+
+<h3>Using Hiera</h3>
+
+<p>Make sure your Puppet setup includes the <code>::cups</code> class on the relevant nodes.
+Configuration is straightforward:</p>
+
+<pre class="code YAML"><code class="YAML">---
+cups::default_queue: Warehouse
+cups::web_interface: true
+</code></pre>
+
+<p>Beyond that you can also create <code>cups_queue</code> resources using Hiera. Just replace a manifest like</p>
+
+<pre class="code puppet"><code class="puppet">class { &#39;cups&#39;:
+  default_queue =&gt; &#39;Warehouse&#39;,
+  web_interface =&gt; true
+}
+
+cups_queue { &#39;MinimalClass&#39;:
+  ensure  =&gt; &#39;class&#39;,
+  members =&gt; [&#39;Office&#39;, &#39;Warehouse&#39;]
+}
+
+cups_queue { &#39;Office&#39;:
+  ensure =&gt; &#39;printer&#39;,
+  uri    =&gt; &#39;socket://office.initech.com&#39;,
+}
+
+cups_queue { &#39;Warehouse&#39;:
+  ensure =&gt; &#39;printer&#39;,
+  uri    =&gt; &#39;socket://warehouse.initech.com&#39;,
+}
+</code></pre>
+
+<p>with the Hiera data</p>
+
+<pre class="code YAML"><code class="YAML">---
+cups::default_queue: Warehouse
+cups::web_interface: true
+cups::resources:
+  GroundFloor:
+    ensure: class
+    members:
+      - Office
+      - Warehouse
+  Office:
+    ensure: printer
+    uri: socket://office.initech.com
+  Warehouse:
+    ensure: printer
+    uri: socket://warehouse.initech.com
+</code></pre>
+
+<h2>Reference</h2>
+
+<h3>Classes</h3>
+
+<ul>
+<li><a href="#class-cups"><code>cups</code></a></li>
+</ul>
+
+<h3>Types</h3>
+
+<ul>
+<li><a href="#type-cups_queue"><code>cups_queue</code></a></li>
+</ul>
+
+<h4>Class: <code>cups</code></h4>
+
+<p>Installs, configures, and manages the CUPS service.</p>
+
+<h5>Attributes</h5>
+
+<ul>
+<li><p><code>default_queue</code>: The name of the default destination for all print jobs.
+Requires the catalog to contain a <code>cups_queue</code> resource with the same name.</p></li>
+<li><p><code>listen</code>: Which addresses to the CUPS daemon should listen to.
+Accepts (an array of) strings.
+Defaults to <code>[&#39;localhost:631&#39;, &#39;/var/run/cups/cups.sock&#39;]</code>.
+Note that the <code>cupsd.conf</code> directive <code>Port 631</code> is equivalent to <code>Listen *:631</code>.
+<em>Warning</em>: For this module to work, it is <em>mandatory</em> that CUPS is listening on <code>localhost:631</code>.</p></li>
+<li><p><code>package_ensure</code>: Whether CUPS packages should be <code>present</code> or <code>absent</code>. Defaults to <code>present</code>.</p></li>
+<li><p><code>package_manage</code>: Whether to manage package installation at all. Defaults to <code>true</code>.</p></li>
+<li><p><code>package_names</code>: A name or an array of names of all packages needed to be installed
+in order to run CUPS and provide <code>ipptool</code>. OS dependent defaults apply.</p></li>
+<li><p><code>papersize</code>: Sets the system&#39;s default <code>/etc/papersize</code>. See <code>man papersize</code> for supported values.</p></li>
+<li><p><code>purge_unmanaged_queues</code>: Setting <code>true</code> will remove all queues from the node
+which do not match a <code>cups_queue</code> resource in the current catalog. Defaults to <code>false</code>.</p></li>
+<li><p><code>resources</code>: This attribute is intended for use with Hiera or any other ENC (see the <a href="#using-hiera">example above</a>).</p></li>
+<li><p><code>service_enable</code>: Whether the CUPS services should be enabled to run at boot.
+Defaults to <code>true</code>.</p></li>
+<li><p><code>service_ensure</code>: Whether the CUPS services should be <code>running</code> or <code>stopped</code>.
+Defaults to <code>running</code>.</p></li>
+<li><p><code>service_manage</code>:  Whether to manage services at all. Defaults to <code>true</code>.</p></li>
+<li><p><code>service_names</code>: A name or an array of names of all CUPS services to be managed. Defaults to <code>cups</code>.</p></li>
+<li><p><code>web_interface</code>:  Boolean value to enable or disable the server&#39;s web interface.</p></li>
+</ul>
+
+<h4>Type: <code>cups_queue</code></h4>
+
+<p>Installs and manages CUPS print queues.</p>
+
+<h5>Attributes</h5>
+
+<ul>
+<li><p><code>name</code>: (mandatory) Queue names may contain any printable character
+except SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or &quot;#&quot;.
+We recommend to use only ASCII characters because the node&#39;s shell might not support Unicode.</p></li>
+<li><p><code>ensure</code>: <em>mandatory</em> - Specifies whether this queue should be a <code>class</code>, a <code>printer</code> or <code>absent</code>.</p></li>
+<li><p><code>access</code>: Manages queue access control. Takes a hash with keys <code>policy</code> and <code>users</code>.
+The <code>allow</code> policy restricts access to the <code>users</code> provided, while the <code>deny</code> policy
+lets everybody submit jobs except the specified <code>users</code>.
+The <code>users</code> are provided as a non-empty array of Unix group names (prefixed with an <code>@</code>) and Unix user names.</p></li>
+<li><p><code>accepting</code>: Boolean value specifying whether the queue should accept print jobs or reject them.</p></li>
+<li><p><code>description</code>: A short informative description of the queue.</p></li>
+<li><p><code>enabled</code>: Boolean value specifying whether the queue should be running or stopped.</p></li>
+<li><p><code>held</code>: A held queue will print all jobs in print or pending, but all new jobs will be held.
+Setting <code>false</code> will release them.</p></li>
+<li><p><code>location</code>: A short information where to find the hard copies.</p></li>
+<li><p><code>options</code>: A hash of options (as keys) and their target value. Almost every option you can set with
+<code>lpadmin -p [queue_name] -o key=value</code> is supported here. Use <code>puppet resource cups_queue [queue_name]</code>
+on the node for a list of all supported options for the given queue, and <code>lpoptions -p [queue_name] -l</code>
+to see a list of available values for the most commonly used printer specific options.</p></li>
+<li><p><code>shared</code>: Boolean value specifying whether to share this queue on the network. Default is <code>false</code>.</p></li>
+</ul>
+
+<h5>Class-only attributes</h5>
+
+<ul>
+<li><code>members</code>: <em>mandatory</em> - A non-empty array with the names of CUPS queues.
+The class will be synced to contain only these members in the given order.
+If the catalog contains <code>cups_queue</code> resources for these queues, they will be required automatically.</li>
+</ul>
+
+<h5>Printers-only attributes</h5>
+
+<ul>
+<li><p><code>make_and_model</code>: This value is used for <a href="#changing-the-driver">driver updates and changes</a>.
+Matches the <code>NickName</code> (fallback <code>ModelName</code>) value from the printer&#39;s PPD file
+if the printer was installed using a PPD file or a model,
+and <code>Local System V Printer</code> or <code>Local Raw Printer</code> otherwise.</p></li>
+<li><p><code>model</code>: A supported printer model. Use <code>lpinfo -m</code> on the node to list all models available.</p></li>
+<li><p><code>ppd</code>: The absolute path to a PPD file on the node.
+If the catalog contains a <code>file</code> resource with this path as title, it will automatically be required.
+The recommended location for your PPD files is <code>/usr/share/cups/model/</code> or <code>/usr/local/share/cups/model/</code>.</p></li>
+<li><p><code>uri</code>: The device URI of the printer. Use <code>lpinfo -v</code> on the node to scan for printer URIs.</p></li>
+</ul>
+
+<h2>Limitations</h2>
+
+<h3>Evince (aka Document Viewer)</h3>
+
+<p>Setting <code>papersize =&gt; &#39;a4&#39;</code> only modifies <code>/etc/papersize</code>,
+but <a href="https://wiki.gnome.org/Apps/Evince">Evince</a> uses
+the environment variable <code>LC_PAPER</code> to determine your preferred paper size,
+as <a href="http://www.patrickmin.com/linux/tip.php?name=evince_default_paper_size">Patrick Min</a> figured out.</p>
+
+<p>On Debian and Ubuntu, you can set a global default value for <code>LC_PAPER</code> using the manifest</p>
+
+<pre class="code puppet"><code class="puppet">augeas { &#39;papersize&#39;:
+  context =&gt; &#39;/files/etc/default/locale&#39;,
+  changes =&gt; &#39;set LC_PAPER \&#39;&quot;es_ES.UTF-8&quot;\&#39;&#39; # Change to your locale
+}
+</code></pre>
+
+<h3>Option defaults</h3>
+
+<p>Sometimes it may be necessary to modify the default values for some queue options to ensure an intuitive user experience,
+e.g. to enable the use of an optional duplex unit.
+For historic reasons there are two ways to set default values for all users:</p>
+
+<ul>
+<li><p>Daemon defaults are set using <code>sudo lpadmin</code> and will affect all jobs from both local and remote hosts.
+The CUPS daemon saves them frequently - but not immediately - to <code>/etc/cups/classes.conf</code>,
+<code>/etc/cups/printers.conf</code>, and the PPD files in <code>/etc/cups/ppd/</code>.</p></li>
+<li><p>Local defaults are set using <code>sudo lpoptions</code> and will only affect jobs from the local host,
+<em>overriding</em> the daemon defaults for these jobs. The values are saved to the file <code>/etc/cups/lpoptions</code>.</p></li>
+</ul>
+
+<p>Hence there is no robust way to determine the current daemon defaults when used in conjunction with local defaults.
+If local defaults aren&#39;t used, the command <code>lpoptions -p [queue_name] -l</code> will return the daemon defaults.</p>
+
+<p>In order to provide a stable and idempotent way for Puppet to set default option values for all jobs sent to a queue,
+this module will <em>disable</em> the use of local defaults by deleting the file <code>/etc/cups/lpoptions</code>.</p>
+
+<h2>Contributing</h2>
+
+<p>There are several ways to contribute for both users and developers:</p>
+
+<ul>
+<li><p>This module is striving for the <a href="https://forge.puppet.com/approved">&quot;Puppet approved&quot;</a> badge.
+If you like this module, please show your appreciation by giving it a
+<a href="https://forge.puppet.com/leoarnold/cups">positive rating</a> in the Puppet Forge
+and spreading the news in your favorite way.</p></li>
+<li><p>Want to suggesting a new feature, point out a flaw in the documentation or report a bug?
+Please open a <a href="https://github.com/leoarnold/puppet-cups/issues">GitHub issue</a>
+using the suggested skeleton from the <a href="CONTRIBUTING.md">contribution guidelines</a>.</p></li>
+<li><p>Developers might want to submit a <a href="https://github.com/leoarnold/puppet-cups/pulls">GitHub pull request</a>.
+It is highly recommended to open an <strong>issue first</strong> and discuss changes with the maintainer.
+See the <a href="CONTRIBUTING.md">contribution guidelines</a> for our quality standards and legal requirements.</p></li>
+</ul>
+
+<p><em>Thank you for your interest in the CUPS module</em>.</p>
+</div></div>
+
+      <div id="footer">
+     Generated by <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>.
+</div>
+
+    </div>
+  </body>
+</html>

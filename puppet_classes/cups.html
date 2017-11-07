@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Puppet Class: cups
+  
+    &mdash; Documentation by YARD 0.9.9
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  pathId = "puppet_classes::cups";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../puppet_class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (c)</a> &raquo;
+    <span class='title'><span class='object_link'>Puppet Classes</span></span>
+     &raquo; 
+    <span class="title">cups</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="puppet_class_list_link"
+        href="../puppet_class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Puppet Class: cups</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd><span class='object_link'><a href="cups_3A_3Aparams.html" title="puppet_classes::cups::params (puppet_class)">cups::params</a></span></dd>
+  </dl>
+  
+  
+  <dl>
+    <dt>Inherited by:</dt>
+    <dd>
+      
+      <span class='object_link'><a href="cups_3A_3Aqueues.html" title="puppet_classes::cups::queues (puppet_class)">cups::queues</a></span><br/>
+      
+      <span class='object_link'><a href="cups_3A_3Aserver.html" title="puppet_classes::cups::server (puppet_class)">cups::server</a></span><br/>
+      
+      <span class='object_link'><a href="cups_3A_3Apackages.html" title="puppet_classes::cups::packages (puppet_class)">cups::packages</a></span><br/>
+      
+    </dd>
+  </dl>
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>
+      manifests/init.pp
+    </dd>
+  </dl>
+</div>
+
+  <h2>Summary</h2>
+  Installs, configures, and manages the CUPS service.
+
+<h2>Overview</h2>
+<div class="docstring">
+  <div class="discussion">
+    <p>All resources in this module require the CUPS daemon to be installed and configured in a certain way.
+To ensure these preconditions you should include the main <code>cups</code> class wherever you use this module.</p>
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <p class="tag_title">Examples:</p>
+    
+      
+        <p class="example_title"><div class='inline'><p>Install and run the CUPS server using default values</p>
+</div></p>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_include'>include</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>::cups</span><span class='tstring_end'>&#39;</span></span></code></pre>
+    
+      
+        <p class="example_title"><div class='inline'><p>Additionally set the default printer</p>
+</div></p>
+      
+      <pre class="example code"><code>class { &#39;::cups&#39;:
+  default_queue =&gt; &#39;Office&#39;
+}</code></pre>
+    
+      
+        <p class="example_title"><div class='inline'><p>Install HP PPD files before managing any printer queue</p>
+</div></p>
+      
+      <pre class="example code"><code>package { &#39;hplip&#39;:
+  ensure =&gt; present
+}
+
+class { &#39;::cups&#39;:
+  require =&gt; Package[&#39;hplip&#39;]
+}</code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>default_queue</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>The name of the default destination for all print jobs.
+Requires the catalog to contain a <code>cups_queue</code> resource with the same name.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>listen</span>
+      
+      
+        <span class='type'>(<tt>Variant[String, Array[String]]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>[&#39;localhost:631&#39;, &#39;/var/run/cups/cups.sock&#39;]</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Which addresses to the CUPS daemon should listen to.
+Accepts (an array of) strings.
+Note that the <code>cupsd.conf</code> directive <code>Port 631</code> is equivalent to <code>Listen *:631</code>.
+<em>Warning</em>: For this module to work, it is <em>mandatory</em> that CUPS is listening on <code>localhost:631</code>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>package_ensure</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;present&#39;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether CUPS packages should be <code>present</code> or <code>absent</code>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>package_manage</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether to manage package installation at all.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>package_names</span>
+      
+      
+        <span class='type'>(<tt>Variant[String, Array[String]]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>$::cups::params::package_names</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>A name or an array of names of all packages needed to be installed
+in order to run CUPS and provide <code>ipptool</code>. OS dependent defaults apply.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>papersize</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Sets the system&#39;s default <code>/etc/papersize</code>. See <code>man papersize</code> for supported values.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>purge_unmanaged_queues</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Setting <code>true</code> will remove all queues from the node
+which do not match a <code>cups_queue</code> resource in the current catalog.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>resources</span>
+      
+      
+        <span class='type'>(<tt>Optional[Hash]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>This attribute is intended for use with Hiera or any other ENC.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>service_enable</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether the CUPS services should be enabled to run at boot.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>service_ensure</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;running&#39;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether the CUPS services should be <code>running</code> or <code>stopped</code>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>service_manage</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Whether to manage services at all.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>service_names</span>
+      
+      
+        <span class='type'>(<tt>Variant[String, Array[String]]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;cups&#39;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>A name or an array of names of all CUPS services to be managed.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>web_interface</span>
+      
+      
+        <span class='type'>(<tt>Optional[Boolean]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Boolean value to enable or disable the server&#39;s web interface.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Author:</p>
+<ul class="author">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>Leo Arnold</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>0.0.1</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><div class="method_details_list">
+  <table class="source_code">
+    <tr>
+      <td>
+        <pre class="lines">
+
+
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70</pre>
+      </td>
+      <td>
+        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 46</span>
+
+class cups (
+  Optional[String]               $default_queue          = undef,
+  Variant[String, Array[String]] $listen                 = [&#39;localhost:631&#39;, &#39;/var/run/cups/cups.sock&#39;],
+  String                         $package_ensure         = &#39;present&#39;,
+  Boolean                        $package_manage         = true,
+  Variant[String, Array[String]] $package_names          = $::cups::params::package_names,
+  Optional[String]               $papersize              = undef,
+  Boolean                        $purge_unmanaged_queues = false,
+  Optional[Hash]                 $resources              = undef,
+  Boolean                        $service_enable         = true,
+  String                         $service_ensure         = &#39;running&#39;,
+  Boolean                        $service_manage         = true,
+  Variant[String, Array[String]] $service_names          = &#39;cups&#39;,
+  Optional[Boolean]              $web_interface          = undef,
+) inherits cups::params {
+
+  contain cups::packages
+  contain cups::server
+  contain cups::queues
+
+  Class[cups::packages]
+  -&gt; Class[cups::server]
+  -&gt; Class[cups::queues]
+
+}</pre>
+      </td>
+    </tr>
+  </table>
+</div>
+</div>
+
+      <div id="footer">
+     Generated by <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>.
+</div>
+
+    </div>
+  </body>
+</html>
