@@ -4,5 +4,6 @@ bin/* linguist-vendored
 rakelib/* linguist-vendored
 spec/* linguist-vendored
 Gemfile linguist-vendored
+Guardfile linguist-vendored
 gems.rb linguist-vendored
 rakefile.rb linguist-vendored

@@ -1,5 +1,6 @@
 bin/
 coverage/
+doc/
 junit/
 log/
 pkg/
@@ -7,6 +8,7 @@ rakelib/
 spec/
 vendor/
 Gemfile
+Guardfile
 gems.rb
 gems.locked
 rakefile.rb

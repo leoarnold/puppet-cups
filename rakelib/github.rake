@@ -6,8 +6,13 @@ namespace :github do
     system('linguist --breakdown')
   end
 
-  desc 'Publish online documentation'
-  task pages: 'strings:gh_pages:update'
+  namespace :pages do
+    desc 'Generate Yard documentation in /doc'
+    task generate: 'strings:generate'
+
+    desc 'Publish online documentation'
+    task publish: 'strings:gh_pages:update'
+  end
 
   desc 'Clean, build, tag, push, and release the module on GitHub'
   task release: [:clean, :build, 'module:tag', 'module:push'] do
