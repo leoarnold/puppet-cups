@@ -132,10 +132,10 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newproperty(:access) do
-    desc 'Manages queue access control. Takes a hash with keys `policy` and `users`.' \
-      ' The `allow` policy restricts access to the `users` provided,' \
-      ' while the `deny` policy lets everybody except the specified `users` submit jobs.' \
-      ' The `users` are provided as a non-empty array of Unix group names (prefixed with an `@`) and Unix user names.'
+    desc 'Manages queue access control. Takes a hash with keys `policy` and `users`.
+      The `allow` policy restricts access to the `users` provided,
+      while the `deny` policy lets everybody except the specified `users` submit jobs.
+      The `users` are provided as a non-empty array of Unix group names (prefixed with an `@`) and Unix user names.'
 
     validate do |value|
       raise ArgumentError, 'Please provide a hash value.' unless value.is_a?(Hash)
@@ -193,10 +193,10 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newproperty(:make_and_model) do
-    desc '(printer-only) This value is used for driver updates and changes.' \
-      " Matches the `NickName` (fallback `ModelName`) value from the printer's PPD file" \
-      ' if the printer was installed using a PPD file or a model,' \
-      ' and `Local System V Printer` or `Local Raw Printer` otherwise.'
+    desc "(printer-only) This value is used for driver updates and changes.
+      Matches the `NickName` (fallback `ModelName`) value from the printer's PPD file
+      if the printer was installed using a PPD file or a model,
+      and `Local System V Printer` or `Local Raw Printer` otherwise."
 
     validate do |value|
       raise ArgumentError, "The 'make_and_model' must be a string." unless value.is_a? String
@@ -204,9 +204,9 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newproperty(:members, array_matching: :all) do
-    desc '(class-only, mandatory) A non-empty array with the names of CUPS queues.' \
-      ' The class will be synced to contain only these members in the given order.' \
-      ' If the catalog contains `cups_queue` resources for these queues, they will be required automatically.'
+    desc '(class-only, mandatory) A non-empty array with the names of CUPS queues.
+      The class will be synced to contain only these members in the given order.
+      If the catalog contains `cups_queue` resources for these queues, they will be required automatically.'
 
     validate do |value|
       raise ArgumentError, 'The list of members must not be empty.' if value.empty?
@@ -233,10 +233,10 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newproperty(:options) do
-    desc 'A hash of options (as keys) and their target value. Almost every option you can set with' \
-      ' `lpadmin -p [queue_name] -o key=value` is supported here. Use `puppet resource cups_queue [queue_name]`' \
-      ' on the node for a list of all supported options for the given queue, and `lpoptions -p [queue_name] -l`' \
-      ' to see a list of available values for the most commonly used printer specific options.'
+    desc 'A hash of options (as keys) and their target value. Almost every option you can set with
+      `lpadmin -p [queue_name] -o key=value` is supported here. Use `puppet resource cups_queue [queue_name]`
+      on the node for a list of all supported options for the given queue, and `lpoptions -p [queue_name] -l`
+      to see a list of available values for the most commonly used printer specific options.'
 
     validate do |value|
       raise ArgumentError, 'Please provide a hash value.' unless value.is_a? Hash
@@ -269,9 +269,9 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newparam(:ppd) do
-    desc '(printer-only) The absolute path to a PPD file on the node.' \
-      ' If the catalog contains a `file` resource with this path as title, it will automatically be required.' \
-      ' The recommended location for your PPD files is `/usr/share/cups/model/` or `/usr/local/share/cups/model/`.'
+    desc '(printer-only) The absolute path to a PPD file on the node.
+      If the catalog contains a `file` resource with this path as title, it will automatically be required.
+      The recommended location for your PPD files is `/usr/share/cups/model/` or `/usr/local/share/cups/model/`.'
 
     validate do |value|
       raise ArgumentError, "The absolute local file path '#{value}' seems malformed." unless Pathname(value).absolute?

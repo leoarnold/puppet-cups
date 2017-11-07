@@ -1,6 +1,12 @@
-# Class: cups::params
+# Private class
 #
-# Provides platform dependent default parameters
+# @summary Manages all OS dependent values.
+#
+# The name of the `cups` and `ipptool` packages for all supported
+# operating systems are stored here and determined through facts.
+#
+# @author Leo Arnold
+# @since 1.0.0
 #
 class cups::params {
 

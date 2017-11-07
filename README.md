@@ -8,7 +8,7 @@
 [![Dependencies](https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg)](https://gemnasium.com/leoarnold/puppet-cups)
 <!-- release:include -->
 
-[![Puppet Forge Version](http://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
+[![Puppet Forge Version](https://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![MIT License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 [![Gitter](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups)
@@ -481,7 +481,7 @@ Installs, configures, and manages the CUPS service.
 * `default_queue`: The name of the default destination for all print jobs.
   Requires the catalog to contain a `cups_queue` resource with the same name.
 
-* `listen`: Which adresses to the CUPS daemon should listen to.
+* `listen`: Which addresses to the CUPS daemon should listen to.
   Accepts (an array of) strings.
   Defaults to `['localhost:631', '/var/run/cups/cups.sock']`.
   Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
@@ -509,8 +509,7 @@ Installs, configures, and manages the CUPS service.
 
 * `service_manage`:  Whether to manage services at all. Defaults to `true`.
 
-* `service_names`: A name or an array of names of all CUPS services to be managed.
-  OS dependent defaults apply.
+* `service_names`: A name or an array of names of all CUPS services to be managed. Defaults to `cups`.
 
 * `web_interface`:  Boolean value to enable or disable the server's web interface.
 

@@ -1,3 +1,19 @@
+# Private class
+#
+# @summary Encapsulates all configuration of the CUPS server
+#
+# This class inherits the several attributes from the public {cups} class.
+#
+# @author Leo Arnold
+# @since 2.0.0
+#
+# @example This class is implicitly declared e.g. through
+#   class { '::cups':
+#     listen        => 'localhost:631',
+#     papersize     => 'A4',
+#     web_interface => true
+#   }
+#
 class cups::server::config inherits cups::server {
 
   File {
