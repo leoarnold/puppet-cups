@@ -155,7 +155,7 @@ describe PuppetX::Cups::Ipp::QueryT do
   describe '#results' do
     context 'when stdout does not contain the attribute' do
       it 'returns an empty array' do
-        request = PuppetX::Cups::Instances::Queues.request
+        request = PuppetX::Cups::Instances.cups_get_printers
 
         stdout = <<~OUTPUT
             "CUPS-Get-Printers.ipp":
@@ -174,7 +174,7 @@ describe PuppetX::Cups::Ipp::QueryT do
 
     context 'when stdout contains a single occurance of the attribute' do
       it 'returns an array containing the attribute value' do
-        request = PuppetX::Cups::Instances::Queues.request
+        request = PuppetX::Cups::Instances.cups_get_printers
 
         stdout = <<~OUTPUT
             "CUPS-Get-Printers.ipp":
@@ -198,7 +198,7 @@ describe PuppetX::Cups::Ipp::QueryT do
 
     context 'when stdout contains multiple occurance of the attribute' do
       it 'returns an array containing the attribute values' do
-        request = PuppetX::Cups::Instances::Queues.request
+        request = PuppetX::Cups::Instances.cups_get_printers
 
         stdout = <<~OUTPUT
             "CUPS-Get-Printers.ipp":

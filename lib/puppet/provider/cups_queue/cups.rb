@@ -8,7 +8,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   commands(cupsdisable: 'cupsdisable')
   commands(cupsenable: 'cupsenable')
   commands(cupsreject: 'cupsreject')
-  commands(ipptool: 'ipptool') # Used in PuppetX::Cups::Instances module. Declared here for Puppet's provider suitability mechanism
+  commands(ipptool: 'ipptool') # Used in PuppetX::Cups::Ipp module. Declared here for Puppet's provider suitability mechanism
   commands(lpadmin: 'lpadmin')
   commands(lpoptions: 'lpoptions')
 
@@ -17,11 +17,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   def self.instances
     providers = []
     # Discover class instances
-    PuppetX::Cups::Instances::ClassMembers.to_h.each do |classname, membernames|
+    PuppetX::Cups::Instances.classmembers.each do |classname, membernames|
       providers << new(name: classname, ensure: :class, members: membernames)
     end
     # Discover printer instances
-    PuppetX::Cups::Instances::Printers.to_a.each do |printername|
+    PuppetX::Cups::Instances.printers.each do |printername|
       providers << new(name: printername, ensure: :printer)
     end
     providers
@@ -195,7 +195,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def options
     options_should = resource.should(:options)
-    options_should.nil? ? all_options_is : specified_options_is(options_should)
+    options_should.nil? ? supported_options_is : specified_options_is(options_should)
   end
 
   def options=(options_should)
@@ -240,9 +240,17 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   ### Helper functions for #options
 
+  # @private
+  #
+  # Extracts the values of the specified options from {supported_options_is}
+  #
+  # @param options_should [Hash] A hash of queue options and their target values
+  #
+  # @return [Hash] A hash of queue options and their current values
+  #
+  # @raise Raises an error when an unsupported option was specified
   def specified_options_is(options_should)
     answer = {}
-    supported_options_is = all_options_is
 
     options_should.each_key do |key|
       raise("Managing the option '#{key}' is unsupported.") unless supported_options_is.key? key
@@ -252,10 +260,20 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     answer
   end
 
-  def all_options_is
+  # @private
+  #
+  # Merges the hashes {native_options_is} and {vendor_options_is}
+  #
+  # @return [Hash] A hash of all supported options and their current values
+  def supported_options_is
     native_options_is.merge(vendor_options_is)
   end
 
+  # @private
+  #
+  # All options provided to every queue by CUPS
+  #
+  # @return [Hash] A hash of all native CUPS queue options and their current values
   def native_options_is
     answer = {}
 
@@ -269,7 +287,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     answer
   end
 
-  # Adapt query result where necessary
+  # @private
+  #
+  # Queries the native option and sanitizes the result where necessary
+  #
+  # @return [String] The sanitized option value
   def query_native_option(option)
     value = query(option)
 
@@ -284,6 +306,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     end
   end
 
+  # @private
+  #
+  # Parses the output of `lpoptions -p [queue_name] -l`
+  #
+  # @return [Hash] All vendor options and their current values
   def vendor_options_is
     answer = {}
 
@@ -297,6 +324,12 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   ### Helper functions for #access
 
+  # @private
+  #
+  # Determines the names of users and groups currently allowed / denied to use the queue.
+  # The result is only meaningful in conjuntion with {access} policy,
+  #
+  # @return [Array] The names of all groups (prefixed by `@`) and users currently allowed / denied to use the queue.
   def users_is
     users_allowed = query_users('allowed')
     users_denied = query_users('denied')
@@ -310,20 +343,36 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     end
   end
 
+  # @private
+  #
+  # Queries the names of users and groups currently allowed or denied to use the queue.
+  #
+  # @param [String] `allowed` or `denied`
+  #
+  # @return [Array] The names of all groups (prefixed by `@`) and users currently allowed / denied to use the queue.
   def query_users(status)
     names = query("requesting-user-name-#{status}")
     names.gsub(/[\'\"]/, '').split(',').sort.uniq if names
   end
 
+  # @private
+  #
+  # Determines the names of users and groups which should be allowed / denied to use the queue.
+  #
+  # @return [Array] The names of all groups (prefixed by `@`) and users which should allowed / denied to use the queue.
   def users_should
     resource.should(:access).nil? ? [] : resource.should(:access)['users']
   end
 
+  # @private
+  #
   # Sometimes the `root` user is not considered a privileged user in CUPS
   # This shim temporarily grants `root` access to the given queue
   # and then (re)establishes the desired access control.
   #
-  # Related issue: https://github.com/apple/cups/issues/4781
+  # @see https://github.com/apple/cups/issues/4781
+  #
+  # @yield The command to be executed as root user
   def while_root_allowed
     acl = (resource.should(:access) ? resource.should(:access) : access)
     debug("CUPS #4781: Temporarily allowing 'root' user to access the queue.")

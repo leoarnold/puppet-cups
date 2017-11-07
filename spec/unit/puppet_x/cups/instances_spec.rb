@@ -8,20 +8,18 @@ def cups_get_printers(stdout)
   mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
 
   allow(PuppetX::Cups::Shell).to receive(:ipptool).and_return(mock_shellout)
-    .with('-c', '/', PuppetX::Cups::Instances::Queues.request)
-                                                  .and_return(mock_shellout)
+    .with('-c', '/', PuppetX::Cups::Instances.cups_get_printers).and_return(mock_shellout)
 end
 
 def cups_get_classes(stdout)
   mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
 
   allow(PuppetX::Cups::Shell).to receive(:ipptool)
-    .with('-c', '/', PuppetX::Cups::Instances::ClassMembers.request)
-    .and_return(mock_shellout)
+    .with('-c', '/', PuppetX::Cups::Instances.cups_get_classes).and_return(mock_shellout)
 end
 
-describe PuppetX::Cups::Instances::Classes do
-  describe '#to_a' do
+describe PuppetX::Cups::Instances do
+  describe '##classes' do
     context 'without printers or classes installed' do
       it 'returns an empty array' do
         cups_get_classes <<~OUTPUT
@@ -34,7 +32,7 @@ describe PuppetX::Cups::Instances::Classes do
 
         expectation = []
 
-        expect(described_class.to_a).to match_array(expectation)
+        expect(described_class.classes).to match_array(expectation)
       end
     end
 
@@ -53,7 +51,7 @@ describe PuppetX::Cups::Instances::Classes do
 
         expectation = []
 
-        expect(described_class.to_a).to match_array(expectation)
+        expect(described_class.classes).to match_array(expectation)
       end
     end
 
@@ -78,14 +76,12 @@ describe PuppetX::Cups::Instances::Classes do
 
         expectation = %w[CrawlSpace GroundFloor UpperFloor]
 
-        expect(described_class.to_a).to match_array(expectation)
+        expect(described_class.classes).to match_array(expectation)
       end
     end
   end
-end
 
-describe PuppetX::Cups::Instances::ClassMembers do
-  describe '#to_h' do
+  describe '##classmembers' do
     context 'with no classes installed' do
       it 'returns an empty hash' do
         cups_get_classes <<~OUTPUT
@@ -101,7 +97,7 @@ describe PuppetX::Cups::Instances::ClassMembers do
 
         expectation = {}
 
-        expect(described_class.to_h).to match_array(expectation)
+        expect(described_class.classmembers).to match_array(expectation)
       end
     end
 
@@ -130,14 +126,12 @@ describe PuppetX::Cups::Instances::ClassMembers do
           'UpperFloor'  => %w[BackOffice]
         }
 
-        expect(described_class.to_h).to match_array(expectation)
+        expect(described_class.classmembers).to match_array(expectation)
       end
     end
   end
-end
 
-describe PuppetX::Cups::Instances::Printers do
-  describe '#to_a' do
+  describe '##printers' do
     context 'without printers or classes installed' do
       it 'returns an empty array' do
         cups_get_classes <<~OUTPUT
@@ -150,7 +144,7 @@ describe PuppetX::Cups::Instances::Printers do
 
         expectation = []
 
-        expect(described_class.to_a).to match_array(expectation)
+        expect(described_class.printers).to match_array(expectation)
       end
     end
 
@@ -169,7 +163,7 @@ describe PuppetX::Cups::Instances::Printers do
 
         expectation = %w[BackOffice Office Warehouse]
 
-        expect(described_class.to_a).to match_array(expectation)
+        expect(described_class.printers).to match_array(expectation)
       end
     end
 
@@ -194,14 +188,12 @@ describe PuppetX::Cups::Instances::Printers do
 
         expectation = %w[BackOffice Office Warehouse]
 
-        expect(described_class.to_a).to match_array(expectation)
+        expect(described_class.printers).to match_array(expectation)
       end
     end
   end
-end
 
-describe PuppetX::Cups::Instances::Queues do
-  describe '#to_a' do
+  describe '##queues' do
     context 'without queues installed' do
       it 'returns an empty array' do
         cups_get_classes <<~OUTPUT
@@ -214,7 +206,7 @@ describe PuppetX::Cups::Instances::Queues do
 
         expectation = []
 
-        expect(described_class.to_a).to match_array(expectation)
+        expect(described_class.queues).to match_array(expectation)
       end
     end
 
@@ -239,7 +231,7 @@ describe PuppetX::Cups::Instances::Queues do
 
         expectation = %w[CrawlSpace BackOffice GroundFloor Office UpperFloor Warehouse]
 
-        expect(described_class.to_a).to match_array(expectation)
+        expect(described_class.queues).to match_array(expectation)
       end
     end
   end

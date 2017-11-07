@@ -10,8 +10,8 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
     describe '#instances' do
       shared_examples 'correct instances' do |classmembers, printers|
         it 'returns the correct array of provider instances' do
-          allow(PuppetX::Cups::Instances::ClassMembers).to receive(:to_h).and_return(classmembers)
-          allow(PuppetX::Cups::Instances::Printers).to receive(:to_a).and_return(printers)
+          allow(PuppetX::Cups::Instances).to receive(:classmembers).and_return(classmembers)
+          allow(PuppetX::Cups::Instances).to receive(:printers).and_return(printers)
 
           instances = provider.instances
           instance = nil
@@ -431,7 +431,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
 
           allow(@resource).to receive(:should).with(:options).and_return(nil)
-          allow(@provider).to receive(:all_options_is).and_return(current)
+          allow(@provider).to receive(:supported_options_is).and_return(current)
 
           expect(@provider.options).to eq(current)
         end
@@ -443,7 +443,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           should = { 'TimeZone' => 'Saturn' }
 
           allow(@resource).to receive(:should).with(:options).and_return(should)
-          allow(@provider).to receive(:all_options_is).and_return(current)
+          allow(@provider).to receive(:supported_options_is).and_return(current)
 
           expect { @provider.options }.to raise_error(/TimeZone/)
         end
@@ -454,7 +454,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
           expected = { 'PageSize' => 'Letter' }
 
           allow(@resource).to receive(:should).with(:options).and_return(should)
-          allow(@provider).to receive(:all_options_is).and_return(current)
+          allow(@provider).to receive(:supported_options_is).and_return(current)
 
           expect(@provider.options).to eq(expected)
         end
@@ -580,7 +580,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
         should = { 'TimeZone' => 'Saturn' }
 
-        allow(@provider).to receive(:all_options_is).and_return(current)
+        allow(@provider).to receive(:supported_options_is).and_return(current)
 
         expect { @provider.send(:specified_options_is, should) }.to raise_error(/TimeZone/)
       end
@@ -590,13 +590,13 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         should = { 'PageSize' => 'A4' }
         expected = { 'PageSize' => 'Letter' }
 
-        allow(@provider).to receive(:all_options_is).and_return(current)
+        allow(@provider).to receive(:supported_options_is).and_return(current)
 
         expect(@provider.send(:specified_options_is, should)).to eq(expected)
       end
     end
 
-    describe '#all_options_is' do
+    describe '#supported_options_is' do
       it 'merges native and vendor options' do
         native = { 'printer-error-policy' => 'retry-job' }
         vendor = { 'Duplex' => 'None' }
@@ -604,7 +604,7 @@ describe Puppet::Type.type(:cups_queue).provider(:cups) do
         allow(@provider).to receive(:native_options_is).and_return(native)
         allow(@provider).to receive(:vendor_options_is).and_return(vendor)
 
-        expect(@provider.send(:all_options_is)).to eq('Duplex' => 'None', 'printer-error-policy' => 'retry-job')
+        expect(@provider.send(:supported_options_is)).to eq('Duplex' => 'None', 'printer-error-policy' => 'retry-job')
       end
     end
 

@@ -8,8 +8,8 @@ guard :livereload do
 end
 
 guard :rake, task: 'mdl' do
-  watch(%r{^.github/.+\.md$})
-  watch(%r{^\w+.md$})
+  watch(%r{^(.github|examples)/.+\.md$})
+  watch(/^\w+.md$/)
 end
 
 guard :rake, task: 'github:pages:generate' do
@@ -18,9 +18,9 @@ guard :rake, task: 'github:pages:generate' do
   watch('README.md')
 end
 
-guard :rubocop, cli: %w(-a) do
-  watch(%r{^(lib|spec)/\+\.rb$})
-  watch(%r{^rakelib/\+\.rake$})
-  watch(%r{^\w+file$})
-  watch(%r{^\w+.rb$})
+guard :rubocop, cli: %w[-a] do
+  watch(%r{^(lib|spec)/.+\.rb$})
+  watch(%r{^rakelib/.+\.rake$})
+  watch(/^\w+file$/)
+  watch(/^\w+\.rb$/)
 end
