@@ -1,18 +1,21 @@
 # Changelog
 
-## 2017-11-?? - Service release 2.0.1
+## 2017-11-09 - Service release 2.0.1
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.0.1)
 and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.0.1).
 
 ### Summary
 
-This service release adds extensive inline documentation.
+This service release adds extensive inline documentation
+and some code quality improvements.
 
 ### Improvements
 
 - Inline [Yard](https://yardoc.org) and [Puppet Strings](https://github.com/puppetlabs/puppet-strings) documentation
 - Online [Yard documentation](https://leoarnold.github.io/puppet-cups)
+- Several Ruby modules refactored to static methods of a single module
+- Tests now use unquoted booleans as customary in Puppet 5
 
 ## 2017-11-01 - Release 2.0.0
 

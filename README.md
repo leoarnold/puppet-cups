@@ -9,7 +9,11 @@
 <!-- release:include -->
 
 [![Puppet Forge Version](https://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
+<!--
+[![Puppet Forge Endorsement](http://img.shields.io/puppetforge/e/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
+-->
 [![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
+[![Puppet Forge Score](http://img.shields.io/puppetforge/f/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![Yard Docs](https://img.shields.io/badge/yard-docs-blue.svg)](https://leoarnold.github.io/puppet-cups)
 [![MIT License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 [![Gitter](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups)
