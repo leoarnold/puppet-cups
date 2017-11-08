@@ -131,7 +131,7 @@ describe 'Custom type `cups_queue`' do
           manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure    => 'printer',
-              accepting => 'true'
+              accepting => true
             }
           MANIFEST
 
@@ -152,7 +152,7 @@ describe 'Custom type `cups_queue`' do
           manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure    => 'printer',
-              accepting => 'false'
+              accepting => false
             }
           MANIFEST
 
@@ -204,7 +204,7 @@ describe 'Custom type `cups_queue`' do
           manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure  => 'printer',
-              enabled => 'true'
+              enabled => true
             }
           MANIFEST
 
@@ -225,7 +225,7 @@ describe 'Custom type `cups_queue`' do
           manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure  => 'printer',
-              enabled => 'false'
+              enabled => false
             }
           MANIFEST
 
@@ -252,7 +252,7 @@ describe 'Custom type `cups_queue`' do
           manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
-              held   => 'true'
+              held   => true
             }
           MANIFEST
 
@@ -273,7 +273,7 @@ describe 'Custom type `cups_queue`' do
           manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
-              held   => 'false'
+              held   => false
             }
           MANIFEST
 
@@ -385,7 +385,7 @@ describe 'Custom type `cups_queue`' do
           manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
-              shared => 'true'
+              shared => true
             }
           MANIFEST
 
@@ -402,7 +402,7 @@ describe 'Custom type `cups_queue`' do
           manifest = <<-MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
-              shared => 'false'
+              shared => false
             }
           MANIFEST
 

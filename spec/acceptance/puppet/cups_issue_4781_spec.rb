@@ -6,7 +6,7 @@ def manifest(access)
   "cups_queue { 'Office':
     ensure  => 'printer',
     access  => #{access},
-    enabled => 'true',
+    enabled => true,
   }"
 end
 
@@ -25,7 +25,7 @@ describe 'Circumventing CUPS issue #4781' do
         manifest = <<-MANIFEST
           cups_queue { 'Office':
             ensure  => 'printer',
-            enabled => 'true',
+            enabled => true,
           }
         MANIFEST
 
@@ -121,7 +121,7 @@ describe 'Circumventing CUPS issue #4781' do
         manifest = <<-MANIFEST
           cups_queue { 'Office':
             ensure  => 'printer',
-            enabled => 'true',
+            enabled => true,
           }
         MANIFEST
 
