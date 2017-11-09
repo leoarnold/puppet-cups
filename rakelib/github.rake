@@ -14,8 +14,11 @@ namespace :github do
     task publish: 'strings:gh_pages:update'
   end
 
-  desc 'Clean, build, tag, push, and release the module on GitHub'
-  task release: [:clean, :build, 'module:tag', 'module:push'] do
+  desc 'Clean, build, push, and release the module on GitHub'
+  task release: %i[clean build] do
+    system('git reset --hard')
+    system('git push')
+
     github = Github.new oauth_token: YAML.load_file('.github.yml')['oauth_token']
 
     metadata = JSON.parse(File.read('metadata.json'))
