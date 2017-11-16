@@ -9,9 +9,7 @@
 <!-- release:include -->
 
 [![Puppet Forge Version](https://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
-<!--
 [![Puppet Forge Endorsement](http://img.shields.io/puppetforge/e/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
--->
 [![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![Puppet Forge Score](http://img.shields.io/puppetforge/f/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![Yard Docs](https://img.shields.io/badge/yard-docs-blue.svg)](https://leoarnold.github.io/puppet-cups)
@@ -615,8 +613,7 @@ this module will *disable* the use of local defaults by deleting the file `/etc/
 
 There are several ways to contribute for both users and developers:
 
-* This module is striving for the ["Puppet approved"](https://forge.puppet.com/approved) badge.
-  If you like this module, please show your appreciation by giving it a
+* If you like this module, please show your appreciation by giving it a
   [positive rating](https://forge.puppet.com/leoarnold/cups) in the Puppet Forge
   and spreading the news in your favorite way.
 
