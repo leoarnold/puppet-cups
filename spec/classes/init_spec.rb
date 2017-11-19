@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'cups' do
+RSpec.describe 'cups' do
   context 'with default values for all attributes' do
     let(:facts) { any_supported_os }
 

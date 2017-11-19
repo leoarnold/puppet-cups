@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Puppet::Type.type(:cups_queue).provider(:cups) do
+RSpec.describe Puppet::Type.type(:cups_queue).provider(:cups) do
   let(:type) { Puppet::Type.type(:cups_queue) }
   let(:provider) { described_class }
 

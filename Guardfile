@@ -4,6 +4,7 @@ guard :bundler do
 end
 
 guard :livereload do
+  watch('coverage/index.html')
   watch(%r{^doc/.+\.htm(l)?$})
 end
 

@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'lib/puppet_x/cups/queue'
 
-describe PuppetX::Cups::Queue do
+RSpec.describe PuppetX::Cups::Queue do
   describe '##attribute' do
   end
 end
 
-describe PuppetX::Cups::Queue::Attribute do
+RSpec.describe PuppetX::Cups::Queue::Attribute do
   describe '#value' do
     context 'when the query result is an array' do
       it 'returns an empty string' do

@@ -2,9 +2,7 @@
 
 require 'spec_helper'
 
-require 'lib/puppet_x/cups/shell'
-
-describe PuppetX::Cups::Shell do
+RSpec.describe PuppetX::Cups::Shell do
   describe '##ipptool' do
     it 'shells out the correct command line' do
       expect(PuppetX::Cups::Shell::ShellOut).to receive(:new)
@@ -15,7 +13,7 @@ describe PuppetX::Cups::Shell do
   end
 end
 
-describe PuppetX::Cups::Shell::ShellOut do
+RSpec.describe PuppetX::Cups::Shell::ShellOut do
   describe '#new' do
     it 'encapsulates stdin, stdout, stderr, exitcode and the given command' do
       command = 'some command'

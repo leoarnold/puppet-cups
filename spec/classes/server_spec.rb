@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'cups::server' do
+RSpec.describe 'cups::server' do
   context 'with default values for all parameters' do
     let(:facts) { any_supported_os }
 

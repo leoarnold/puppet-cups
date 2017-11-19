@@ -2,8 +2,6 @@
 
 require 'spec_helper'
 
-require 'lib/puppet_x/cups/instances'
-
 def cups_get_printers(stdout)
   mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
 
@@ -18,7 +16,7 @@ def cups_get_classes(stdout)
     .with('-c', '/', PuppetX::Cups::Instances.cups_get_classes).and_return(mock_shellout)
 end
 
-describe PuppetX::Cups::Instances do
+RSpec.describe PuppetX::Cups::Instances do
   describe '##classes' do
     context 'without printers or classes installed' do
       it 'returns an empty array' do

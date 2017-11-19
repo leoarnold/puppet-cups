@@ -10,7 +10,7 @@ def manifest(access)
   }"
 end
 
-describe 'Circumventing CUPS issue #4781' do
+RSpec.describe 'Circumventing CUPS issue #4781' do
   before(:all) do
     ensure_cups_is_running
   end

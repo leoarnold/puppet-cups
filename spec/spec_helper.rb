@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'bundler/setup'
 require 'codacy-coverage'
 require 'simplecov-murmur'
 
@@ -37,8 +38,10 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../'))
 # RSpec configuration
 # http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |c|
-  c.color = true
-  c.formatter = :documentation
+  c.disable_monkey_patching!
+  c.expect_with :rspec do |e|
+    e.syntax = :expect
+  end
   c.mock_with(:rspec)
   c.example_status_persistence_file_path = '.rspec_status'
 end

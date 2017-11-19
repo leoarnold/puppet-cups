@@ -10,7 +10,7 @@ OS_NAME = fact('os.name')
 OS_RELEASE_FULL = fact('os.release.full')
 DEBIAN_PWG_RASTER_PATCH = (OS_NAME == 'Ubuntu' && ['16.10', '17.04'].include?(OS_RELEASE_FULL))
 
-describe 'Ipptool' do
+RSpec.describe 'Ipptool' do
   before(:all) do
     ensure_cups_is_running
   end

@@ -2,7 +2,7 @@
 
 require 'spec_helper_acceptance'
 
-describe 'Including class "cups"' do
+RSpec.describe 'Including class "cups"' do
   before(:all) do
     ensure_cups_is_running
   end

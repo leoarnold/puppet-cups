@@ -6,7 +6,7 @@ RSpec.configure do |c|
   c.manifest = Dir.pwd + '/spec/fixtures/manifests/site.pp'
 end
 
-describe 'nina.initech.com' do
+RSpec.describe 'nina.initech.com' do
   let(:facts) { any_supported_os(certname: 'nina.initech.com') }
 
   if Puppet::PUPPETVERSION.to_f < 4.9

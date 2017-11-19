@@ -2,7 +2,7 @@
 
 require 'spec_helper_acceptance'
 
-describe 'Custom type `cups_queue`' do
+RSpec.describe 'Custom type `cups_queue`' do
   before(:all) do
     ensure_cups_is_running
   end

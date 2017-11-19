@@ -2,10 +2,7 @@
 
 require 'spec_helper'
 
-require 'lib/puppet_x/cups/ipp'
-require 'lib/puppet_x/cups/instances'
-
-describe PuppetX::Cups::Ipp::QueryC do
+RSpec.describe PuppetX::Cups::Ipp::QueryC do
   describe '#new' do
     context 'when the shell command exits 0' do
       it 'creates an object' do
@@ -92,7 +89,7 @@ describe PuppetX::Cups::Ipp::QueryC do
   end
 end
 
-describe PuppetX::Cups::Ipp::QueryT do
+RSpec.describe PuppetX::Cups::Ipp::QueryT do
   describe '#new' do
     context 'when stdout contains "status-code = successful-ok"' do
       context 'when the shell command exits 0' do

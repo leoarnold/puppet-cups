@@ -3,14 +3,6 @@
 require 'shellwords'
 require 'beaker-rspec'
 
-# RSpec configuration
-# http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/Configuration
-RSpec.configure do |c|
-  c.color = true
-  c.formatter = :documentation
-  c.mock_with(:rspec)
-end
-
 # Beaker related configuration
 # http://www.rubydoc.info/github/puppetlabs/beaker/Beaker/DSL
 RSpec.configure do |c|

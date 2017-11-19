@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Puppet::Type.type(:cups_queue) do
+RSpec.describe Puppet::Type.type(:cups_queue) do
   let(:type) { described_class }
 
   describe 'dependency relations' do
