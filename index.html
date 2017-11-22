@@ -6,7 +6,7 @@
 <title>
   File: README
   
-    &mdash; Documentation by YARD 0.9.9
+    &mdash; Documentation by YARD 0.9.10
   
 </title>
 
@@ -58,16 +58,6 @@
       </div>
 
       <div id="content"><div id='filecontents'><h1>The CUPS module</h1>
-
-<!-- release:exclude -->
-
-<p><a href="https://travis-ci.org/leoarnold/puppet-cups"><img src="https://travis-ci.org/leoarnold/puppet-cups.svg" alt="Build Status"></a>
-<a href="https://codeclimate.com/github/leoarnold/puppet-cups"><img src="https://codeclimate.com/github/leoarnold/puppet-cups/badges/gpa.svg" alt="Code Climate"></a>
-<a href="https://www.codacy.com/app/leoarnold/puppet-cups"><img src="https://img.shields.io/codacy/0404c3f7b7b345859d5eb9d2cbeecc39.svg" alt="Code Quality"></a>
-<a href="https://codeclimate.com/github/leoarnold/puppet-cups/coverage"><img src="https://codeclimate.com/github/leoarnold/puppet-cups/badges/coverage.svg" alt="Coverage"></a>
-<a href="https://gemnasium.com/leoarnold/puppet-cups"><img src="https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg" alt="Dependencies"></a></p>
-
-<!-- release:include -->
 
 <p><a href="https://forge.puppet.com/leoarnold/cups"><img src="https://img.shields.io/puppetforge/v/leoarnold/cups.svg" alt="Puppet Forge Version"></a>
 <a href="https://forge.puppet.com/leoarnold/cups"><img src="http://img.shields.io/puppetforge/e/leoarnold/cups.svg" alt="Puppet Forge Endorsement"></a>
@@ -598,7 +588,7 @@ Setting <code>false</code> will release them.</p></li>
 <code>lpadmin -p [queue_name] -o key=value</code> is supported here. Use <code>puppet resource cups_queue [queue_name]</code>
 on the node for a list of all supported options for the given queue, and <code>lpoptions -p [queue_name] -l</code>
 to see a list of available values for the most commonly used printer specific options.</p></li>
-<li><p><code>shared</code>: Boolean value specifying whether to share this queue on the network. Default is <code>false</code>.</p></li>
+<li><p><code>shared</code>: Boolean value specifying whether to share this queue on the network.</p></li>
 </ul>
 
 <h5>Class-only attributes</h5>
