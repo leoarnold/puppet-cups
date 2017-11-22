@@ -743,11 +743,6 @@ RSpec.describe Puppet::Type.type(:cups_queue) do
         expect(type.attrclass(:shared).doc.length).to be > 20
       end
 
-      it "defaults to 'false'" do
-        resource = type.new(name: 'Office')
-        expect(resource[:shared]).to eq(:false)
-      end
-
       it 'accepts boolean values' do
         @resource[:shared] = :true
         expect(@resource[:shared]).to eq(:true)

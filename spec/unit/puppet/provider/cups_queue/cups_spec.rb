@@ -105,7 +105,6 @@ RSpec.describe Puppet::Type.type(:cups_queue).provider(:cups) do
         it 'installs the class with default values' do
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-c', 'GroundFloor')
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Warehouse', '-c', 'GroundFloor')
-          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'GroundFloor', '-o', 'printer-is-shared=false')
 
           @provider.create_class
         end
@@ -137,7 +136,6 @@ RSpec.describe Puppet::Type.type(:cups_queue).provider(:cups) do
           allow(@provider).to receive(:lpadmin).with('-E', '-x', 'Office')
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', 'file:///dev/null')
           expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', switch[method], manifest[method]) if method
-          expect(@provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'printer-is-shared=false')
           expect(@provider).to receive(:check_make_and_model)
 
           @provider.create_printer

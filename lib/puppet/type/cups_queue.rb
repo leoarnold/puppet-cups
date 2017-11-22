@@ -281,10 +281,9 @@ Puppet::Type.newtype(:cups_queue) do
   end
 
   newproperty(:shared) do
-    desc 'Boolean value specifying whether to share this queue on the network. Default is `false`.'
+    desc 'Boolean value specifying whether to share this queue on the network.'
 
     newvalues(:true, :false)
-    defaultto(:false)
   end
 
   newproperty(:uri) do

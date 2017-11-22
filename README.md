@@ -549,7 +549,7 @@ Installs and manages CUPS print queues.
   on the node for a list of all supported options for the given queue, and `lpoptions -p [queue_name] -l`
   to see a list of available values for the most commonly used printer specific options.
 
-* `shared`: Boolean value specifying whether to share this queue on the network. Default is `false`.
+* `shared`: Boolean value specifying whether to share this queue on the network.
 
 ##### Class-only attributes
 

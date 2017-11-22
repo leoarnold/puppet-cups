@@ -1,5 +1,24 @@
 # Changelog
 
+## 2017-11-21 - Bugfix release 2.0.2
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.0.2)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.0.2).
+
+### Summary
+
+This release fixes a conflict when using remotely shared queues.
+
+### Bugfixes
+
+- Removed the default value `shared => false` for type `cups_queue`
+  in order to comply with [CUPS #4766](https://github.com/apple/cups/issues/4766)
+
+## 2017-11-16 - Official Approval by Puppet Inc
+
+We are proud to announce that Puppet Inc [officially approved](https://tickets.puppetlabs.com/browse/MODULES-5903)
+version 2.0.1 of this module.
+
 ## 2017-11-09 - Service release 2.0.1
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.0.1)
