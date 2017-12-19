@@ -12,6 +12,12 @@ DefaultAuthType Basic
 <%= '#' if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>
 <Location />
   Order allow,deny
+  <% for @rule in @root_location_allow -%>
+  Allow <%= @rule %>
+  <%end %>
+  <% for @rule in @root_location_deny -%>
+  Deny <%= @rule %>
+  <%end %>
 </Location>
 <Location /admin>
   Order allow,deny

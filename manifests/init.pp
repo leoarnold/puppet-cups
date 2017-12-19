@@ -42,6 +42,8 @@
 # @param service_manage Whether to manage services at all.
 # @param service_names A name or an array of names of all CUPS services to be managed.
 # @param web_interface Boolean value to enable or disable the server's web interface.
+# @param root_location_allow Array value to allow access to cups (web interface, printers, classes)
+# @param root_location_deny Array value to deny access to cups (web interface, printers, classes)
 #
 class cups (
   Optional[String]               $default_queue          = undef,
@@ -57,6 +59,8 @@ class cups (
   Boolean                        $service_manage         = true,
   Variant[String, Array[String]] $service_names          = 'cups',
   Optional[Boolean]              $web_interface          = undef,
+  Array                          $root_location_allow   = [],
+  Array                          $root_location_deny    = [],
 ) inherits cups::params {
 
   contain cups::packages
