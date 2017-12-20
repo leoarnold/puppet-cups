@@ -37,13 +37,13 @@
 # @param purge_unmanaged_queues Setting `true` will remove all queues from the node
 #   which do not match a `cups_queue` resource in the current catalog.
 # @param resources This attribute is intended for use with Hiera or any other ENC.
+# @param root_location_allow Array value to allow access to cups (web interface, printers, classes)
+# @param root_location_deny Array value to deny access to cups (web interface, printers, classes)
 # @param service_enable Whether the CUPS services should be enabled to run at boot.
 # @param service_ensure Whether the CUPS services should be `running` or `stopped`.
 # @param service_manage Whether to manage services at all.
 # @param service_names A name or an array of names of all CUPS services to be managed.
 # @param web_interface Boolean value to enable or disable the server's web interface.
-# @param root_location_allow Array value to allow access to cups (web interface, printers, classes)
-# @param root_location_deny Array value to deny access to cups (web interface, printers, classes)
 #
 class cups (
   Optional[String]               $default_queue          = undef,
@@ -54,13 +54,13 @@ class cups (
   Optional[String]               $papersize              = undef,
   Boolean                        $purge_unmanaged_queues = false,
   Optional[Hash]                 $resources              = undef,
+  Array                          $root_location_allow   = [],
+  Array                          $root_location_deny    = [],
   Boolean                        $service_enable         = true,
   String                         $service_ensure         = 'running',
   Boolean                        $service_manage         = true,
   Variant[String, Array[String]] $service_names          = 'cups',
   Optional[Boolean]              $web_interface          = undef,
-  Array                          $root_location_allow   = [],
-  Array                          $root_location_deny    = [],
 ) inherits cups::params {
 
   contain cups::packages
