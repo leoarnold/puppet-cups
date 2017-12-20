@@ -6,7 +6,7 @@ MaxLogSize 0
 <%=    "Listen #{l}" %>
 <%   end -%>
 <% end -%>
-Browsing Off
+Browsing <%= @browsing %>
 BrowseLocalProtocols dnssd
 DefaultAuthType Basic
 <%= '#' if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>

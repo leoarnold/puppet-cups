@@ -46,6 +46,7 @@
 # @param web_interface Boolean value to enable or disable the server's web interface.
 #
 class cups (
+  Enum['On', 'Off']              $browsing               = 'Off',
   Optional[String]               $default_queue          = undef,
   Variant[String, Array[String]] $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
   String                         $package_ensure         = 'present',
