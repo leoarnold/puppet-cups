@@ -2,6 +2,8 @@
 
 require 'spec_helper'
 
+require 'puppet_x/cups/instances'
+
 def cups_get_printers(stdout)
   mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
 

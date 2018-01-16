@@ -2,6 +2,8 @@
 
 require 'spec_helper'
 
+require 'puppet_x/cups/shell'
+
 RSpec.describe PuppetX::Cups::Shell do
   describe '##ipptool' do
     it 'shells out the correct command line' do

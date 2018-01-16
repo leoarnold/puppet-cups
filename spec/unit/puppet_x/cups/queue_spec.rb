@@ -2,6 +2,8 @@
 
 require 'spec_helper'
 
+require 'puppet_x/cups/queue'
+
 RSpec.describe PuppetX::Cups::Queue do
   describe '##attribute' do
   end

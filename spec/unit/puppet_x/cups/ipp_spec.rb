@@ -2,6 +2,9 @@
 
 require 'spec_helper'
 
+require 'puppet_x/cups/instances'
+require 'puppet_x/cups/ipp'
+
 RSpec.describe PuppetX::Cups::Ipp::QueryC do
   describe '#new' do
     context 'when the shell command exits 0' do
