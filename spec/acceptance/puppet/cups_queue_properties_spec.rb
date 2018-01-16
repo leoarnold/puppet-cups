@@ -329,7 +329,7 @@ RSpec.describe 'Custom type `cups_queue`' do
             cups_queue { '#{name}':
               ensure  => 'printer',
               options => {
-                'auth-info-required'   => 'none',
+                'auth-info-required'   => 'username,password',
                 'printer-error-policy' => 'stop-printer',
                 'job-sheets-default'   => 'none,none'
               }

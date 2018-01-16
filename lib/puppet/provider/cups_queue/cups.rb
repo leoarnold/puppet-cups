@@ -295,15 +295,12 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   def query_native_option(option)
     value = query(option)
 
-    case option
-    when 'auth-info-required'
+    if option == 'auth-info-required'
       # Related issue: https://github.com/apple/cups/issues/4958
-      value.empty? ? 'none' : value
-    when 'job-sheets-default'
-      value.gsub(/\A"|"\Z/, '')
-    else
-      value
+      value = 'none' if value.empty?
     end
+
+    value.gsub(/\A"|"\Z/, '')
   end
 
   # @private
