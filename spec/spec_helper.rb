@@ -21,8 +21,10 @@ end
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec-puppet/spec_helper'
 
+# rubocop:disable Style/MixinUsage
 require 'rspec-puppet-facts'
 include RspecPuppetFacts
+# rubocop:enable Style/MixinUsage
 
 def any_supported_os(morefacts = {})
   {

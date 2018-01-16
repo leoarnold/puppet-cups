@@ -2,7 +2,7 @@
 
 1. [Issue style - Always start by opening an issue](#issues)
 1. [Pull requests](#pull-requests)
-  * [Development system setup](#development-system-setup)
+  * [Development environment setup](#development-environment-setup)
   * [Code style - Don't offend RuboCop](#code-style)
   * [Write tests first - they're mandatory](#testing)
   * [Commit style - Be clean, be passing, be atomic](#commit-style)
@@ -72,7 +72,13 @@ You will also need [Bundler](http://bundler.io/) to install the required gems. O
 Now change to the directory you cloned this git repository to and run
 
   ```Shell
-  bundle install --path vendor/bundle
+  bundle install
+  ```
+
+Finally, add [Overcommit](https://github.com/brigade/overcommit) to your setup for automated commit checks:
+
+  ```Shell
+  overcommit --install
   ```
 
 ### Code Style
@@ -274,6 +280,9 @@ Pre-commit checklist:
   ```
 
 Commit message checklist:
+
+* Make sure [Overcommit](#development-environment-setup) is set up correctly.
+  It will automatically check your commit message for formal errors.
 
 * The first line of the commit message should be a short
   description (50 characters is the soft limit, excluding ticket
