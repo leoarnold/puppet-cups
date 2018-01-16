@@ -41,16 +41,20 @@ module PuppetX
           @name = name
         end
 
-        # Encodes the queue name and returns the resource to query
+        # Executes the query and returns the attribute value
+        # without surrounding quotes, or an empty string
+        # if the query did not return a value
         #
         # @author Leo Arnold
         # @since 2.0.0
         #
-        # @return [String] The resource to query
+        # @return [String] The attribute value (if any) without surrounding quotes, or an empty string
         def value
           query = PuppetX::Cups::Ipp.query(resource, request)
 
-          query.results.empty? ? '' : query.results.first
+          answer = query.results.empty? ? '' : query.results.first
+
+          answer.gsub(/\A"|"\Z/, '')
         end
 
         private

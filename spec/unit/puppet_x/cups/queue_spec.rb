@@ -11,7 +11,7 @@ end
 
 RSpec.describe PuppetX::Cups::Queue::Attribute do
   describe '#value' do
-    context 'when the query result is an array' do
+    context 'when the query result is an empty array' do
       it 'returns an empty string' do
         attribute = described_class.new('Office', 'auth-info-required')
 
@@ -24,14 +24,14 @@ RSpec.describe PuppetX::Cups::Queue::Attribute do
     end
 
     context 'when the query result is a non-empty array' do
-      it 'returns the first entry' do
-        attribute = described_class.new('Office', 'device-uri')
+      it 'returns the first entry and strips surrounding quotes' do
+        attribute = described_class.new('Office', 'printer-make-and-model')
 
-        mock_query = double(PuppetX::Cups::Ipp::QueryC, results: %w[lpd://192.168.2.105/binary_p1])
+        mock_query = double(PuppetX::Cups::Ipp::QueryC, results: ['"HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3"'])
 
         allow(PuppetX::Cups::Ipp).to receive(:query).and_return(mock_query)
 
-        expect(attribute.value).to eq 'lpd://192.168.2.105/binary_p1'
+        expect(attribute.value).to eq 'HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3'
       end
     end
   end

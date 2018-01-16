@@ -300,7 +300,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
       value = 'none' if value.empty?
     end
 
-    value.gsub(/\A"|"\Z/, '')
+    value
   end
 
   # @private

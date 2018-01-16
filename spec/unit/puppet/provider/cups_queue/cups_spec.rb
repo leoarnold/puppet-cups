@@ -629,14 +629,6 @@ RSpec.describe Puppet::Type.type(:cups_queue).provider(:cups) do
         end
       end
 
-      context "'job-sheets-default'" do
-        it 'strips leading and trailing quotes' do
-          allow(@provider).to receive(:query).with('job-sheets-default').and_return('"none,none"')
-
-          expect(@provider.send(:query_native_option, 'job-sheets-default')).to eq('none,none')
-        end
-      end
-
       context 'using any other option' do
         it 'returns nonempty query results unmodified' do
           allow(@provider).to receive(:query).with('printer-error-policy').and_return('abort-job')
