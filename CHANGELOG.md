@@ -1,5 +1,15 @@
 # Changelog
 
+## 2017-01-18 - Bugfix release 2.0.3
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.0.3)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.0.3).
+
+### Summary
+
+This release fixes several bugs where retrieved values were still
+surrounded by quotes, thereby incorrectly breaking idempotence.
+
 ## 2017-11-21 - Bugfix release 2.0.2
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.0.2)

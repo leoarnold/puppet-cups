@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-ProjectRoot="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+ProjectRoot="$(git rev-parse --show-toplevel)"
 
 set -euo pipefail
 IFS=$'\n\t'
 set -vx
 
-bundle install --path ${ProjectRoot}/vendor/bundle --without ci
+cd ${ProjectRoot}
+
+bundle install --without ci
+
+bundle exec overcommit --install

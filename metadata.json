@@ -1,14 +1,19 @@
 {
   "name": "leoarnold-cups",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "author": "Leo Arnold",
   "summary": "Puppet module for the Common Unix Printing System (CUPS)",
   "license": "MIT",
   "source": "https://github.com/leoarnold/puppet-cups",
   "project_page": "https://github.com/leoarnold/puppet-cups",
   "issues_url": "https://github.com/leoarnold/puppet-cups/issues",
-  "tags": [ "CUPS", "printer", "printing" ],
+  "tags": [
+    "CUPS",
+    "printer",
+    "printing"
+  ],
   "dependencies": [
+
   ],
   "operatingsystem_support": [
     {
