@@ -33,7 +33,7 @@ namespace :github do
       repo: remote[:repo],
       tag_name: metadata['version'],
       name: changelog[subsections[0]].match(/^## \d+-\d+-\d+ - (?<name>.*)$/)[:name],
-      body: changelog[subsections[0]..subsections[1] - 2].join("\n"),
+      body: changelog[(subsections[0] + 2)..(subsections[1] - 2)].join("\n"),
       draft: false,
       prerelease: false
     }
