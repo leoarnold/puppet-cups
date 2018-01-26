@@ -16,6 +16,8 @@ matrix:
   exclude:
   - rvm: 2.4.2
     env: PUPPET_GEM_VERSION='4.0.0' STRICT_VARIABLES='yes'
+  - rvm: 2.5.0
+    env: PUPPET_GEM_VERSION='4.0.0' STRICT_VARIABLES='yes'
 script: bundle exec rake travis:ci
 after_script: bundle exec codeclimate-test-reporter
 notifications:
