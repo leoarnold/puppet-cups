@@ -56,6 +56,6 @@ group :release do
 end
 
 group :metatools do
-  gem 'github-linguist', '~> 5.0'
+  gem 'github-linguist', '~> 6.0'
   gem 'travis', '~> 1.8'
 end
