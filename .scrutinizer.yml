@@ -1,7 +1,4 @@
 ---
-build:
-    environment:
-        ruby: '2.3.5'
 checks:
     ruby: true
 
