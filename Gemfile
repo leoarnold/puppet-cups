@@ -29,7 +29,7 @@ group :development do
   gem 'rake', '~> 12.2'
   gem 'rspec-puppet-facts', '~> 1.7'
   gem 'rubocop', '~> 0.51'
-  gem 'ruby-graphviz'
+  gem 'ruby-graphviz', '~> 1.2'
   gem 'semantic_puppet' if puppetversion.to_f < 4.9
   gem 'simplecov', '~> 0.13'
   gem 'simplecov-murmur', '~> 0.8'

@@ -106,11 +106,9 @@ Puppet::Type.newtype(:cups_queue) do
       "changed from #{is_to_s(currentvalue)} to #{should_to_s(newvalue)}"
     end
 
-    # rubocop:disable Naming/PredicateName
-    def is_to_s(value)
+    def is_to_s(value) # rubocop:disable Naming/PredicateName
       value.to_s
     end
-    # rubocop:enable Naming/PredicateName
 
     def should_to_s(value)
       value.to_s
@@ -153,11 +151,9 @@ Puppet::Type.newtype(:cups_queue) do
       value
     end
 
-    # rubocop:disable Naming/PredicateName
-    def is_to_s(value)
+    def is_to_s(value) # rubocop:disable Naming/PredicateName
       value.to_s
     end
-    # rubocop:enable Naming/PredicateName
 
     def should_to_s(value)
       value.to_s
@@ -213,11 +209,9 @@ Puppet::Type.newtype(:cups_queue) do
       raise ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if value =~ %r{[\s/#]}
     end
 
-    # rubocop:disable Naming/PredicateName
-    def is_to_s(value)
+    def is_to_s(value) # rubocop:disable Naming/PredicateName
       value.to_s
     end
-    # rubocop:enable Naming/PredicateName
 
     def should_to_s(value)
       value.to_s
@@ -257,11 +251,9 @@ Puppet::Type.newtype(:cups_queue) do
       end
     end
 
-    # rubocop:disable Naming/PredicateName
-    def is_to_s(currentvalue)
+    def is_to_s(currentvalue) # rubocop:disable Naming/PredicateName
       currentvalue.sort.to_h.to_s
     end
-    # rubocop:enable Naming/PredicateName
 
     def should_to_s(newvalue)
       newvalue.sort.to_h.to_s

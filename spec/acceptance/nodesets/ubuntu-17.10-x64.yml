@@ -1,0 +1,10 @@
+HOSTS:
+  ubuntu-17.10-x64:
+    roles:
+      - master
+    platform: ubuntu-17.10-x64
+    box: bento/ubuntu-17.10
+    hypervisor: vagrant
+CONFIG:
+  type: foss
+  log_level: debug
