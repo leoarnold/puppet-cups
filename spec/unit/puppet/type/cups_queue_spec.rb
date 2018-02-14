@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-RSpec.describe Puppet::Type.type(:cups_queue) do
-  let(:type) { described_class }
+RSpec.describe "Type 'cups_queue'" do
+  let(:type) { Puppet::Type.type(:cups_queue) }
 
   describe 'dependency relations' do
     before(:each) do
