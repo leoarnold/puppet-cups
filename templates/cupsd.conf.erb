@@ -6,6 +6,7 @@ MaxLogSize 0
 <%=    "Listen #{l}" %>
 <%   end -%>
 <% end -%>
+<% if @server_admin -%>ServerAdmin <%= "#{@server_admin}\r\n" %><% end -%>
 Browsing Off
 BrowseLocalProtocols dnssd
 DefaultAuthType Basic

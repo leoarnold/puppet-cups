@@ -45,6 +45,7 @@
 #
 class cups (
   Optional[String]               $default_queue          = undef,
+  Optional[String]               $server_admin           = undef,
   Variant[String, Array[String]] $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
   String                         $package_ensure         = 'present',
   Boolean                        $package_manage         = true,
