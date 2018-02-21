@@ -25,6 +25,8 @@
 #
 # @param default_queue The name of the default destination for all print jobs.
 #   Requires the catalog to contain a `cups_queue` resource with the same name.
+# @param server_admin ServerAdmin email-address
+#   Specifies the email address of the server administrator.
 # @param listen Which addresses to the CUPS daemon should listen to.
 #   Accepts (an array of) strings.
 #   Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
@@ -45,6 +47,7 @@
 #
 class cups (
   Optional[String]               $default_queue          = undef,
+  Optional[String]               $server_admin           = undef,
   Variant[String, Array[String]] $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
   String                         $package_ensure         = 'present',
   Boolean                        $package_manage         = true,
