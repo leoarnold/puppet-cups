@@ -40,6 +40,8 @@ end
 # RSpec configuration
 # http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |c|
+  c.order = :random
+  Kernel.srand c.seed
   c.disable_monkey_patching!
   c.expect_with :rspec do |e|
     e.syntax = :expect
