@@ -4,59 +4,20 @@ require 'spec_helper'
 
 RSpec.describe "Type 'cups_queue'" do
   let(:type) { Puppet::Type.type(:cups_queue) }
+  let(:minimal_printer) { { name: 'Office', ensure: 'printer' } }
+  let(:resource) { type.new(minimal_printer) }
 
   describe 'dependency relations' do
-    before(:each) do
-      @catalog = Puppet::Resource::Catalog.new
-    end
+    let(:catalog) { Puppet::Resource::Catalog.new }
 
     context 'when ensuring a class' do
-      before(:each) do
-        @queue = type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice'])
-        @catalog.add_resource @queue
-      end
+      let(:queue) { type.new(name: 'UpperFloor', ensure: 'class', members: ['BackOffice']) }
+
+      before(:example) { catalog.add_resource queue }
 
       it 'autorequires File[/etc/cups/lpoptions]' do
         file = Puppet::Type.type(:file).new(name: '/etc/cups/lpoptions', path: '/etc/cups/lpoptions')
-        @catalog.add_resource file
-
-        reqs = @queue.autorequire
-
-        expect(reqs).not_to be_empty
-        expect(reqs[0].source).to eq(file)
-        expect(reqs[0].target).to eq(@queue)
-      end
-
-      it 'autorequires Service[cups]' do
-        service = Puppet::Type.type(:service).new(name: 'cups')
-        @catalog.add_resource service
-
-        reqs = @queue.autorequire
-
-        expect(reqs).not_to be_empty
-        expect(reqs[0].source).to eq(service)
-        expect(reqs[0].target).to eq(@queue)
-      end
-
-      it 'autorequires its members' do
-        member = type.new(name: 'BackOffice')
-        @catalog.add_resource member
-
-        reqs = @queue.autorequire
-
-        expect(reqs).not_to be_empty
-        expect(reqs[0].source).to eq(member)
-        expect(reqs[0].target).to eq(@queue)
-      end
-    end
-
-    context 'when ensuring a printer' do
-      it 'autorequires File[/etc/cups/lpoptions]' do
-        file = Puppet::Type.type(:file).new(name: '/etc/cups/lpoptions', path: '/etc/cups/lpoptions')
-        @catalog.add_resource file
-
-        queue = type.new(name: 'Office', ensure: 'printer')
-        @catalog.add_resource queue
+        catalog.add_resource file
 
         reqs = queue.autorequire
 
@@ -67,10 +28,48 @@ RSpec.describe "Type 'cups_queue'" do
 
       it 'autorequires Service[cups]' do
         service = Puppet::Type.type(:service).new(name: 'cups')
-        @catalog.add_resource service
+        catalog.add_resource service
+
+        reqs = queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(service)
+        expect(reqs[0].target).to eq(queue)
+      end
+
+      it 'autorequires its members' do
+        member = type.new(name: 'BackOffice')
+        catalog.add_resource member
+
+        reqs = queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(member)
+        expect(reqs[0].target).to eq(queue)
+      end
+    end
+
+    context 'when ensuring a printer' do
+      it 'autorequires File[/etc/cups/lpoptions]' do
+        file = Puppet::Type.type(:file).new(name: '/etc/cups/lpoptions', path: '/etc/cups/lpoptions')
+        catalog.add_resource file
 
         queue = type.new(name: 'Office', ensure: 'printer')
-        @catalog.add_resource queue
+        catalog.add_resource queue
+
+        reqs = queue.autorequire
+
+        expect(reqs).not_to be_empty
+        expect(reqs[0].source).to eq(file)
+        expect(reqs[0].target).to eq(queue)
+      end
+
+      it 'autorequires Service[cups]' do
+        service = Puppet::Type.type(:service).new(name: 'cups')
+        catalog.add_resource service
+
+        queue = type.new(name: 'Office', ensure: 'printer')
+        catalog.add_resource queue
 
         reqs = queue.autorequire
 
@@ -83,10 +82,10 @@ RSpec.describe "Type 'cups_queue'" do
         ppd = '/usr/share/ppd/cupsfilters/textonly.ppd'
 
         queue = type.new(name: 'Office', ensure: 'printer', ppd: ppd)
-        @catalog.add_resource queue
+        catalog.add_resource queue
 
         file = Puppet::Type.type(:file).new(name: ppd)
-        @catalog.add_resource file
+        catalog.add_resource file
 
         reqs = queue.autorequire
 
@@ -99,10 +98,10 @@ RSpec.describe "Type 'cups_queue'" do
         model = 'myprinter.ppd'
 
         queue = type.new(name: 'Office', ensure: 'printer', model: model)
-        @catalog.add_resource queue
+        catalog.add_resource queue
 
         file = Puppet::Type.type(:file).new(name: "/usr/share/cups/model/#{model}")
-        @catalog.add_resource file
+        catalog.add_resource file
 
         reqs = queue.autorequire
 
@@ -303,16 +302,6 @@ RSpec.describe "Type 'cups_queue'" do
   end
 
   describe 'parameter' do
-    before(:each) do
-      manifest = {
-        ensure: 'printer',
-        name: 'Office',
-        model: 'drv:///sample.drv/generic.ppd'
-      }
-
-      @resource = type.new(manifest)
-    end
-
     describe 'model' do
       it 'has documentation' do
         expect(type.attrclass(:model).doc).to be_instance_of(String)
@@ -320,8 +309,11 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts a string' do
-        @resource[:model] = 'This is a string'
-        expect(@resource[:model]).to eq('This is a string')
+        manifest = minimal_printer.merge(model: 'This is a string')
+
+        resource = type.new(manifest)
+
+        expect(resource[:model]).to eq('This is a string')
       end
     end
 
@@ -332,48 +324,71 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts a string with international characters, numbers and underscores' do
-        @resource[:name] = 'RSpec_Test_äöü_абв_Nr1'
-        expect(@resource[:name]).to eq('RSpec_Test_äöü_абв_Nr1')
+        manifest = minimal_printer.merge(name: 'RSpec_Test_äöü_абв_Nr1')
+
+        resource = type.new(manifest)
+
+        expect(resource[:name]).to eq('RSpec_Test_äöü_абв_Nr1')
       end
 
       it 'rejects a string with a SPACE' do
-        expect { @resource[:name] = 'RSpec Test_Printer' }.to raise_error(/SPACE/)
+        manifest = minimal_printer.merge(name: 'RSpec Test_Printer')
+
+        expect { type.new(manifest) }.to raise_error(/SPACE/)
       end
 
       it 'rejects a string with a TAB' do
-        expect { @resource[:name] = "RSpec\tTest_Printer" }.to raise_error(/TAB/)
+        manifest = minimal_printer.merge(name: "RSpec\tTest_Printer")
+
+        expect { type.new(manifest) }.to raise_error(/TAB/)
       end
 
       it 'rejects a string with a carriage return character' do
-        expect { @resource[:name] = "RSpec\rTest_Printer" }.to raise_error(/SPACE/)
+        manifest = minimal_printer.merge(name: "RSpec\rTest_Printer")
+
+        expect { type.new(manifest) }.to raise_error(/SPACE/)
       end
 
       it 'rejects a string with a newline character' do
-        expect { @resource[:name] = "RSpec\nTest_Printer" }.to raise_error(/SPACE/)
+        manifest = minimal_printer.merge(name: "RSpec\nTest_Printer")
+
+        expect { type.new(manifest) }.to raise_error(/SPACE/)
       end
 
       it 'rejects a string with a SLASH' do
-        expect { @resource[:name] = 'RSpec/Test_Printer' }.to raise_error(/SLASH/)
+        manifest = minimal_printer.merge(name: 'RSpec/Test_Printer')
+
+        expect { type.new(manifest) }.to raise_error(/SLASH/)
       end
 
       it 'rejects a string with a BACKSLASH' do
-        expect { @resource[:name] = 'RSpec\Test_Printer' }.to raise_error(/BACK[)]?SLASH/)
+        manifest = minimal_printer.merge(name: 'RSpec\Test_Printer')
+
+        expect { type.new(manifest) }.to raise_error(/BACK[)]?SLASH/)
       end
 
       it 'rejects a string with a SINGLEQUOTE' do
-        expect { @resource[:name] = "RSpec'Test_Printer" }.to raise_error(/QUOTE/)
+        manifest = minimal_printer.merge(name: "RSpec'Test_Printer")
+
+        expect { type.new(manifest) }.to raise_error(/QUOTE/)
       end
 
       it 'rejects a string with a DOUBLEQUOTE' do
-        expect { @resource[:name] = 'RSpec"Test_Printer' }.to raise_error(/QUOTE/)
+        manifest = minimal_printer.merge(name: 'RSpec"Test_Printer')
+
+        expect { type.new(manifest) }.to raise_error(/QUOTE/)
       end
 
       it 'rejects a string with a COMMA' do
-        expect { @resource[:name] = 'RSpec,Test_Printer' }.to raise_error(/COMMA/)
+        manifest = minimal_printer.merge(name: 'RSpec,Test_Printer')
+
+        expect { type.new(manifest) }.to raise_error(/COMMA/)
       end
 
-      it "rejects a string with a '#'" do
-        expect { @resource[:name] = 'RSpec#Test_Printer' }.to raise_error(/COMMA/)
+      it 'rejects a string with a "#"' do
+        manifest = minimal_printer.merge(name: 'RSpec#Test_Printer')
+
+        expect { type.new(manifest) }.to raise_error(/"#"/)
       end
     end
 
@@ -384,27 +399,22 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts an absolute UNIX file path' do
-        @resource[:ppd] = '/usr/share/cups/model/myprinter.ppd'
-        expect(@resource[:ppd]).to eq('/usr/share/cups/model/myprinter.ppd')
+        manifest = minimal_printer.merge(ppd: '/usr/share/cups/model/myprinter.ppd')
+
+        resource = type.new(manifest)
+
+        expect(resource[:ppd]).to eq('/usr/share/cups/model/myprinter.ppd')
       end
 
       it 'rejects a path starting with /etc/cups' do
-        expect { @resource[:ppd] = '/etc/cups/ppd/myprinter.ppd' }.to raise_error(%r{/usr/share/cups/model})
+        manifest = minimal_printer.merge(ppd: '/etc/cups/ppd/myprinter.ppd')
+
+        expect { type.new(manifest) }.to raise_error(%r{/usr/share/cups/model})
       end
     end
   end
 
   describe 'property' do
-    before(:each) do
-      manifest = {
-        ensure: 'printer',
-        name: 'Office',
-        model: 'drv:///sample.drv/generic.ppd'
-      }
-
-      @resource = type.new(manifest)
-    end
-
     describe 'ensure' do
       it 'has documentation' do
         expect(type.attrclass(:ensure).doc).to be_instance_of(String)
@@ -515,39 +525,41 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe '#change_to_s' do
+      let(:property) { resource.property(:ensure) }
+
       context 'narrates the change' do
         it 'mentions the creation of a class' do
-          expect(@resource.property(:ensure).send(:change_to_s, :absent, :class)).to eq('created a class')
+          expect(property.send(:change_to_s, :absent, :class)).to eq('created a class')
         end
       end
 
       context 'from :absent to :printer' do
         it 'narrates the change' do
-          expect(@resource.property(:ensure).send(:change_to_s, :absent, :printer)).to eq('created a printer')
+          expect(property.send(:change_to_s, :absent, :printer)).to eq('created a printer')
         end
       end
 
       context 'from :class to :printer' do
         it 'narrates the change' do
-          expect(@resource.property(:ensure).send(:change_to_s, :class, :printer)).to eq('changed from class to printer')
+          expect(property.send(:change_to_s, :class, :printer)).to eq('changed from class to printer')
         end
       end
 
       context 'from :printer to :class' do
         it 'narrates the change' do
-          expect(@resource.property(:ensure).send(:change_to_s, :printer, :class)).to eq('changed from printer to class')
+          expect(property.send(:change_to_s, :printer, :class)).to eq('changed from printer to class')
         end
       end
 
       context 'from :class to :absent' do
         it 'narrates the change' do
-          expect(@resource.property(:ensure).send(:change_to_s, :class, :absent)).to eq('class removed')
+          expect(property.send(:change_to_s, :class, :absent)).to eq('class removed')
         end
       end
 
       context 'from :printer to :class' do
         it 'narrates the change' do
-          expect(@resource.property(:ensure).send(:change_to_s, :printer, :absent)).to eq('printer removed')
+          expect(property.send(:change_to_s, :printer, :absent)).to eq('printer removed')
         end
       end
     end
@@ -559,10 +571,11 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts boolean values' do
-        @resource[:accepting] = :true
-        expect(@resource[:accepting]).to eq(:true)
-        @resource[:accepting] = :false
-        expect(@resource[:accepting]).to eq(:false)
+        resource[:accepting] = :true
+        expect(resource[:accepting]).to eq(:true)
+
+        resource[:accepting] = :false
+        expect(resource[:accepting]).to eq(:false)
       end
     end
 
@@ -573,43 +586,43 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it "accepts { 'policy' => 'allow', 'users' => ['all'] }" do
-        @resource[:access] = { 'policy' => 'allow', 'users' => ['all'] }
-        expect(@resource[:access]).to eq('policy' => 'allow', 'users' => ['all'])
+        resource[:access] = { 'policy' => 'allow', 'users' => ['all'] }
+        expect(resource[:access]).to eq('policy' => 'allow', 'users' => ['all'])
       end
 
       it "accepts { 'policy' => 'deny', 'users' => ['all'] }" do
-        @resource[:access] = { 'policy' => 'deny', 'users' => ['all'] }
-        expect(@resource[:access]).to eq('policy' => 'deny', 'users' => ['all'])
+        resource[:access] = { 'policy' => 'deny', 'users' => ['all'] }
+        expect(resource[:access]).to eq('policy' => 'deny', 'users' => ['all'])
       end
 
       it "accepts an array for key 'users', sorts it, and removes duplicates" do
-        @resource[:access] = { 'policy' => 'allow', 'users' => ['nina', '@council', 'nina', 'lumbergh'] }
-        expect(@resource[:access]).to eq('policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'])
+        resource[:access] = { 'policy' => 'allow', 'users' => ['nina', '@council', 'nina', 'lumbergh'] }
+        expect(resource[:access]).to eq('policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'])
       end
 
       it 'rejects an array' do
-        expect { @resource[:access] = %w[a b] }.to raise_error(Puppet::ResourceError)
+        expect { resource[:access] = %w[a b] }.to raise_error(Puppet::ResourceError)
       end
 
       it 'rejects a string' do
-        expect { @resource[:access] = 'This is a string' }.to raise_error(Puppet::ResourceError)
+        expect { resource[:access] = 'This is a string' }.to raise_error(Puppet::ResourceError)
       end
 
       it 'rejects an empty hash' do
-        expect { @resource[:access] = {} }.to raise_error(Puppet::ResourceError)
+        expect { resource[:access] = {} }.to raise_error(Puppet::ResourceError)
       end
 
       it 'rejects a hash with unsupported policy' do
-        expect { @resource[:access] = { 'policy' => 'random', 'users' => ['lumbergh'] } }.to raise_error(Puppet::ResourceError, /unsupported/)
+        expect { resource[:access] = { 'policy' => 'random', 'users' => ['lumbergh'] } }.to raise_error(Puppet::ResourceError, /unsupported/)
       end
 
       it 'rejects a hash with empty users array' do
-        expect { @resource[:access] = { 'policy' => 'allow', 'users' => [] } }.to raise_error(Puppet::ResourceError, /non-empty/)
+        expect { resource[:access] = { 'policy' => 'allow', 'users' => [] } }.to raise_error(Puppet::ResourceError, /non-empty/)
       end
 
       it 'rejects a hash with malformed user names' do
-        expect { @resource[:access] = { 'policy' => 'allow', 'users' => ['@coun cil'] } }.to raise_error(Puppet::ResourceError, /malformed/)
-        expect { @resource[:access] = { 'policy' => 'allow', 'users' => ['@coun,cil'] } }.to raise_error(Puppet::ResourceError, /malformed/)
+        expect { resource[:access] = { 'policy' => 'allow', 'users' => ['@coun cil'] } }.to raise_error(Puppet::ResourceError, /malformed/)
+        expect { resource[:access] = { 'policy' => 'allow', 'users' => ['@coun,cil'] } }.to raise_error(Puppet::ResourceError, /malformed/)
       end
     end
 
@@ -620,8 +633,8 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts a string' do
-        @resource[:description] = 'This is a string'
-        expect(@resource[:description]).to eq('This is a string')
+        resource[:description] = 'This is a string'
+        expect(resource[:description]).to eq('This is a string')
       end
     end
 
@@ -632,10 +645,10 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts boolean values' do
-        @resource[:enabled] = :true
-        expect(@resource[:enabled]).to eq(:true)
-        @resource[:enabled] = :false
-        expect(@resource[:enabled]).to eq(:false)
+        resource[:enabled] = :true
+        expect(resource[:enabled]).to eq(:true)
+        resource[:enabled] = :false
+        expect(resource[:enabled]).to eq(:false)
       end
     end
 
@@ -646,10 +659,10 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts boolean values' do
-        @resource[:held] = :true
-        expect(@resource[:held]).to eq(:true)
-        @resource[:held] = :false
-        expect(@resource[:held]).to eq(:false)
+        resource[:held] = :true
+        expect(resource[:held]).to eq(:true)
+        resource[:held] = :false
+        expect(resource[:held]).to eq(:false)
       end
     end
 
@@ -660,8 +673,8 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts a string' do
-        @resource[:location] = 'This is a string'
-        expect(@resource[:location]).to eq('This is a string')
+        resource[:location] = 'This is a string'
+        expect(resource[:location]).to eq('This is a string')
       end
     end
 
@@ -672,8 +685,8 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts a string' do
-        @resource[:make_and_model] = 'This is a string'
-        expect(@resource[:make_and_model]).to eq('This is a string')
+        resource[:make_and_model] = 'This is a string'
+        expect(resource[:make_and_model]).to eq('This is a string')
       end
     end
 
@@ -691,26 +704,26 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts an empty hash' do
-        @resource[:options] = {}
-        expect(@resource[:options]).to eq({})
+        resource[:options] = {}
+        expect(resource[:options]).to eq({})
       end
 
       it 'accepts a typical options hash' do
-        @resource[:options] = { Duplex: 'DuplexNoTumble', PageSize: 'A4' }
-        expect(@resource[:options]).to eq(Duplex: 'DuplexNoTumble', PageSize: 'A4')
+        resource[:options] = { Duplex: 'DuplexNoTumble', PageSize: 'A4' }
+        expect(resource[:options]).to eq(Duplex: 'DuplexNoTumble', PageSize: 'A4')
       end
 
       it 'rejects an array' do
-        expect { @resource[:options] = %w[a b] }.to raise_error(Puppet::ResourceError)
+        expect { resource[:options] = %w[a b] }.to raise_error(Puppet::ResourceError)
       end
 
       it 'rejects a string' do
-        expect { @resource[:options] = 'This is a string' }.to raise_error(Puppet::ResourceError)
+        expect { resource[:options] = 'This is a string' }.to raise_error(Puppet::ResourceError)
       end
 
       it 'rejects a hash containing options already managed by other attributes' do
         %w[printer-is-accepting-jobs printer-info printer-state printer-location printer-is-shared device-uri].each do |key|
-          expect { @resource[:options] = { key => 'some value' } }.to raise_error(Puppet::ResourceError)
+          expect { resource[:options] = { key => 'some value' } }.to raise_error(Puppet::ResourceError)
         end
       end
 
@@ -719,9 +732,9 @@ RSpec.describe "Type 'cups_queue'" do
           options_is = { 'PageSize' => 'Letter', 'Duplex' => 'None', 'InputSlot' => 'Tray1' }
           expectation = '{"Duplex"=>"None", "InputSlot"=>"Tray1", "PageSize"=>"Letter"}'
 
-          @resource[:options] = options_is
+          resource[:options] = options_is
 
-          expect(@resource.property(:options).send(:is_to_s, options_is)).to eq(expectation)
+          expect(resource.property(:options).send(:is_to_s, options_is)).to eq(expectation)
         end
       end
 
@@ -730,9 +743,9 @@ RSpec.describe "Type 'cups_queue'" do
           options_should = { 'PageSize' => 'A4', 'Duplex' => 'DuplexNoTumble', 'InputSlot' => 'Default' }
           expectation = '{"Duplex"=>"DuplexNoTumble", "InputSlot"=>"Default", "PageSize"=>"A4"}'
 
-          @resource[:options] = { 'PageSize' => 'Letter', 'Duplex' => 'None', 'InputSlot' => 'Tray1' }
+          resource[:options] = { 'PageSize' => 'Letter', 'Duplex' => 'None', 'InputSlot' => 'Tray1' }
 
-          expect(@resource.property(:options).send(:should_to_s, options_should)).to eq(expectation)
+          expect(resource.property(:options).send(:should_to_s, options_should)).to eq(expectation)
         end
       end
     end
@@ -744,10 +757,10 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts boolean values' do
-        @resource[:shared] = :true
-        expect(@resource[:shared]).to eq(:true)
-        @resource[:shared] = :false
-        expect(@resource[:shared]).to eq(:false)
+        resource[:shared] = :true
+        expect(resource[:shared]).to eq(:true)
+        resource[:shared] = :false
+        expect(resource[:shared]).to eq(:false)
       end
     end
 
@@ -758,38 +771,38 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'accepts a typical absolute UNIX file URI' do
-        @resource[:uri] = 'file:///dev/printer0'
-        expect(@resource[:uri]).to eq('file:///dev/printer0')
+        resource[:uri] = 'file:///dev/printer0'
+        expect(resource[:uri]).to eq('file:///dev/printer0')
       end
 
       it 'accepts a typical IPv4 URI' do
-        @resource[:uri] = 'http://10.0.0.5:631'
-        expect(@resource[:uri]).to eq('http://10.0.0.5:631')
+        resource[:uri] = 'http://10.0.0.5:631'
+        expect(resource[:uri]).to eq('http://10.0.0.5:631')
       end
 
       it 'accepts a typical IPv6 URI' do
-        @resource[:uri] = 'http://[2001:7f8::00d1:0:1]:631'
-        expect(@resource[:uri]).to eq('http://[2001:7f8::00d1:0:1]:631')
+        resource[:uri] = 'http://[2001:7f8::00d1:0:1]:631'
+        expect(resource[:uri]).to eq('http://[2001:7f8::00d1:0:1]:631')
       end
 
       it 'accepts a typical HTTP URI' do
-        @resource[:uri] = 'http://hostname:631/ipp/port1'
-        expect(@resource[:uri]).to eq('http://hostname:631/ipp/port1')
+        resource[:uri] = 'http://hostname:631/ipp/port1'
+        expect(resource[:uri]).to eq('http://hostname:631/ipp/port1')
       end
 
       it 'accepts a typical IPP URI' do
-        @resource[:uri] = 'ipp://hostname/ipp/port1'
-        expect(@resource[:uri]).to eq('ipp://hostname/ipp/port1')
+        resource[:uri] = 'ipp://hostname/ipp/port1'
+        expect(resource[:uri]).to eq('ipp://hostname/ipp/port1')
       end
 
       it 'accepts a typical LPD URI' do
-        @resource[:uri] = 'lpd://hostname/queue'
-        expect(@resource[:uri]).to eq('lpd://hostname/queue')
+        resource[:uri] = 'lpd://hostname/queue'
+        expect(resource[:uri]).to eq('lpd://hostname/queue')
       end
 
       it 'accepts a typical HP JetSocket URI' do
-        @resource[:uri] = 'socket://hostname:9100'
-        expect(@resource[:uri]).to eq('socket://hostname:9100')
+        resource[:uri] = 'socket://hostname:9100'
+        expect(resource[:uri]).to eq('socket://hostname:9100')
       end
     end
   end

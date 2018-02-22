@@ -1,16 +1,21 @@
 # frozen_string_literal: true
 
-require 'bundler/setup'
-require 'codacy-coverage'
-require 'simplecov-murmur'
+PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..')).freeze
 
-SimpleCov.formatters = [
-  SimpleCov::Formatter::MurMurFormatter,
-  SimpleCov::Formatter::HTMLFormatter,
-  Codacy::Formatter
-]
+require 'simplecov'
 
-SimpleCov::Formatter::MurMurFormatter.mode = :all
+unless defined?(Spec::Runner::Formatter::TeamcityFormatter)
+  require 'codacy-coverage'
+  require 'simplecov-murmur'
+
+  SimpleCov.formatters = [
+    SimpleCov::Formatter::MurMurFormatter,
+    SimpleCov::Formatter::HTMLFormatter,
+    Codacy::Formatter
+  ]
+
+  SimpleCov::Formatter::MurMurFormatter.mode = :all
+end
 
 SimpleCov.start do
   add_filter '/.mdl/'
@@ -32,9 +37,6 @@ def any_supported_os(morefacts = {})
   }.merge(morefacts)
 end
 
-# Make all files in this module available to #require
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../'))
-
 # RSpec configuration
 # http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |c|
@@ -48,9 +50,16 @@ end
 
 # RSpec-Puppet configuration
 # http://rspec-puppet.com/setup/
-fixture_path = File.expand_path(File.join(__FILE__, '..', 'fixtures'))
+FIXTURE_PATH = File.join(PROJECT_ROOT, 'spec', 'fixtures').freeze
 RSpec.configure do |c|
-  c.after(:suite) { RSpec::Puppet::Coverage.report! }
-  c.manifest_dir = File.join(fixture_path, 'manifests')
-  c.module_path = File.join(fixture_path, 'modules')
+  c.after(:suite) do
+    RSpec::Puppet::Coverage.report! unless defined?(Spec::Runner::Formatter::TeamcityFormatter)
+  end
+  c.manifest_dir = File.join(FIXTURE_PATH, 'manifests')
+  c.module_path = File.join(FIXTURE_PATH, 'modules')
+end
+
+# Make Puppet eXtension modules available
+Dir["#{PROJECT_ROOT}/lib/puppet_x/**/*.rb"].each do |file|
+  require file
 end
