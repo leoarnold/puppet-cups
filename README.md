@@ -5,7 +5,7 @@
 [![Code Climate](https://codeclimate.com/github/leoarnold/puppet-cups/badges/gpa.svg)](https://codeclimate.com/github/leoarnold/puppet-cups)
 [![Code Quality](https://img.shields.io/codacy/0404c3f7b7b345859d5eb9d2cbeecc39.svg)](https://www.codacy.com/app/leoarnold/puppet-cups)
 [![Coverage](https://codeclimate.com/github/leoarnold/puppet-cups/badges/coverage.svg)](https://codeclimate.com/github/leoarnold/puppet-cups/coverage)
-[![Dependencies](https://img.shields.io/gemnasium/leoarnold/puppet-cups.svg)](https://gemnasium.com/leoarnold/puppet-cups)
+[![Depfu](https://badges.depfu.com/badges/b664de4d78caad461da4a66da7c9efeb/overview.svg)](https://depfu.com/github/leoarnold/puppet-cups)
 <!-- release:include -->
 
 [![Puppet Forge Version](https://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
