@@ -1,5 +1,7 @@
 require 'github_api'
 
+require_relative 'forge_module'
+
 namespace :github do
   desc 'Break down language statistics'
   task :linguist do
@@ -33,8 +35,8 @@ namespace :github do
       owner: FORGE_MODULE.github[:owner],
       repo: FORGE_MODULE.github[:repo],
       id: response['id'],
-      name: FORGE_MODULE.filename,
-      filepath: FORGE_MODULE.artefact,
+      name: FORGE_MODULE.artefact_name,
+      filepath: FORGE_MODULE.artefact_path,
       content_type: 'application/gzip'
     }
 

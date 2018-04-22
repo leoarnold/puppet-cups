@@ -13,3 +13,4 @@ Guardfile
 gems.rb
 gems.locked
 rakefile.rb
+README.md.erb
