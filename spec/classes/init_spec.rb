@@ -99,6 +99,80 @@ RSpec.describe 'cups' do
       end
     end
 
+    describe 'page_log_format' do
+      let(:facts) { any_supported_os }
+
+      context 'by default' do
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^PageLogFormat$/) }
+      end
+
+      context "=> '%T %p %u %{job-name} %{sides}'" do
+        let(:params) { { page_log_format: '%T %p %u %{job-name} %{sides}' } }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^PageLogFormat %T %p %u %{job-name} %{sides}$/) }
+      end
+    end
+
+    describe 'max_log_size' do
+      let(:facts) { any_supported_os }
+
+      context 'by default' do
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^MaxLogSize 0$/) }
+      end
+
+      context "=> 200" do
+        let(:params) { { max_log_size: 200 } }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^MaxLogSize 200$/) }
+      end
+
+      context "=> '20mb'" do
+        let(:params) { { max_log_size: '20mb' } }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^MaxLogSize 20mb$/) }
+      end
+    end
+
+    describe 'job_private_access' do
+      let(:facts) { any_supported_os }
+
+      context 'by default' do
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^  JobPrivateAccess default$/) }
+      end
+
+      context "=> '@SYSTEM printmanager'" do
+        let(:params) { { job_private_access: '@SYSTEM printmanager' } }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^  JobPrivateAccess @SYSTEM printmanager$/) }
+      end
+
+      context "=> ['@SYSTEM', 'printmanager']" do
+        let(:params) { { job_private_access: ['@SYSTEM', 'printmanager'] } }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^  JobPrivateAccess @SYSTEM printmanager$/) }
+      end
+    end
+
+    describe 'job_private_values' do
+      let(:facts) { any_supported_os }
+
+      context 'by default' do
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^  JobPrivateValues default$/) }
+      end
+
+      context "=> 'job-name phone'" do
+        let(:params) { { job_private_values: 'job-name phone' } }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^  JobPrivateValues job-name phone$/) }
+      end
+
+      context "=> ['job-name', 'phone']" do
+        let(:params) { { job_private_values: ['job-name', 'phone'] } }
+
+        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^  JobPrivateValues job-name phone$/) }
+      end
+    end
+
     describe 'package_manage' do
       context '=> true' do
         context 'with default package_names' do

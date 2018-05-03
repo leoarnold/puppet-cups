@@ -25,14 +25,20 @@
 #
 # @param default_queue The name of the default destination for all print jobs.
 #   Requires the catalog to contain a `cups_queue` resource with the same name.
+# @param job_private_access Specifies an access list for a job's private values.
+# @param job_private_values Specifies the list of job values to make private.
 # @param listen Which addresses to the CUPS daemon should listen to.
 #   Accepts (an array of) strings.
 #   Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
 #   *Warning*: For this module to work, it is *mandatory* that CUPS is listening on `localhost:631`.
+# @param max_log_size Specifies the maximum size of the log files before they are rotated.
+#   Accepts an integer for the number of bytes for example: 1024
+#   or a string representation of size for exampl: '20mb'.
 # @param package_ensure Whether CUPS packages should be `present` or `absent`.
 # @param package_manage Whether to manage package installation at all.
 # @param package_names A name or an array of names of all packages needed to be installed
 #   in order to run CUPS and provide `ipptool`. OS dependent defaults apply.
+# @param page_log_format Specifies the format of PageLog lines. The default is the empty string, which disables page logging.
 # @param papersize Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
 # @param purge_unmanaged_queues Setting `true` will remove all queues from the node
 #   which do not match a `cups_queue` resource in the current catalog.
@@ -45,10 +51,14 @@
 #
 class cups (
   Optional[String]               $default_queue          = undef,
+  Variant[String, Array[String]] $job_private_access     = ['default'],
+  Variant[String, Array[String]] $job_private_values     = ['default'],
   Variant[String, Array[String]] $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
+  Variant[String, Integer]       $max_log_size           = 0,
   String                         $package_ensure         = 'present',
   Boolean                        $package_manage         = true,
   Variant[String, Array[String]] $package_names          = $::cups::params::package_names,
+  Optional[String]               $page_log_format        = undef,
   Optional[String]               $papersize              = undef,
   Boolean                        $purge_unmanaged_queues = false,
   Optional[Hash]                 $resources              = undef,

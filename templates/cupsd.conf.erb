@@ -1,6 +1,6 @@
 LogLevel warn
-PageLogFormat
-MaxLogSize 0
+PageLogFormat<% unless @page_log_format.nil? -%> <%= @page_log_format %><% end %>
+MaxLogSize <%= @max_log_size %>
 <% unless @listen.empty? -%>
 <%   [@listen].flatten.each do |l| -%>
 <%=    "Listen #{l}" %>
@@ -27,8 +27,8 @@ DefaultAuthType Basic
   Order allow,deny
 </Location>
 <Policy default>
-  JobPrivateAccess default
-  JobPrivateValues default
+  JobPrivateAccess <%= [@job_private_access].join(' ') %>
+  JobPrivateValues <%= [@job_private_values].join(' ') %>
   SubscriptionPrivateAccess default
   SubscriptionPrivateValues default
   <Limit Create-Job Print-Job Print-URI Validate-Job>
