@@ -5,5 +5,5 @@ namespace :travis do
   end
 
   desc 'Perform all static code analysis checks'
-  task ci: %i[rake:lint validate spec check:symlinks check:test_file check:dot_underscore check:git_ignore mdl]
+  task ci: %i[release_checks mdl]
 end

@@ -6,21 +6,30 @@ require 'simplecov'
 
 unless defined?(Spec::Runner::Formatter::TeamcityFormatter)
   require 'codacy-coverage'
-  require 'simplecov-murmur'
 
   SimpleCov.formatters = [
-    SimpleCov::Formatter::MurMurFormatter,
     SimpleCov::Formatter::HTMLFormatter,
     Codacy::Formatter
   ]
-
-  SimpleCov::Formatter::MurMurFormatter.mode = :all
 end
 
 SimpleCov.start do
   add_filter '/.mdl/'
   add_filter '/vendor/'
   add_filter '/spec/'
+end
+
+# RSpec configuration
+# http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/Configuration
+RSpec.configure do |c|
+  c.order = :random
+  Kernel.srand c.seed
+  c.disable_monkey_patching!
+  c.expect_with :rspec do |e|
+    e.syntax = :expect
+  end
+  c.mock_with(:rspec)
+  c.example_status_persistence_file_path = '.rspec_status'
 end
 
 require 'puppetlabs_spec_helper/module_spec_helper'
@@ -35,19 +44,6 @@ def any_supported_os(morefacts = {})
     osfamily: 'Suse',
     os: { 'family' => 'Suse', 'name' => 'CentOS' }
   }.merge(morefacts)
-end
-
-# RSpec configuration
-# http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/Configuration
-RSpec.configure do |c|
-  c.order = :random
-  Kernel.srand c.seed
-  c.disable_monkey_patching!
-  c.expect_with :rspec do |e|
-    e.syntax = :expect
-  end
-  c.mock_with(:rspec)
-  c.example_status_persistence_file_path = '.rspec_status'
 end
 
 # RSpec-Puppet configuration
