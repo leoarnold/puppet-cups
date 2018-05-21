@@ -16,18 +16,11 @@ group :development do
   gem 'bundler', '~> 1.16'
   gem 'codacy-coverage', '~> 1.0'
   gem 'coderay', '~> 1.1'
-  gem 'guard', '~> 2.14'
-  gem 'guard-bundler', '~> 2.1'
-  gem 'guard-livereload', '~> 2.5'
-  gem 'guard-rake', '~> 1.0'
-  gem 'guard-rubocop', '~> 1.3'
   gem 'mdl', '~> 0.3'
   gem 'metadata-json-lint', '~> 2.0'
-  gem 'overcommit', '~> 0.41'
   gem 'puppetlabs_spec_helper', '~> 2.0'
   gem 'rake', '~> 12.2'
   gem 'rspec-puppet-facts', '~> 1.7'
-  gem 'rubocop', '~> 0.51'
   gem 'semantic_puppet' if puppetversion.to_f < 4.9
   gem 'simplecov', '~> 0.13'
 end
@@ -54,5 +47,12 @@ end
 
 group :metatools do
   gem 'github-linguist', '~> 6.0'
+  gem 'guard', '~> 2.14'
+  gem 'guard-bundler', '~> 2.1'
+  gem 'guard-livereload', '~> 2.5'
+  gem 'guard-rake', '~> 1.0'
+  gem 'guard-rubocop', '~> 1.3'
+  gem 'overcommit', '~> 0.41'
+  gem 'rubocop', '~> 0.51'
   gem 'travis', '~> 1.8'
 end
