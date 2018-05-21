@@ -13,17 +13,13 @@ namespace :github do
   task release: %i[clean build] do
     github = Github.new oauth_token: ENV['GITHUB_TOKEN']
 
-    metadata = JSON.parse(File.read('metadata.json'))
-    remote = metadata['source'].match(%r{https://github.com/(?<owner>\w+)/(?<repo>[^/]+)})
-    filename = "#{metadata['name']}-#{metadata['version']}.tar.gz"
-
     changelog = File.read('CHANGELOG.md').split("\n")
     subsections = changelog.each_index.select { |i| changelog[i] =~ /^## / }
 
     release = {
-      owner: remote[:owner],
-      repo: remote[:repo],
-      tag_name: metadata['version'],
+      owner: FORGE_MODULE.github[:owner],
+      repo: FORGE_MODULE.github[:repo],
+      tag_name: FORGE_MODULE.metadata['version'],
       target_commitish: 'release',
       name: changelog[subsections[0]].match(/^## \d+-\d+-\d+ - (?<name>.*)$/)[:name],
       body: changelog[(subsections[0] + 2)..(subsections[1] - 2)].join("\n"),
@@ -34,11 +30,11 @@ namespace :github do
     response = github.repos.releases.create release
 
     asset = {
-      owner: remote[:owner],
-      repo: remote[:repo],
+      owner: FORGE_MODULE.github[:owner],
+      repo: FORGE_MODULE.github[:repo],
       id: response['id'],
-      name: filename,
-      filepath: "pkg/#{filename}",
+      name: FORGE_MODULE.filename,
+      filepath: FORGE_MODULE.artefact,
       content_type: 'application/gzip'
     }
 
