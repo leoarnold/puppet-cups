@@ -1,5 +1,6 @@
 require 'json'
 require 'net/https'
+require 'pathname'
 require 'singleton'
 
 # A data object offering convenience methods
@@ -7,16 +8,19 @@ require 'singleton'
 class ForgeModule
   include Singleton
 
-  def artefact_name
-    "#{name}-#{version}.tar.gz"
-  end
+  def artefact
+    artefact_name = "#{name}-#{version}.tar.gz"
 
-  def artefact_path
-    file("pkg/#{filename}")
+    {
+      name: artefact_name,
+      path: file("pkg/#{artefact_name}").to_s
+    }
   end
 
   def file(relative_path)
-    File.expand_path(File.join(__dir__, '..', *relative_path.split('/')))
+    path = File.expand_path(File.join(__dir__, '..', *relative_path.split('/')))
+
+    Pathname.new(path)
   end
 
   def github
@@ -37,16 +41,26 @@ class ForgeModule
     releases.include?(version)
   end
 
+  def candidate # rubocop:disable Metrics/AbcSize
+    @changelog ||= file('CHANGELOG.md').read
+
+    title = nil
+    changes = []
+    @changelog.each_line do |line|
+      break if line =~ /^## / && !title.nil?
+      changes << line unless title.nil?
+      title = line.match(/^## \d+-\d+-\d+ - (?<title>.*)$/)[:title] if line =~ /^## /
+    end
+
+    { title: title.strip, changes: changes.join("\n").strip, version: metadata['version'].strip }
+  end
+
   def releases
     forgedata['releases'].map { |release| release['version'].strip }
   end
 
   def source
     metadata['source'].strip
-  end
-
-  def version
-    metadata['version'].strip
   end
 
   def forgedata

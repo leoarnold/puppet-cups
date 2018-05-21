@@ -7,8 +7,8 @@ def erb(mode, input, output)
   target = FORGE_MODULE.file(output)
 
   puts "[ERB] Rendering #{output} from #{input}"
-  renderer = ERB.new(File.read(template), 0, '>')
-  File.write(target, renderer.result)
+  renderer = ERB.new(template.read, 0, '>')
+  target.write(renderer.result)
 end
 
 desc 'Render README files from template'

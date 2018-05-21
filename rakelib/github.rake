@@ -15,16 +15,13 @@ namespace :github do
   task release: %i[clean build] do
     github = Github.new oauth_token: ENV['GITHUB_TOKEN']
 
-    changelog = File.read('CHANGELOG.md').split("\n")
-    subsections = changelog.each_index.select { |i| changelog[i] =~ /^## / }
-
     release = {
       owner: FORGE_MODULE.github[:owner],
       repo: FORGE_MODULE.github[:repo],
       tag_name: FORGE_MODULE.metadata['version'],
       target_commitish: 'release',
-      name: changelog[subsections[0]].match(/^## \d+-\d+-\d+ - (?<name>.*)$/)[:name],
-      body: changelog[(subsections[0] + 2)..(subsections[1] - 2)].join("\n"),
+      name: FORGE_MODULE.candidate[:title],
+      body: FORGE_MODULE.candidate[:changes],
       draft: false,
       prerelease: false
     }
@@ -35,8 +32,8 @@ namespace :github do
       owner: FORGE_MODULE.github[:owner],
       repo: FORGE_MODULE.github[:repo],
       id: response['id'],
-      name: FORGE_MODULE.artefact_name,
-      filepath: FORGE_MODULE.artefact_path,
+      name: FORGE_MODULE.artefact[:name],
+      filepath: FORGE_MODULE.artefact[:path],
       content_type: 'application/gzip'
     }
 
