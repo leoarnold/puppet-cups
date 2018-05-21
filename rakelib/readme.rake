@@ -11,15 +11,14 @@ def erb(mode, input, output)
   File.write(target, renderer.result)
 end
 
-file '.github/README.md' => 'README.md.erb' do
+desc 'Render README files from template'
+task :readme do
+  FileUtils.rm_f('.github/README.md')
   erb(:github, 'README.md.erb', '.github/README.md')
-end
 
-file 'README.md' => 'README.md.erb' do
+  FileUtils.rm_f('README.md')
   erb(:release, 'README.md.erb', 'README.md')
 end
 
-desc 'Render README files from template'
-task readme: ['README.md', '.github/README.md']
-
 task build: :readme
+task mdl: :readme
