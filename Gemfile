@@ -42,7 +42,7 @@ group :ci do
 end
 
 group :documentation do
-  gem 'puppet-strings', '~> 1.1'
+  gem 'puppet-strings', '~> 2.0'
   gem 'redcarpet', '~> 3.4'
   gem 'rgen', '~> 0.8'
 end
