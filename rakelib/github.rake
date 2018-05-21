@@ -6,20 +6,12 @@ namespace :github do
     system('linguist --breakdown')
   end
 
-  namespace :pages do
-    desc 'Generate Yard documentation in /doc'
-    task generate: 'strings:generate'
+  desc 'Generate Yard documentation in /doc'
+  task pages: ['strings:generate', 'strings:gh_pages:configure']
 
-    desc 'Publish online documentation'
-    task publish: 'strings:gh_pages:update'
-  end
-
-  desc 'Clean, build, push, and release the module on GitHub'
+  desc 'Release the module on GitHub'
   task release: %i[clean build] do
-    system('git reset --hard')
-    system('git push')
-
-    github = Github.new oauth_token: YAML.load_file('.github.yml')['oauth_token']
+    github = Github.new oauth_token: ENV['GITHUB_TOKEN']
 
     metadata = JSON.parse(File.read('metadata.json'))
     remote = metadata['source'].match(%r{https://github.com/(?<owner>\w+)/(?<repo>[^/]+)})
@@ -32,6 +24,7 @@ namespace :github do
       owner: remote[:owner],
       repo: remote[:repo],
       tag_name: metadata['version'],
+      target_commitish: 'release',
       name: changelog[subsections[0]].match(/^## \d+-\d+-\d+ - (?<name>.*)$/)[:name],
       body: changelog[(subsections[0] + 2)..(subsections[1] - 2)].join("\n"),
       draft: false,

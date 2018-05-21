@@ -16,6 +16,40 @@ before_install:
 - gem install bundler
 script: bundle exec rake travis:ci
 after_script: bundle exec codeclimate-test-reporter
+jobs:
+  include:
+  - stage: Release on Puppet Forge
+    if: branch = release
+    env: PUPPET_GEM_VERSION='~> 5.0'
+    rvm: 2.5.1
+    script: skip
+    deploy:
+      provider: puppetforge
+      user: leoarnold
+      password:
+        secure: H2rNQfd46Oq2TCGz1Q0cXrFmz6Z2bEQaI1EgpUN7mpiq9YL8DGKQCDOb1dx8FUqonQnOly7n2emAfBG+BdIkdQqlme/TmB/uiU7vDyswsj9cHpkstEjHLqRrA4LyqXOICgwf0ZkPuu8TdAWXo3LuE9JktqBN7/XC0IgLZHCtgtJ1GaheF5eJLeu243YnX//3F8VIjhvw6n3QUB7oz0vWzIJ038imelJNT5LPB8iR/WEJO0LG4+Gh3xxNE9Z6HilWzMuoaXMFtZS2Ex0Zg3uZfwot3ks7Adamrc5iw9YVlhhlkmXOrqkLByaxTHu/p+3P7rJw1ZKLxdh6XtvTTsqsIZ3DVj8q2pAhdsgC5KhSvsB1t3Jz5PiM1QSrvk/wwe30bP7qCN0TZsNkwyJQ2XnoiSuEMpsn8za1lu0//tMDeP9YFbaT3vNM5cDDYWjbhVWlQGTCnb78+q2E9cfPKpKR8MMQxGoLIDNiAaW0L57FfNoskz3icv0a2vh91g9T8ERi2JrupWyQEfanAQS7Yn1N01BoNuVM6eXnz8l2ZoX2mzHZ9IXf9Q4fhHERemeacwUoHFOBejLXdbS31uVmXhuSRO20zAfWnL7yv060BzptsVwzX0nwg5TE2SvsiIpLjIHNVtyfPkeiQpeke4DkP4qkxxbF8F5tq3uneTn/r8DfAHw=
+      skip_cleanup: true
+      on:
+        branch: release
+  - stage: Release on GitHub
+    if: branch = release
+    env: PUPPET_GEM_VERSION='~> 5.0'
+    rvm: 2.5.1
+    script: bundle exec rake github:release
+  - stage: Update GitHub Pages
+    if: branch = release
+    env: PUPPET_GEM_VERSION='~> 5.0'
+    rvm: 2.5.1
+    script: skip
+    before_deploy: bundle exec rake github:pages
+    deploy:
+      provider: pages
+      local-dir: doc
+      github-token: $GITHUB_TOKEN
+      keep-history: true
+      skip_cleanup: true
+      on:
+        branch: release
 notifications:
   webhooks:
     urls:
