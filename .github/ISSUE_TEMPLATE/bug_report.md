@@ -1,4 +1,8 @@
-_Issue template: Please fill in the gaps_.
+---
+name: Bug report
+about: Please fill in the gaps
+
+---
 
 **Given** [Your operating system and version] with Puppet [Your Puppet version] and CUPS [Your CUPS version].
 
