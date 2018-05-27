@@ -1,16 +1,8 @@
 source 'https://rubygems.org'
 
-puppetversion = ENV['PUPPET_GEM_VERSION']
+puppet_version = ENV['PUPPET_GEM_VERSION']
 
-# Gemnasium.com does not understand ternary operators
-#
-# rubocop:disable Bundler/DuplicatedGem
-if puppetversion.nil?
-  gem 'puppet', '~> 5.0'
-else
-  gem 'puppet', puppetversion
-end
-# rubocop:enable Bundler/DuplicatedGem
+gem 'puppet', (puppet_version.nil? ? '~> 5.0' : puppet_version)
 
 group :development do
   gem 'bundler', '~> 1.16'
@@ -21,7 +13,7 @@ group :development do
   gem 'puppetlabs_spec_helper', '~> 2.0'
   gem 'rake', '~> 12.2'
   gem 'rspec-puppet-facts', '~> 1.7'
-  gem 'semantic_puppet' if puppetversion.to_f < 4.9
+  gem 'semantic_puppet' if puppet_version.to_f < 4.9
   gem 'simplecov', '~> 0.13'
 end
 
