@@ -8,6 +8,6 @@ set -vx
 
 cd ${ProjectRoot}
 
-bundle install --without ci
+bundle install
 
 bundle exec overcommit --install

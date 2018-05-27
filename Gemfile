@@ -30,10 +30,6 @@ group :acceptance_testing do
   gem 'beaker-rspec', '~> 6.2'
 end
 
-group :ci do
-  gem 'codeclimate-test-reporter', '~> 1.0'
-end
-
 group :documentation do
   gem 'puppet-strings', '~> 2.0'
   gem 'redcarpet', '~> 3.4'
