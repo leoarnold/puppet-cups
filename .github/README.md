@@ -1,18 +1,16 @@
 # The CUPS module
 
 [![Build Status](https://travis-ci.org/leoarnold/puppet-cups.svg)](https://travis-ci.org/leoarnold/puppet-cups)
-[![Code Climate](https://codeclimate.com/github/leoarnold/puppet-cups/badges/gpa.svg)](https://codeclimate.com/github/leoarnold/puppet-cups)
-[![Code Quality](https://img.shields.io/codacy/0404c3f7b7b345859d5eb9d2cbeecc39.svg)](https://www.codacy.com/app/leoarnold/puppet-cups)
-[![Coverage](https://codeclimate.com/github/leoarnold/puppet-cups/badges/coverage.svg)](https://codeclimate.com/github/leoarnold/puppet-cups/coverage)
 [![Depfu](https://badges.depfu.com/badges/b664de4d78caad461da4a66da7c9efeb/overview.svg)](https://depfu.com/github/leoarnold/puppet-cups)
+[![Maintainability](https://api.codeclimate.com/v1/badges/64c46cb56b156ee464de/maintainability)](https://codeclimate.com/github/leoarnold/puppet-cups/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/64c46cb56b156ee464de/test_coverage)](https://codeclimate.com/github/leoarnold/puppet-cups/test_coverage)
+[![Documentation](http://inch-ci.org/github/leoarnold/puppet-cups.svg?branch=master)](https://leoarnold.github.io/puppet-cups)
 
 [![Puppet Forge Version](https://img.shields.io/puppetforge/v/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![Puppet Forge Endorsement](http://img.shields.io/puppetforge/e/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
 [![Puppet Forge Score](http://img.shields.io/puppetforge/f/leoarnold/cups.svg)](https://forge.puppet.com/leoarnold/cups)
-[![Documentation](http://inch-ci.org/github/leoarnold/puppet-cups.svg?branch=master)](https://leoarnold.github.io/puppet-cups)
-[![MIT License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
-[![Gitter](https://badges.gitter.im/leoarnold/puppet-cups.svg)](https://gitter.im/leoarnold/puppet-cups)
+[![MIT License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE.txt)
 
 ## Table of Contents
 

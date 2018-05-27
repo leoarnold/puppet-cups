@@ -15,8 +15,9 @@ end
 
 SimpleCov.start do
   add_filter '/.mdl/'
-  add_filter '/vendor/'
+  add_filter '/rakelib/'
   add_filter '/spec/'
+  add_filter '/vendor/'
 end
 
 # RSpec configuration

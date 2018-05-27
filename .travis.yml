@@ -15,12 +15,20 @@ before_install:
 - gem update --system
 - gem install bundler
 script: bundle exec rake travis:ci
-after_script: bundle exec codeclimate-test-reporter
 jobs:
   include:
+  - stage: Report test coverage to code climate
+    rvm: 2.5.1
+    before_script:
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - ./cc-test-reporter before-build
+    script:
+    - bundle exec rake spec
+    after_script:
+    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   - stage: Release on Puppet Forge
     if: branch = release
-    env: PUPPET_GEM_VERSION='~> 5.0'
     rvm: 2.5.1
     script: bundle exec rake travis:deploy?
     deploy:
@@ -33,12 +41,10 @@ jobs:
         branch: release
   - stage: Release on GitHub
     if: branch = release
-    env: PUPPET_GEM_VERSION='~> 5.0'
     rvm: 2.5.1
     script: bundle exec rake github:release
   - stage: Update GitHub Pages
     if: branch = release
-    env: PUPPET_GEM_VERSION='~> 5.0'
     rvm: 2.5.1
     script: skip
     before_deploy: bundle exec rake github:pages
@@ -50,10 +56,3 @@ jobs:
       skip_cleanup: true
       on:
         branch: release
-notifications:
-  webhooks:
-    urls:
-    - https://webhooks.gitter.im/e/3402fe31d5b814c57316
-    on_success: always
-    on_failure: always
-    on_start: never
