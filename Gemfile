@@ -6,7 +6,7 @@ gem 'puppet', (puppet_version.nil? ? '~> 5.0' : puppet_version)
 
 group :development do
   gem 'bundler', '~> 1.16'
-  gem 'codacy-coverage', '~> 1.0'
+  gem 'codacy-coverage', '~> 2.0'
   gem 'coderay', '~> 1.1'
   gem 'mdl', '~> 0.3'
   gem 'metadata-json-lint', '~> 2.0'
