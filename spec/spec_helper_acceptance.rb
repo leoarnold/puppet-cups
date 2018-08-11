@@ -32,10 +32,10 @@ def add_printers(*names)
   end
 end
 
-def add_printers_to_classes(classmembers)
+def add_printers_to_classes(class_members)
   add_printers('Dummy')
-  classmembers.each_key do |classname|
-    members = classmembers[classname]
+  class_members.each_key do |classname|
+    members = class_members[classname]
     members = %w[Dummy] if members.empty?
     members.each do |printername|
       shell("lpadmin -E -p #{Shellwords.escape(printername)} -c #{Shellwords.escape(classname)}")

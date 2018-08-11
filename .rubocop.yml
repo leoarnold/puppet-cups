@@ -1,6 +1,6 @@
 ---
 AllCops:
-  TargetRubyVersion: 2.1
+  TargetRubyVersion: 2.2
   Exclude:
     - 'pkg/**/*'
     - 'spec/fixtures/**/*'
@@ -22,3 +22,10 @@ Metrics/LineLength:
     - puppet
 Metrics/BlockLength:
   Enabled: false
+Naming/PredicateName:
+  Exclude:
+    - 'lib/puppet/type/cups_queue.rb'
+Style/AccessModifierDeclarations:
+  Exclude:
+    - 'lib/puppet/provider/cups_queue/cups.rb'
+    - 'lib/puppet/type/cups_queue.rb'

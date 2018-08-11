@@ -81,7 +81,7 @@ RSpec.describe PuppetX::Cups::Instances do
     end
   end
 
-  describe '##classmembers' do
+  describe '##class_members' do
     context 'with no classes installed' do
       it 'returns an empty hash' do
         cups_get_classes <<~OUTPUT
@@ -97,7 +97,7 @@ RSpec.describe PuppetX::Cups::Instances do
 
         expectation = {}
 
-        expect(described_class.classmembers).to match_array(expectation)
+        expect(described_class.class_members).to match_array(expectation)
       end
     end
 
@@ -126,7 +126,7 @@ RSpec.describe PuppetX::Cups::Instances do
           'UpperFloor'  => %w[BackOffice]
         }
 
-        expect(described_class.classmembers).to match_array(expectation)
+        expect(described_class.class_members).to match_array(expectation)
       end
     end
   end

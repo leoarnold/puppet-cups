@@ -17,7 +17,7 @@ module PuppetX
       #
       # @return [Array] The names of all installed class queues
       def self.classes
-        classmembers.keys
+        class_members.keys
       end
 
       # Sends a {cups_get_classes} request and parses the names of class queues and their members
@@ -45,7 +45,7 @@ module PuppetX
       # @since 1.0.0
       #
       # @return [Hash] Class names as key and an array with the names of the members as value
-      def self.classmembers
+      def self.class_members
         answer = {}
 
         query = PuppetX::Cups::Ipp::QueryC.new('/', cups_get_classes)

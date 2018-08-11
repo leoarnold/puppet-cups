@@ -365,7 +365,7 @@ RSpec.describe 'Ipptool' do
               DISPLAY printer-name
               DISPLAY member-names
             }
-            REQUEST
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -419,7 +419,7 @@ RSpec.describe 'Ipptool' do
               DISPLAY printer-name
               DISPLAY member-names
             }
-            REQUEST
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -475,7 +475,7 @@ RSpec.describe 'Ipptool' do
               STATUS successful-ok
               DISPLAY printer-name
             }
-            REQUEST
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -559,7 +559,7 @@ RSpec.describe 'Ipptool' do
               ATTR language attributes-natural-language en
               DISPLAY printer-name
             }
-            REQUEST
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -659,7 +659,7 @@ RSpec.describe 'Ipptool' do
               DISPLAY printer-name
               DISPLAY member-names
             }
-            REQUEST
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -740,7 +740,7 @@ RSpec.describe 'Ipptool' do
               DISPLAY printer-name
               DISPLAY member-names
             }
-            REQUEST
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -823,7 +823,7 @@ RSpec.describe 'Ipptool' do
               STATUS successful-ok
               DISPLAY printer-name
             }
-            REQUEST
+          REQUEST
         end
 
         describe "'ipptool -c'" do
@@ -916,7 +916,7 @@ RSpec.describe 'Ipptool' do
               ATTR language attributes-natural-language en
               DISPLAY printer-name
             }
-            REQUEST
+          REQUEST
         end
 
         describe "'ipptool -c'" do

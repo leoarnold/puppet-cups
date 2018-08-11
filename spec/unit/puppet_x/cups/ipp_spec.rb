@@ -59,7 +59,7 @@ RSpec.describe PuppetX::Cups::Ipp::QueryC do
         stdout = <<~OUTPUT
             printer-name
             Office
-          OUTPUT
+        OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
 
@@ -78,7 +78,7 @@ RSpec.describe PuppetX::Cups::Ipp::QueryC do
             BackOffice
             Office
             Warehouse
-          OUTPUT
+        OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdout: stdout, exitcode: 0)
 
@@ -160,7 +160,7 @@ RSpec.describe PuppetX::Cups::Ipp::QueryT do
         stdout = <<~OUTPUT
             "CUPS-Get-Printers.ipp":
                 CUPS-Get-Printers                                                    [PASS]
-          OUTPUT
+        OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdin: request, stdout: stdout, exitcode: 0)
 
@@ -184,7 +184,7 @@ RSpec.describe PuppetX::Cups::Ipp::QueryT do
                     Duplicate "pwg-raster-document-type-supported" attribute in printer-attributes-tag group
                     Duplicate "pwg-raster-document-resolution-supported" attribute in printer-attributes-tag group
                     printer-name (nameWithoutLanguage) = Office
-          OUTPUT
+        OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdin: request, stdout: stdout, exitcode: 0)
 
@@ -214,7 +214,7 @@ RSpec.describe PuppetX::Cups::Ipp::QueryT do
                     printer-name (nameWithoutLanguage) = BackOffice
                     printer-name (nameWithoutLanguage) = Office
                     printer-name (nameWithoutLanguage) = Warehouse
-          OUTPUT
+        OUTPUT
 
         mock_shellout = double(PuppetX::Cups::Shell::ShellOut, stdin: request, stdout: stdout, exitcode: 0)
 

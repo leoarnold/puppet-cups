@@ -8,9 +8,9 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
   describe 'static class method' do
     describe '#instances' do
-      shared_examples 'correct instances' do |classmembers, printers|
+      shared_examples 'correct instances' do |class_members, printers|
         it 'returns the correct array of provider instances' do
-          allow(PuppetX::Cups::Instances).to receive(:classmembers).and_return(classmembers)
+          allow(PuppetX::Cups::Instances).to receive(:class_members).and_return(class_members)
           allow(PuppetX::Cups::Instances).to receive(:printers).and_return(printers)
 
           instances = cups.instances
@@ -22,7 +22,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
             expect(instance.ensure).to eq(:printer)
           end
 
-          classmembers.each do |name, members|
+          class_members.each do |name, members|
             instances.delete_if { |i| instance = i if i.name == name }
             expect(instance).to be_a cups
             expect(instance.ensure).to eq(:class)

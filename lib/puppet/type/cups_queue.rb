@@ -100,13 +100,13 @@ Puppet::Type.newtype(:cups_queue) do
       provider.destroy if provider.queue_exists?
     end
 
-    def change_to_s(currentvalue, newvalue)
-      return "created a #{should_to_s(newvalue)}" if currentvalue == :absent || currentvalue.nil?
-      return "#{is_to_s(currentvalue)} removed" if newvalue == :absent
-      "changed from #{is_to_s(currentvalue)} to #{should_to_s(newvalue)}"
+    def change_to_s(current_value, new_value)
+      return "created a #{should_to_s(new_value)}" unless %i[class printer].include?(current_value)
+      return "#{is_to_s(current_value)} removed" unless %i[class printer].include?(new_value)
+      "changed from #{is_to_s(current_value)} to #{should_to_s(new_value)}"
     end
 
-    def is_to_s(value) # rubocop:disable Naming/PredicateName
+    def is_to_s(value)
       value.to_s
     end
 
@@ -151,7 +151,7 @@ Puppet::Type.newtype(:cups_queue) do
       value
     end
 
-    def is_to_s(value) # rubocop:disable Naming/PredicateName
+    def is_to_s(value)
       value.to_s
     end
 
@@ -209,7 +209,7 @@ Puppet::Type.newtype(:cups_queue) do
       raise ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if value =~ %r{[\s/#]}
     end
 
-    def is_to_s(value) # rubocop:disable Naming/PredicateName
+    def is_to_s(value)
       value.to_s
     end
 
@@ -251,12 +251,12 @@ Puppet::Type.newtype(:cups_queue) do
       end
     end
 
-    def is_to_s(currentvalue) # rubocop:disable Naming/PredicateName
-      currentvalue.sort.to_h.to_s
+    def is_to_s(current_value)
+      current_value.sort.to_h.to_s
     end
 
-    def should_to_s(newvalue)
-      newvalue.sort.to_h.to_s
+    def should_to_s(new_value)
+      new_value.sort.to_h.to_s
     end
   end
 

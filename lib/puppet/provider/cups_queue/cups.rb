@@ -17,12 +17,12 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   def self.instances
     providers = []
     # Discover class instances
-    PuppetX::Cups::Instances.classmembers.each do |classname, membernames|
-      providers << new(name: classname, ensure: :class, members: membernames)
+    PuppetX::Cups::Instances.class_members.each do |class_name, member_names|
+      providers << new(name: class_name, ensure: :class, members: member_names)
     end
     # Discover printer instances
-    PuppetX::Cups::Instances.printers.each do |printername|
-      providers << new(name: printername, ensure: :printer)
+    PuppetX::Cups::Instances.printers.each do |printer_name|
+      providers << new(name: printer_name, ensure: :printer)
     end
     providers
   end
@@ -105,8 +105,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   ### Property getters and setters
 
   def ensure
-    prefetched = @property_hash[:ensure]
-    prefetched ? prefetched : :absent
+    @property_hash[:ensure] || :absent
   end
 
   def accepting
@@ -185,8 +184,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def members
-    prefetched = @property_hash[:members]
-    prefetched if prefetched
+    @property_hash[:members]
   end
 
   def members=(_value)
@@ -371,7 +369,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   #
   # @yield The command to be executed as root user
   def while_root_allowed
-    acl = (resource.should(:access) ? resource.should(:access) : access)
+    acl = (resource.should(:access) || access)
     debug("CUPS #4781: Temporarily allowing 'root' user to access the queue.")
     self.access = { 'policy' => 'allow', 'users' => ['root'] }
     yield
