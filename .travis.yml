@@ -18,6 +18,7 @@ script: bundle exec rake travis:ci
 jobs:
   include:
   - stage: Report test coverage to code climate
+    if: branch = release
     rvm: 2.5.1
     before_script:
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter

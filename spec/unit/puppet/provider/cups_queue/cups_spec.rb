@@ -338,6 +338,11 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     describe '#enabled=' do
+      before do
+        allow(provider).to receive(:access).and_return('policy' => 'allow', 'users' => %w[lumbergh nina])
+        allow(provider).to receive(:lpadmin).and_return(nil)
+      end
+
       describe "'true'" do
         it 'calls #cupsenable with the correct arguments' do
           allow(provider).to receive(:cupsenable)
@@ -437,21 +442,22 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     describe '#make_and_model=(_value)' do
+      before do
+        allow(provider).to receive(:create_printer).and_return(nil)
+        allow(provider).to receive(:check_make_and_model).and_return(nil)
+      end
+
       context 'when ensuring a printer' do
         it 'calls #create_printer' do
-          allow(provider).to receive(:create_printer)
-
           provider.make_and_model = 'Local Raw Printer'
 
           expect(provider).to have_received(:create_printer)
         end
 
         it 'calls #check_make_and_model' do
-          allow(provider).to receive(:check_make_and_model)
-
           provider.make_and_model = 'Local Raw Printer'
 
-          expect(provider).to have_received(:check_make_and_model).twice
+          expect(provider).to have_received(:check_make_and_model)
         end
       end
     end
