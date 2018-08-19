@@ -18,7 +18,7 @@ group :development do
 end
 
 group :acceptance_testing do
-  gem 'beaker', '~> 3.27'
+  gem 'beaker', '~> 4.0'
   gem 'beaker-rspec', '~> 6.2'
 end
 
