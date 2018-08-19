@@ -148,13 +148,14 @@ RSpec.describe 'Custom type `cups_queue`' do
       include_examples 'modifying a printer', [manifest, 'Generic text-only printer']
     end
 
-    context 'using a full-fledged manifest' do
+    describe 'using a full-fledged manifest' do
       context 'when the queue is absent' do
         before(:all) do
           purge_all_queues
         end
 
-        manifest = <<-MANIFEST
+        let(:manifest) do
+          <<~MANIFEST
           cups_queue { '#{name}':
             ensure         => 'printer',
             model          => 'drv:///sample.drv/deskjet.ppd',
@@ -169,7 +170,8 @@ RSpec.describe 'Custom type `cups_queue`' do
             options        => { 'job-quota-period' => '604800', 'job-page-limit' => '100' },
             shared         => false
           }
-        MANIFEST
+          MANIFEST
+        end
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
@@ -182,17 +184,19 @@ RSpec.describe 'Custom type `cups_queue`' do
     end
   end
 
-  context 'managing a printer' do
-    context 'setting the URI' do
-      uri = 'lpd://192.168.2.105/binary_p1'
+  context 'when managing a printer' do
+    context 'when setting the URI' do
+      let(:uri) { 'lpd://192.168.2.105/binary_p1' }
 
-      manifest = <<-MANIFEST
-        cups_queue { '#{name}':
-          ensure => 'printer',
-          model  => 'drv:///sample.drv/generic.ppd',
-          uri    => '#{uri}',
-        }
-      MANIFEST
+      let(:manifest) do
+        <<~MANIFEST
+          cups_queue { '#{name}':
+            ensure => 'printer',
+            model  => 'drv:///sample.drv/generic.ppd',
+            uri    => '#{uri}',
+          }
+        MANIFEST
+      end
 
       context 'when the queue is absent' do
         before(:all) do

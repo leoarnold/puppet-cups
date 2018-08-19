@@ -7,14 +7,16 @@ RSpec.describe 'Custom type `cups_queue`' do
     ensure_cups_is_running
   end
 
-  context 'ensuring absence' do
+  context 'when ensuring absence' do
     queue = 'Office'
 
-    manifest = <<-MANIFEST
-      cups_queue { '#{queue}':
-        ensure => 'absent'
-      }
-    MANIFEST
+    let(:manifest) do
+      <<~MANIFEST
+        cups_queue { '#{queue}':
+          ensure => 'absent'
+        }
+      MANIFEST
+    end
 
     context 'when the queue is absent' do
       before(:all) do

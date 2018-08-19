@@ -8,19 +8,21 @@ RSpec.describe 'Circumventing CUPS issue #4766' do
     ensure_cups_is_running
   end
 
-  context 'ensuring a queue' do
-    context "when is shared via IPP by some remote host and 'shared'" do
-      context 'is not specified' do
+  context 'when ensuring a queue' do
+    context 'when is shared via IPP by some remote host' do
+      context "when 'shared' is not specified" do
         before(:all) do
           purge_all_queues
         end
 
-        manifest = <<-MANIFEST
-          cups_queue { 'Office':
-            ensure  => 'printer',
-            uri     => 'ipp://192.168.10.20/printers/Office',
-          }
-        MANIFEST
+        let(:manifest) do
+          <<~MANIFEST
+            cups_queue { 'Office':
+              ensure  => 'printer',
+              uri     => 'ipp://192.168.10.20/printers/Office',
+            }
+          MANIFEST
+        end
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
@@ -31,40 +33,44 @@ RSpec.describe 'Circumventing CUPS issue #4766' do
         end
       end
 
-      context '=> true' do
+      context "when 'shared' is set to true" do
         before(:all) do
           purge_all_queues
         end
 
-        manifest = <<-MANIFEST
-          cups_queue { 'Office':
-            ensure  => 'printer',
-            uri     => 'ipp://192.168.10.20/printers/Office',
-            shared  => true
-          }
-        MANIFEST
+        let(:manifest) do
+          <<~MANIFEST
+            cups_queue { 'Office':
+              ensure  => 'printer',
+              uri     => 'ipp://192.168.10.20/printers/Office',
+              shared  => true
+            }
+          MANIFEST
+        end
 
-        it 'it fails to apply changes' do
+        it 'fails to apply changes' do
           command = apply_manifest(manifest, expect_failures: true)
 
           expect(command.stderr).to include('printer-is-shared for remote queues')
         end
       end
 
-      context '=> false' do
+      context "when 'shared' is set to false" do
         before(:all) do
           purge_all_queues
         end
 
-        manifest = <<-MANIFEST
-          cups_queue { 'Office':
-            ensure  => 'printer',
-            uri     => 'ipp://192.168.10.20/printers/Office',
-            shared  => false
-          }
-        MANIFEST
+        let(:manifest) do
+          <<~MANIFEST
+            cups_queue { 'Office':
+              ensure  => 'printer',
+              uri     => 'ipp://192.168.10.20/printers/Office',
+              shared  => false
+            }
+          MANIFEST
+        end
 
-        it 'it fails to apply changes' do
+        it 'fails to apply changes' do
           command = apply_manifest(manifest, expect_failures: true)
 
           expect(command.stderr).to include('printer-is-shared for remote queues')

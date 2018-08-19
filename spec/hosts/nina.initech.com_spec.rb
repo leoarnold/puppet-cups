@@ -15,7 +15,7 @@ RSpec.describe 'nina.initech.com' do
     let(:hiera_config) { 'spec/fixtures/hiera5.yaml' }
   end
 
-  context 'using a hiera example' do
+  context 'when using a hiera example' do
     it { should contain_class('cups').with(web_interface: true) }
 
     it { should contain_cups_queue('Warehouse').with(ensure: 'printer') }

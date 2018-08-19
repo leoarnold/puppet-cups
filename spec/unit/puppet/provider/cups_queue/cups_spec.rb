@@ -9,27 +9,29 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
   describe 'static class method' do
     describe '#instances' do
       shared_examples 'correct instances' do |class_members, printers|
-        it 'returns the correct array of provider instances' do
+        before do
           allow(PuppetX::Cups::Instances).to receive(:class_members).and_return(class_members)
           allow(PuppetX::Cups::Instances).to receive(:printers).and_return(printers)
+        end
 
-          instances = cups.instances
-          instance = nil
+        let(:class_instances) do
+          instances = cups.instances.select { |i| i.ensure == :class }
 
-          printers.each do |name|
-            instances.delete_if { |i| instance = i if i.name == name }
-            expect(instance).to be_a cups
-            expect(instance.ensure).to eq(:printer)
-          end
+          instances.map { |i| [i.name, i.members] }
+        end
 
-          class_members.each do |name, members|
-            instances.delete_if { |i| instance = i if i.name == name }
-            expect(instance).to be_a cups
-            expect(instance.ensure).to eq(:class)
-            expect(instance.members).to eq(members)
-          end
+        let(:printer_instances) do
+          instances = cups.instances.select { |i| i.ensure == :printer }
 
-          expect(instances).to eq([])
+          instances.map(&:name)
+        end
+
+        it 'returns the correct array of print queues' do
+          expect(printer_instances).to match_array(printers)
+        end
+
+        it 'returns the correct hash of classes and their members' do
+          expect(class_instances).to match_array(class_members)
         end
       end
 
@@ -52,25 +54,30 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
     describe '#prefetch' do
       shared_examples 'correct prefetch' do |specified, installed|
-        it 'adds all discovered provider instance to their resources if specified' do
-          instances = []
-          resource_hash = {}
-
-          installed.each do |name|
-            instances << cups.new(cups_queue.new(name: name, ensure: :printer))
+        let(:instances) do
+          installed.map do |name|
+            cups.new(cups_queue.new(name: name, ensure: :printer))
           end
+        end
 
+        let(:resource_hash) do
+          specified.map do |name|
+            [name, cups_queue.new(name: name, ensure: :printer)]
+          end.to_h
+        end
+
+        before do
           allow(cups).to receive(:instances).and_return(instances)
 
-          specified.each do |name|
-            resource_hash[name] = cups_queue.new(name: name, ensure: :printer)
-          end
-
           cups.prefetch(resource_hash)
+        end
 
-          specified.each do |name|
-            expect(resource_hash[name].provider).to be_a cups if installed.include? name
+        it 'adds all discovered provider instance to their resources if specified' do
+          providers = (specified & installed).map do |name|
+            resource_hash[name].provider
           end
+
+          expect(providers).to all(be_a cups)
         end
       end
 
@@ -93,12 +100,21 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     let(:provider) { cups.new(resource) }
 
     describe '#create_class' do
-      context 'using the minimal manifest' do
-        it 'installs the class with default values' do
-          expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-c', 'GroundFloor')
-          expect(provider).to receive(:lpadmin).with('-E', '-p', 'Warehouse', '-c', 'GroundFloor')
+      context 'when using a minimal manifest with two members' do
+        before do
+          allow(provider).to receive(:lpadmin)
+        end
 
+        it 'adds the first printer to the class' do
           provider.create_class
+
+          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-c', 'GroundFloor')
+        end
+
+        it 'adds the second printer to the class' do
+          provider.create_class
+
+          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Warehouse', '-c', 'GroundFloor')
         end
       end
     end
@@ -106,9 +122,11 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     describe '#destroy' do
       it 'deletes the class if it exists' do
         allow(provider).to receive(:queue_exists?).and_return(true)
-        expect(provider).to receive(:lpadmin).with('-E', '-x', 'GroundFloor')
+        allow(provider).to receive(:lpadmin)
 
         provider.destroy
+
+        expect(provider).to have_received(:lpadmin).with('-E', '-x', 'GroundFloor')
       end
     end
   end
@@ -119,25 +137,41 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
       let(:provider) { cups.new(resource) }
 
       describe '#create_printer' do
-        it 'installs the printer with default values and checks for correct make_and_model' do
-          switch = { model: '-m', ppd: '-P' }
-          method = (manifest.keys & switch.keys)[0]
+        let(:switch) { { model: '-m', ppd: '-P' } }
+        let(:method) { (manifest.keys & switch.keys)[0] }
 
-          allow(provider).to receive(:lpadmin).with('-E', '-x', 'Office')
-          expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', 'file:///dev/null')
-          expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', switch[method], manifest[method]) if method
-          expect(provider).to receive(:check_make_and_model)
+        before do
+          allow(provider).to receive(:lpadmin)
+          allow(provider).to receive(:check_make_and_model)
+        end
 
+        it 'installs a print queue' do
           provider.create_printer
+
+          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-v', 'file:///dev/null')
+        end
+
+        it 'sets the driver' do
+          provider.create_printer
+
+          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', switch[method], manifest[method]) if method
+        end
+
+        it 'checks for correct make and model' do
+          provider.create_printer
+
+          expect(provider).to have_received(:check_make_and_model)
         end
       end
 
       describe '#destroy' do
         it 'deletes the printer if it exists' do
           allow(provider).to receive(:queue_exists?).and_return(true)
-          expect(provider).to receive(:lpadmin).with('-E', '-x', 'Office')
+          allow(provider).to receive(:lpadmin)
 
           provider.destroy
+
+          expect(provider).to have_received(:lpadmin).with('-E', '-x', 'Office')
         end
       end
     end
@@ -178,26 +212,32 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
     describe '#accepting' do
       it 'calls #query with the correct parameter' do
-        expect(provider).to receive(:query).with('printer-is-accepting-jobs')
+        allow(provider).to receive(:query)
 
         provider.accepting
+
+        expect(provider).to have_received(:query).with('printer-is-accepting-jobs')
       end
     end
 
     describe '#accepting=' do
-      context 'true' do
+      describe 'true' do
         it 'calls #cupsaccept with the correct arguments' do
-          expect(provider).to receive(:cupsaccept).with('-E', 'Office')
+          allow(provider).to receive(:cupsaccept)
 
           provider.accepting = :true
+
+          expect(provider).to have_received(:cupsaccept).with('-E', 'Office')
         end
       end
 
-      context 'false' do
+      describe 'false' do
         it 'calls #cupsreject with the correct arguments' do
-          expect(provider).to receive(:cupsreject).with('-E', 'Office')
+          allow(provider).to receive(:cupsreject)
 
           provider.accepting = :false
+
+          expect(provider).to have_received(:cupsreject).with('-E', 'Office')
         end
       end
     end
@@ -232,26 +272,30 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     describe '#access=' do
-      context "{ 'policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'] }" do
+      describe "{ 'policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'] }" do
         it 'executes the correct command' do
-          expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-u', 'allow:@council,lumbergh,nina')
+          allow(provider).to receive(:lpadmin)
 
           provider.access = { 'policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'] }
+
+          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-u', 'allow:@council,lumbergh,nina')
         end
       end
 
-      context "{ 'policy' => 'deny', 'users' => ['@council', 'lumbergh', 'nina'] }" do
+      describe "{ 'policy' => 'deny', 'users' => ['@council', 'lumbergh', 'nina'] }" do
         it 'executes the correct command' do
-          expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-u', 'deny:@council,lumbergh,nina')
+          allow(provider).to receive(:lpadmin)
 
           provider.access = { 'policy' => 'deny', 'users' => ['@council', 'lumbergh', 'nina'] }
+
+          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-u', 'deny:@council,lumbergh,nina')
         end
       end
     end
 
     describe '#description' do
       it 'calls #query with the correct parameter' do
-        expect(provider).to receive(:query).with('printer-info').and_return('color / duplex / stapling')
+        allow(provider).to receive(:query).with('printer-info').and_return('color / duplex / stapling')
 
         expect(provider.description).to eq('color / duplex / stapling')
       end
@@ -259,16 +303,18 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
     describe '#description=' do
       it 'calls #lpadmin with the correct arguments' do
-        expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-D', 'color / duplex / stapling')
+        allow(provider).to receive(:lpadmin)
 
         provider.description = 'color / duplex / stapling'
+
+        expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-D', 'color / duplex / stapling')
       end
     end
 
     describe '#enabled' do
       context 'when the printer is idle' do
         it "returns 'true'" do
-          expect(provider).to receive(:query).with('printer-state').and_return('idle')
+          allow(provider).to receive(:query).with('printer-state').and_return('idle')
 
           expect(provider.enabled).to eq(:true)
         end
@@ -276,7 +322,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
       context 'when the printer is processing' do
         it "returns 'true'" do
-          expect(provider).to receive(:query).with('printer-state').and_return('processing')
+          allow(provider).to receive(:query).with('printer-state').and_return('processing')
 
           expect(provider.enabled).to eq(:true)
         end
@@ -284,7 +330,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
       context 'when the printer is stopped' do
         it "returns 'false'" do
-          expect(provider).to receive(:query).with('printer-state').and_return('stopped')
+          allow(provider).to receive(:query).with('printer-state').and_return('stopped')
 
           expect(provider.enabled).to eq(:false)
         end
@@ -292,23 +338,23 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     describe '#enabled=' do
-      context "'true'" do
+      describe "'true'" do
         it 'calls #cupsenable with the correct arguments' do
-          target_acl = { 'policy' => 'allow', 'users' => %w[lumbergh nina] }
-          expect(provider).to receive(:access).and_return(target_acl)
-          expect(provider).to receive(:access=).with('policy' => 'allow', 'users' => ['root'])
-          expect(provider).to receive(:cupsenable).with('-E', 'Office')
-          expect(provider).to receive(:access=).with(target_acl)
+          allow(provider).to receive(:cupsenable)
 
           provider.enabled = :true
+
+          expect(provider).to have_received(:cupsenable).with('-E', 'Office')
         end
       end
 
-      context "'false'" do
+      describe "'false'" do
         it 'calls #cupsdisable with the correct arguments' do
-          expect(provider).to receive(:cupsdisable).with('-E', 'Office')
+          allow(provider).to receive(:cupsdisable)
 
           provider.enabled = :false
+
+          expect(provider).to have_received(:cupsdisable).with('-E', 'Office')
         end
       end
     end
@@ -316,7 +362,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     describe '#held' do
       context 'when new jobs are being held' do
         it "returns 'true'" do
-          expect(provider).to receive(:query).with('printer-state-reasons').and_return('hold-new-jobs')
+          allow(provider).to receive(:query).with('printer-state-reasons').and_return('hold-new-jobs')
 
           expect(provider.held).to eq(:true)
         end
@@ -324,7 +370,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
       context 'when new jobs are NOT being held' do
         it "returns 'false'" do
-          expect(provider).to receive(:query).with('printer-state-reasons').and_return('paused')
+          allow(provider).to receive(:query).with('printer-state-reasons').and_return('paused')
 
           expect(provider.held).to eq(:false)
         end
@@ -332,26 +378,30 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     describe '#held=' do
-      context 'true' do
+      describe 'true' do
         it 'calls #cupsenable with the correct arguments' do
-          expect(provider).to receive(:cupsdisable).with('-E', '--hold', 'Office')
+          allow(provider).to receive(:cupsdisable)
 
           provider.held = :true
+
+          expect(provider).to have_received(:cupsdisable).with('-E', '--hold', 'Office')
         end
       end
 
-      context 'false' do
+      describe 'false' do
         it 'calls #cupsdisable with the correct arguments' do
-          expect(provider).to receive(:cupsenable).with('-E', '--release', 'Office')
+          allow(provider).to receive(:cupsenable)
 
           provider.held = :false
+
+          expect(provider).to have_received(:cupsenable).with('-E', '--release', 'Office')
         end
       end
     end
 
     describe '#location' do
       it 'calls #query with the correct parameter' do
-        expect(provider).to receive(:query).with('printer-location').and_return('Room 101')
+        allow(provider).to receive(:query).with('printer-location').with('printer-location').and_return('Room 101')
 
         expect(provider.location).to eq('Room 101')
       end
@@ -359,9 +409,11 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
     describe '#location=' do
       it 'calls #lpadmin with the correct arguments' do
-        expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-L', 'Room 101')
+        allow(provider).to receive(:lpadmin)
 
         provider.location = 'Room 101'
+
+        expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-L', 'Room 101')
       end
     end
 
@@ -377,7 +429,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
       context 'when fetching a printer' do
         it 'calls #query with the correct parameter' do
           allow(provider).to receive(:printer_exists?).and_return(true)
-          expect(provider).to receive(:query).with('printer-make-and-model').and_return('Local Raw Printer')
+          allow(provider).to receive(:query).with('printer-make-and-model').and_return('Local Raw Printer')
 
           expect(provider.make_and_model).to eq('Local Raw Printer')
         end
@@ -386,11 +438,20 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
     describe '#make_and_model=(_value)' do
       context 'when ensuring a printer' do
-        it 'calls #create_printer and #check_make_and_model' do
-          expect(provider).to receive(:create_printer)
-          expect(provider).to receive(:check_make_and_model)
+        it 'calls #create_printer' do
+          allow(provider).to receive(:create_printer)
 
           provider.make_and_model = 'Local Raw Printer'
+
+          expect(provider).to have_received(:create_printer)
+        end
+
+        it 'calls #check_make_and_model' do
+          allow(provider).to receive(:check_make_and_model)
+
+          provider.make_and_model = 'Local Raw Printer'
+
+          expect(provider).to have_received(:check_make_and_model).twice
         end
       end
     end
@@ -399,9 +460,11 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
       context 'when ensuring a class' do
         it 'calls #create_class' do
           allow(provider).to receive(:class_exists?).and_return(true)
-          expect(provider).to receive(:create_class)
+          allow(provider).to receive(:create_class)
 
           provider.members = %w[Office Warehouse]
+
+          expect(provider).to have_received(:create_class)
         end
       end
     end
@@ -419,34 +482,49 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
       end
 
       context 'when the `options` property is specified' do
-        it 'fails on unsupported options' do
-          current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
-          should = { 'TimeZone' => 'Saturn' }
-
+        before do
           allow(resource).to receive(:should).with(:options).and_return(should)
           allow(provider).to receive(:supported_options_is).and_return(current)
-
-          expect { provider.options }.to raise_error(/TimeZone/)
         end
 
-        it 'returns a hash of all specified options and their current values' do
-          current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
-          should = { 'PageSize' => 'A4' }
-          expected = { 'PageSize' => 'Letter' }
+        context 'when using an unsupported option' do
+          let(:current) { { 'PageSize' => 'Letter', 'Duplex' => 'None' } }
+          let(:should) { { 'TimeZone' => 'Saturn' } }
 
-          allow(resource).to receive(:should).with(:options).and_return(should)
-          allow(provider).to receive(:supported_options_is).and_return(current)
+          it 'fails' do
+            expect { provider.options }.to raise_error(/TimeZone/)
+          end
+        end
 
-          expect(provider.options).to eq(expected)
+        context 'when only using only supported options' do
+          let(:current) { { 'PageSize' => 'Letter', 'Duplex' => 'None' } }
+          let(:should) { { 'PageSize' => 'A4' } }
+          let(:expected) { { 'PageSize' => 'Letter' } }
+
+          it 'returns a hash of all specified options and their current values' do
+            expect(provider.options).to eq(expected)
+          end
         end
       end
 
       describe '#options=' do
-        context "{ 'PageSize' => 'A4', 'Duplex' => 'None' }" do
-          it 'makes the correct calls to `lpadmin`' do
-            expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'PageSize=A4')
-            expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'Duplex=None')
-            provider.options = { 'PageSize' => 'A4', 'Duplex' => 'None' }
+        describe "{ 'PageSize' => 'A4', 'Duplex' => 'None' }" do
+          let(:options) { { 'PageSize' => 'A4', 'Duplex' => 'None' } }
+
+          it 'sets the PageSize' do
+            allow(provider).to receive(:lpadmin)
+
+            provider.options = options
+
+            expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-o', 'PageSize=A4')
+          end
+
+          it 'sets the duplex mode' do
+            allow(provider).to receive(:lpadmin)
+
+            provider.options = options
+
+            expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-o', 'Duplex=None')
           end
         end
       end
@@ -464,17 +542,21 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
     describe '#shared' do
       it 'calls #query with the correct parameter' do
-        expect(provider).to receive(:query).with('printer-is-shared')
+        allow(provider).to receive(:query)
 
         provider.shared
+
+        expect(provider).to have_received(:query).with('printer-is-shared')
       end
     end
 
     describe '#shared=' do
       it 'calls #lpadmin with the correct arguments' do
-        expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-o', 'printer-is-shared=true')
+        allow(provider).to receive(:lpadmin)
 
         provider.shared = :true
+
+        expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-o', 'printer-is-shared=true')
       end
     end
 
@@ -482,8 +564,8 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
       context 'when fetching a printer' do
         it 'calls #query with the correct parameter' do
           allow(provider).to receive(:printer_exists?).and_return(true)
+          allow(provider).to receive(:query).with('device-uri').and_return('file:///dev/null')
 
-          expect(provider).to receive(:query).with('device-uri').and_return('file:///dev/null')
           expect(provider.uri).to eq('file:///dev/null')
         end
       end
@@ -491,9 +573,11 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
     describe '#uri=' do
       it 'calls #lpadmin with the correct arguments' do
-        expect(provider).to receive(:lpadmin).with('-E', '-p', 'Office', '-v', 'file:///dev/null')
+        allow(provider).to receive(:lpadmin)
 
         provider.uri = 'file:///dev/null'
+
+        expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-v', 'file:///dev/null')
       end
     end
   end
@@ -504,9 +588,11 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
     describe '#query' do
       it 'sends a query to the IPP module' do
-        expect(PuppetX::Cups::Queue).to receive(:attribute).with('Office', 'printer-location')
+        allow(PuppetX::Cups::Queue).to receive(:attribute)
 
         provider.send(:query, 'printer-location')
+
+        expect(PuppetX::Cups::Queue).to have_received(:attribute).with('Office', 'printer-location')
       end
     end
 
@@ -515,7 +601,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         it 'does not raise an error' do
           allow(provider).to receive(:query).with('printer-make-and-model').and_return('Local Raw Printer')
 
-          expect { provider.send(:check_make_and_model) }.not_to raise_error
+          expect { provider.send(:check_make_and_model) }.to_not raise_error
         end
       end
 
@@ -523,15 +609,15 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         let(:resource) { cups_queue.new(ensure: 'printer', name: 'Office', make_and_model: 'HP DeskJet 550C') }
         let(:provider) { cups.new(resource) }
 
-        context 'and the `model` / `ppd` was suitable to achieve this make_and_model' do
+        context 'when the `model` / `ppd` was suitable to achieve this make_and_model' do
           it 'does not raise an error' do
             allow(provider).to receive(:query).with('printer-make-and-model').and_return('HP DeskJet 550C')
 
-            expect { provider.send(:check_make_and_model) }.not_to raise_error
+            expect { provider.send(:check_make_and_model) }.to_not raise_error
           end
         end
 
-        context 'and the `model` / `ppd` did NOT yield this make_and_model' do
+        context 'when the `model` / `ppd` did NOT yield this make_and_model' do
           it 'does not raise an error' do
             allow(provider).to receive(:query).with('printer-make-and-model').and_return('Local Raw Printer')
 
@@ -542,31 +628,35 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     describe '#specified_options_is' do
-      it 'fails on unsupported options' do
-        current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
-        should = { 'TimeZone' => 'Saturn' }
+      context 'when using an unsupported option' do
+        let(:current) { { 'PageSize' => 'Letter', 'Duplex' => 'None' } }
+        let(:should) { { 'TimeZone' => 'Saturn' } }
 
-        allow(provider).to receive(:supported_options_is).and_return(current)
+        it 'fails on unsupported options' do
+          allow(provider).to receive(:supported_options_is).and_return(current)
 
-        expect { provider.send(:specified_options_is, should) }.to raise_error(/TimeZone/)
+          expect { provider.send(:specified_options_is, should) }.to raise_error(/TimeZone/)
+        end
       end
 
-      it 'returns a hash of all specified options and their current values' do
-        current = { 'PageSize' => 'Letter', 'Duplex' => 'None' }
-        should = { 'PageSize' => 'A4' }
-        expected = { 'PageSize' => 'Letter' }
+      context 'when using only supported options' do
+        let(:current) { { 'PageSize' => 'Letter', 'Duplex' => 'None' } }
+        let(:should) { { 'PageSize' => 'A4' } }
+        let(:expected) { { 'PageSize' => 'Letter' } }
 
-        allow(provider).to receive(:supported_options_is).and_return(current)
+        it 'returns a hash of all specified options and their current values' do
+          allow(provider).to receive(:supported_options_is).and_return(current)
 
-        expect(provider.send(:specified_options_is, should)).to eq(expected)
+          expect(provider.send(:specified_options_is, should)).to eq(expected)
+        end
       end
     end
 
     describe '#supported_options_is' do
-      it 'merges native and vendor options' do
-        native = { 'printer-error-policy' => 'retry-job' }
-        vendor = { 'Duplex' => 'None' }
+      let(:native) { { 'printer-error-policy' => 'retry-job' } }
+      let(:vendor) { { 'Duplex' => 'None' } }
 
+      it 'merges native and vendor options' do
         allow(provider).to receive(:native_options_is).and_return(native)
         allow(provider).to receive(:vendor_options_is).and_return(vendor)
 
@@ -583,7 +673,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     describe '#query_native_option' do
-      context "'auth-info-required'" do
+      describe "'auth-info-required'" do
         it "upon empty query result returns 'none'" do
           allow(provider).to receive(:query).with('auth-info-required').and_return('')
 
@@ -597,7 +687,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         end
       end
 
-      context 'using any other option' do
+      context 'when using any other option' do
         it 'returns nonempty query results unmodified' do
           allow(provider).to receive(:query).with('printer-error-policy').and_return('abort-job')
 
@@ -607,9 +697,9 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     describe '#vendor_options_is' do
-      context 'for a raw queue' do
-        it 'should return an empty hash' do
-          input = "lpoptions: Unable to get PPD file for Rawe: Not Found\n"
+      context 'with a raw queue' do
+        it 'returns an empty hash' do
+          input = "lpoptions: Unable to get PPD file for Raw: Not Found\n"
 
           allow(provider).to receive(:lpoptions).with('-E', '-p', 'Office', '-l').and_return(input)
 
@@ -617,22 +707,26 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         end
       end
 
-      context 'for a queue using a PPD file' do
-        it 'should return a hash of vendor options and their current values' do
-          input = <<~INPUT
+      context 'with a queue using a PPD file' do
+        let(:input) do
+          <<~INPUT
             PageSize/Who: Custom.WIDTHxHEIGHT Letter Legal Executive FanFoldGermanLegal *A4 A5 A6 Env10 EnvMonarch EnvDL EnvC5
             MediaType/cares: *PLAIN THIN THICK THICKERPAPER2 BOND ENV ENVTHICK ENVTHIN RECYCLED
             InputSlot/about: MANUAL *TRAY1
             Duplex/this: DuplexTumble DuplexNoTumble *None
           INPUT
+        end
 
-          expected = {
+        let(:expected) do
+          {
             'PageSize' => 'A4',
             'MediaType' => 'PLAIN',
             'InputSlot' => 'TRAY1',
             'Duplex' => 'None'
           }
+        end
 
+        it 'returns a hash of vendor options and their current values' do
           allow(provider).to receive(:lpoptions).with('-E', '-p', 'Office', '-l').and_return(input)
 
           expect(provider.send(:vendor_options_is)).to eq(expected)

@@ -41,5 +41,6 @@ group :metatools do
   gem 'guard-rubocop', '~> 1.3'
   gem 'overcommit', '~> 0.41'
   gem 'rubocop', '~> 0.51'
+  gem 'rubocop-rspec', '~> 1.28'
   gem 'travis', '~> 1.8'
 end

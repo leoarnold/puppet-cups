@@ -6,10 +6,8 @@ RSpec.describe 'cups' do
   context 'with default values for all attributes' do
     let(:facts) { any_supported_os }
 
-    it { should contain_class('cups::params') }
-
-    it do
-      defaults = {
+    let(:defaults) do
+      {
         listen: ['localhost:631', '/var/run/cups/cups.sock'],
         package_ensure: 'present',
         package_manage: 'true',
@@ -19,20 +17,22 @@ RSpec.describe 'cups' do
         service_manage: 'true',
         service_names: 'cups'
       }
-
-      should contain_class('cups').with(defaults)
     end
 
-    it do
-      undefs = %i[
+    let(:undefs) do
+      %i[
         default_queue
         papersize
         resources
         web_interface
       ]
-
-      should contain_class('cups').without(undefs)
     end
+
+    it { should contain_class('cups::params') }
+
+    it { should contain_class('cups').with(defaults) }
+
+    it { should contain_class('cups').without(undefs) }
 
     it { should contain_class('cups::packages') }
 
@@ -52,18 +52,18 @@ RSpec.describe 'cups' do
     describe 'default_queue' do
       let(:facts) { any_supported_os }
 
-      context 'not provided' do
+      context 'when not provided' do
         it { should_not contain_exec('cups::queues::default') }
       end
 
-      context "=> 'Office'" do
+      context "when set to 'Office'" do
         let(:params) { { default_queue: 'Office' } }
 
-        context "but the catalog does NOT contain the corresponding 'cups_queue' resource" do
+        context "when the catalog does NOT contain the corresponding 'cups_queue' resource" do
           it { should_not compile }
         end
 
-        context "and the catalog contains the corresponding 'cups_queue' resource" do
+        context "when the catalog contains the corresponding 'cups_queue' resource" do
           let(:pre_condition) { "cups_queue { 'Office':  ensure => 'printer' }" }
 
           it { should contain_exec('cups::queues::default').with(command: "lpadmin -E -d 'Office'") }
@@ -78,19 +78,19 @@ RSpec.describe 'cups' do
     describe 'listen' do
       let(:facts) { any_supported_os }
 
-      context 'by default' do
+      describe 'by default' do
         it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen localhost:631$/) }
 
         it { should contain_file('/etc/cups/cupsd.conf').with(content: %r{^Listen /var/run/cups/cups.sock$}) }
       end
 
-      context "=> '*:631'" do
+      context "when set to '*:631'" do
         let(:params) { { listen: '*:631' } }
 
         it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen \*:631$/) }
       end
 
-      context "=> ['*:631', 'localhost:8080']" do
+      context "when set to ['*:631', 'localhost:8080']" do
         let(:params) { { listen: ['*:631', 'localhost:8080'] } }
 
         it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen \*:631$/) }
@@ -100,7 +100,7 @@ RSpec.describe 'cups' do
     end
 
     describe 'package_manage' do
-      context '=> true' do
+      context 'when set to true' do
         context 'with default package_names' do
           on_supported_os.each do |os, facts|
             %w[present absent].each do |package_ensure|
@@ -182,7 +182,7 @@ RSpec.describe 'cups' do
         end
       end
 
-      context '=> false' do
+      context 'when set to false' do
         let(:params) { { package_manage: false } }
 
         context 'with default package_names' do
@@ -214,11 +214,11 @@ RSpec.describe 'cups' do
     describe 'papersize' do
       let(:facts) { any_supported_os }
 
-      context '=> undef' do
+      context 'when set to undef' do
         it { should_not contain_exec('cups::papersize') }
       end
 
-      context '=> a4' do
+      context 'when set to a4' do
         let(:params) { { papersize: 'a4' } }
 
         it { should contain_exec('cups::papersize').with(command: 'paperconfig -p a4') }
@@ -230,13 +230,13 @@ RSpec.describe 'cups' do
     describe 'purge_unmanaged_queues' do
       let(:facts) { any_supported_os }
 
-      context '=> true' do
+      context 'when set to true' do
         let(:params) { { purge_unmanaged_queues: true } }
 
         it { should contain_resources('cups_queue').with(purge: 'true') }
       end
 
-      context '=> false' do
+      context 'when set to false' do
         let(:params) { { purge_unmanaged_queues: false } }
 
         it { should contain_resources('cups_queue').with(purge: 'false') }
@@ -246,7 +246,7 @@ RSpec.describe 'cups' do
     describe 'resources' do
       let(:facts) { any_supported_os }
 
-      context "=> { 'BackOffice' => { 'ensure' => 'printer' }, UpperFloor' => { 'ensure' => 'class', 'members' => ['BackOffice'] }" do
+      context "when set to { 'BackOffice' => { 'ensure' => 'printer' }, UpperFloor' => { 'ensure' => 'class', 'members' => ['BackOffice'] }" do
         let(:params) do
           {
             resources: {
@@ -265,7 +265,7 @@ RSpec.describe 'cups' do
     describe 'service_manage' do
       let(:facts) { any_supported_os }
 
-      context '=> true' do
+      context 'when set to true' do
         context "with service_names => 'mycups'," do
           %w[running stopped].each do |service_ensure|
             context "service_ensure => #{service_ensure}" do
@@ -311,7 +311,7 @@ RSpec.describe 'cups' do
         end
       end
 
-      context '=> false' do
+      context 'when set to false' do
         %w[cups mycups].each do |service_names|
           context "with service_names => #{service_names}," do
             let(:params) { { service_manage: false, service_names: service_names } }
@@ -343,13 +343,13 @@ RSpec.describe 'cups' do
     describe 'web_interface' do
       let(:facts) { any_supported_os }
 
-      context '=> true' do
+      context 'when set to true' do
         let(:params) { { web_interface: true } }
 
         it { should contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface Yes$/) }
       end
 
-      context '=> false' do
+      context 'when set to false' do
         let(:params) { { web_interface: false } }
 
         it { should contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface No$/) }

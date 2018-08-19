@@ -9,20 +9,21 @@ RSpec.describe 'Custom type `cups_queue`' do
 
   name = 'RSpec&Test_Printer'
 
-  context 'managing any queue' do
+  context 'when managing any queue' do
     before(:all) do
       purge_all_queues
       add_printers(name)
     end
 
-    context 'changing only the property' do
-      context 'access' do
+    context 'when changing only the property' do
+      describe 'access' do
         before(:all) do
           shell("lpadmin -E -p #{Shellwords.escape(name)} -u allow:all")
         end
 
         context 'with policy => allow' do
-          manifest = <<-MANIFEST
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               access => {
@@ -30,7 +31,8 @@ RSpec.describe 'Custom type `cups_queue`' do
                 'users'  => ['nina', 'lumbergh', '@council', 'nina'],
               }
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -42,7 +44,8 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
 
         context 'with policy => allow and changing users' do
-          manifest = <<-MANIFEST
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               access => {
@@ -50,7 +53,8 @@ RSpec.describe 'Custom type `cups_queue`' do
                 'users'  => ['lumbergh', 'bolton'],
               }
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -62,7 +66,8 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
 
         context 'with policy => deny' do
-          manifest = <<-MANIFEST
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               access => {
@@ -70,7 +75,8 @@ RSpec.describe 'Custom type `cups_queue`' do
                 'users'  => ['nina', 'lumbergh', '@council', 'nina'],
               }
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -82,7 +88,8 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
 
         context 'with policy => deny and changing users' do
-          manifest = <<-MANIFEST
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               access => {
@@ -90,7 +97,8 @@ RSpec.describe 'Custom type `cups_queue`' do
                 'users'  => ['lumbergh', 'bolton'],
               }
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -101,8 +109,9 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
         end
 
-        context 'unsetting all restrictions' do
-          manifest = <<-MANIFEST
+        context 'when unsetting all restrictions' do
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               access => {
@@ -110,7 +119,8 @@ RSpec.describe 'Custom type `cups_queue`' do
                 'users'  => ['all'],
               }
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -122,18 +132,20 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
       end
 
-      context 'accepting' do
+      describe 'accepting' do
         before(:all) do
           shell("cupsreject -E #{Shellwords.escape(name)}")
         end
 
-        context '=> true' do
-          manifest = <<-MANIFEST
-            cups_queue { '#{name}':
-              ensure    => 'printer',
-              accepting => true
-            }
-          MANIFEST
+        context 'when set to true' do
+          let(:manifest) do
+            <<~MANIFEST
+              cups_queue { '#{name}':
+                ensure    => 'printer',
+                accepting => true
+              }
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -148,13 +160,15 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
         end
 
-        context '=> false' do
-          manifest = <<-MANIFEST
-            cups_queue { '#{name}':
-              ensure    => 'printer',
-              accepting => false
-            }
-          MANIFEST
+        context 'when set to false' do
+          let(:manifest) do
+            <<~MANIFEST
+              cups_queue { '#{name}':
+                ensure    => 'printer',
+                accepting => false
+              }
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -170,17 +184,19 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
       end
 
-      context 'description' do
+      describe 'description' do
         before(:all) do
           shell("lpadmin -E -p #{Shellwords.escape(name)} -D 'color'")
         end
 
-        manifest = <<-MANIFEST
-          cups_queue { '#{name}':
-            ensure      => 'printer',
-            description => 'duplex'
-          }
-        MANIFEST
+        let(:manifest) do
+          <<~MANIFEST
+            cups_queue { '#{name}':
+              ensure      => 'printer',
+              description => 'duplex'
+            }
+          MANIFEST
+        end
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
@@ -195,25 +211,27 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
       end
 
-      context 'enabled' do
+      describe 'enabled' do
         before(:all) do
           shell("cupsdisable -E #{Shellwords.escape(name)}")
         end
 
-        context '=> true' do
-          manifest = <<-MANIFEST
-            cups_queue { '#{name}':
-              ensure  => 'printer',
-              enabled => true
-            }
-          MANIFEST
+        context 'when set to true' do
+          let(:manifest) do
+            <<~MANIFEST
+              cups_queue { '#{name}':
+                ensure  => 'printer',
+                enabled => true
+              }
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
           end
 
           it 'sets the correct value' do
-            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).not_to match(/printer-state-reasons=\S*paused\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to_not match(/printer-state-reasons=\S*paused\S*/)
           end
 
           it 'is idempotent' do
@@ -221,13 +239,15 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
         end
 
-        context '=> false' do
-          manifest = <<-MANIFEST
+        context 'when set to false' do
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure  => 'printer',
               enabled => false
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -243,18 +263,20 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
       end
 
-      context 'held' do
+      describe 'held' do
         before(:all) do
           shell("cupsenable -E --release #{Shellwords.escape(name)}")
         end
 
-        context '=> true' do
-          manifest = <<-MANIFEST
+        context 'when set to true' do
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               held   => true
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -269,20 +291,22 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
         end
 
-        context '=> false' do
-          manifest = <<-MANIFEST
+        context 'when set to false' do
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               held   => false
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
           end
 
           it 'sets the correct value' do
-            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).not_to match(/printer-state-reasons=\S*hold-new-jobs\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to_not match(/printer-state-reasons=\S*hold-new-jobs\S*/)
           end
 
           it 'is idempotent' do
@@ -291,17 +315,19 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
       end
 
-      context 'location' do
+      describe 'location' do
         before(:all) do
           shell("lpadmin -E -p #{Shellwords.escape(name)} -L 'Room 451'")
         end
 
-        manifest = <<-MANIFEST
+        let(:manifest) do
+          <<~MANIFEST
           cups_queue { '#{name}':
             ensure   => 'printer',
             location => 'Room 101'
           }
-        MANIFEST
+          MANIFEST
+        end
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
@@ -316,8 +342,8 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
       end
 
-      context 'options' do
-        context 'using native options' do
+      describe 'options' do
+        context 'when using native options' do
           before(:all) do
             shell("lpadmin -E -p #{Shellwords.escape(name)}" \
               ' -o auth-info-required=negotiate' \
@@ -325,7 +351,8 @@ RSpec.describe 'Custom type `cups_queue`' do
               ' -o printer-error-policy=retry-current-job')
           end
 
-          manifest = <<-MANIFEST
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure  => 'printer',
               options => {
@@ -334,7 +361,8 @@ RSpec.describe 'Custom type `cups_queue`' do
                 'job-sheets-default'   => 'none,none'
               }
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -345,20 +373,21 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
         end
 
-        context 'using vendor options' do
+        context 'when using vendor options' do
           before(:all) do
-            shell("lpadmin -E -p #{Shellwords.escape(name)} -o Duplex=None -o PageSize=Letter")
+            shell("lpadmin -E -p #{Shellwords.escape(name)} -o Duplex=None")
           end
 
-          manifest = <<-MANIFEST
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure  => 'printer',
               options => {
                 'Duplex'   => 'DuplexNoTumble',
-                'PageSize' => 'A4'
               }
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -366,8 +395,8 @@ RSpec.describe 'Custom type `cups_queue`' do
 
           it 'sets the correct values' do
             output = shell("lpoptions -p #{Shellwords.escape(name)} -l").stdout
+
             expect(output).to match(%r{Duplex/.*\s\*DuplexNoTumble\s})
-            expect(output).to match(%r{PageSize/.*\s\*A4\s})
           end
 
           it 'is idempotent' do
@@ -376,18 +405,20 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
       end
 
-      context 'shared' do
+      describe 'shared' do
         before(:all) do
           shell("lpadmin -E -p #{Shellwords.escape(name)} -o printer-is-shared=false")
         end
 
-        context '=> true' do
-          manifest = <<-MANIFEST
+        context 'when set to true' do
+          let(:manifest) do
+            <<~MANIFEST
             cups_queue { '#{name}':
               ensure => 'printer',
               shared => true
             }
-          MANIFEST
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -398,13 +429,15 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
         end
 
-        context '=> false' do
-          manifest = <<-MANIFEST
-            cups_queue { '#{name}':
-              ensure => 'printer',
-              shared => false
-            }
-          MANIFEST
+        context 'when set to false' do
+          let(:manifest) do
+            <<~MANIFEST
+              cups_queue { '#{name}':
+                ensure => 'printer',
+                shared => false
+              }
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)

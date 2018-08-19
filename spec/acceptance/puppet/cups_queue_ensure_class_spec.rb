@@ -7,21 +7,23 @@ RSpec.describe 'Custom type `cups_queue`' do
     ensure_cups_is_running
   end
 
-  context 'ensuring a class' do
+  context 'when ensuring a class' do
     context 'when the queue is absent' do
-      context 'and all designated members are present' do
-        context 'using a minimal manifest' do
+      context 'when all designated members are present' do
+        context 'when using a minimal manifest' do
           before(:all) do
             purge_all_queues
             add_printers('Office', 'Warehouse')
           end
 
-          manifest = <<-MANIFEST
-            cups_queue { 'GroundFloor':
-              ensure  => 'class',
-              members => ['Office', 'Warehouse']
-            }
-          MANIFEST
+          let(:manifest) do
+            <<~MANIFEST
+              cups_queue { 'GroundFloor':
+                ensure  => 'class',
+                members => ['Office', 'Warehouse']
+              }
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -32,26 +34,28 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
         end
 
-        context 'using a full-fledged manifest' do
+        context 'when using a full-fledged manifest' do
           before(:all) do
             purge_all_queues
             add_printers('Office', 'Warehouse')
           end
 
-          manifest = <<-MANIFEST
-            cups_queue { 'GroundFloor':
-              ensure         => 'class',
-              members        => ['Office', 'Warehouse'],
-              access         => { 'policy' => 'allow', 'users' => ['root'] },
-              accepting      => true,
-              description    => 'A full-fledged queue',
-              enabled        => true,
-              held           => true,
-              location       => 'Room 101',
-              options        => { 'job-quota-period' => '604800', 'job-page-limit' => '100' },
-              shared         => false
-            }
-          MANIFEST
+          let(:manifest) do
+            <<~MANIFEST
+              cups_queue { 'GroundFloor':
+                ensure         => 'class',
+                members        => ['Office', 'Warehouse'],
+                access         => { 'policy' => 'allow', 'users' => ['root'] },
+                accepting      => true,
+                description    => 'A full-fledged queue',
+                enabled        => true,
+                held           => true,
+                location       => 'Room 101',
+                options        => { 'job-quota-period' => '604800', 'job-page-limit' => '100' },
+                shared         => false
+              }
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -63,40 +67,44 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
       end
 
-      context 'and all designated members are absent' do
-        context 'and NOT specified in the catalog' do
+      context 'when all designated members are absent' do
+        context 'when NOT specified in the catalog' do
           before(:all) do
             purge_all_queues
           end
 
-          manifest = <<-MANIFEST
-            cups_queue { 'GroundFloor':
-              ensure  => 'class',
-              members => ['Office', 'Warehouse']
-            }
-          MANIFEST
+          let(:manifest) do
+            <<~MANIFEST
+              cups_queue { 'GroundFloor':
+                ensure  => 'class',
+                members => ['Office', 'Warehouse']
+              }
+            MANIFEST
+          end
 
           it 'applying the manifest fails' do
             apply_manifest(manifest, expect_failures: true)
           end
         end
 
-        context 'but specified in the catalog' do
+        context 'when specified in the catalog' do
           before(:all) do
             purge_all_queues
           end
 
-          manifest = <<-MANIFEST
-            cups_queue { 'GroundFloor':
-              ensure  => 'class',
-              members => ['Office', 'Warehouse']
-            }
+          let(:manifest) do
+            <<~MANIFEST
+              cups_queue { 'GroundFloor':
+                ensure  => 'class',
+                members => ['Office', 'Warehouse']
+              }
 
-            cups_queue { ['Office', 'Warehouse']:
-              ensure => 'printer',
-              model  => 'drv:///sample.drv/generic.ppd',
-            }
-          MANIFEST
+              cups_queue { ['Office', 'Warehouse']:
+                ensure => 'printer',
+                model  => 'drv:///sample.drv/generic.ppd',
+              }
+            MANIFEST
+          end
 
           it 'applies changes' do
             apply_manifest(manifest, expect_changes: true)
@@ -110,15 +118,17 @@ RSpec.describe 'Custom type `cups_queue`' do
     end
 
     context 'when the queue is present as class' do
-      context 'and all designated members are present' do
-        manifest = <<-MANIFEST
-          cups_queue { 'GroundFloor':
-            ensure  => 'class',
-            members => ['Office', 'Warehouse']
-          }
-        MANIFEST
+      context 'when all designated members are present' do
+        let(:manifest) do
+          <<~MANIFEST
+            cups_queue { 'GroundFloor':
+              ensure  => 'class',
+              members => ['Office', 'Warehouse']
+            }
+          MANIFEST
+        end
 
-        context 'but some are not members yet' do
+        context 'when some are not members yet' do
           before(:all) do
             purge_all_queues
             add_printers('Office', 'Warehouse')
@@ -134,7 +144,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
         end
 
-        context 'and the class already consists of them, but in wrong order' do
+        context 'when the class already consists of them, but in wrong order' do
           before(:all) do
             purge_all_queues
             add_printers('Office', 'Warehouse')
@@ -150,7 +160,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
         end
 
-        context 'and they already are members, amongst others' do
+        context 'when they already are members, amongst others' do
           before(:all) do
             purge_all_queues
             add_printers('BackOffice', 'Office', 'Warehouse')
@@ -171,20 +181,22 @@ RSpec.describe 'Custom type `cups_queue`' do
         end
       end
 
-      context 'and some of the designated members are absent' do
-        manifest = <<-MANIFEST
-          cups_queue { 'GroundFloor':
-            ensure  => 'class',
-            members => ['Office', 'Warehouse']
-          }
+      context 'when some of the designated members are absent' do
+        let(:manifest) do
+          <<~MANIFEST
+            cups_queue { 'GroundFloor':
+              ensure  => 'class',
+              members => ['Office', 'Warehouse']
+            }
 
-          cups_queue { ['Office', 'Warehouse']:
-            ensure => 'printer',
-            model  => 'drv:///sample.drv/generic.ppd',
-          }
-        MANIFEST
+            cups_queue { ['Office', 'Warehouse']:
+              ensure => 'printer',
+              model  => 'drv:///sample.drv/generic.ppd',
+            }
+          MANIFEST
+        end
 
-        context 'and there are NO unwanted members' do
+        context 'when there are NO unwanted members' do
           before(:all) do
             purge_all_queues
             add_printers('Office')
@@ -200,7 +212,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
         end
 
-        context 'and there are unwanted members' do
+        context 'when there are unwanted members' do
           before(:all) do
             purge_all_queues
             add_printers('BackOffice', 'Office')
@@ -228,12 +240,14 @@ RSpec.describe 'Custom type `cups_queue`' do
         add_printers('GroundFloor', 'Office', 'Warehouse')
       end
 
-      manifest = <<-MANIFEST
-        cups_queue { 'GroundFloor':
-          ensure  => 'class',
-          members => ['Office', 'Warehouse']
-        }
-      MANIFEST
+      let(:manifest) do
+        <<~MANIFEST
+          cups_queue { 'GroundFloor':
+            ensure  => 'class',
+            members => ['Office', 'Warehouse']
+          }
+        MANIFEST
+      end
 
       it 'applies changes' do
         apply_manifest(manifest, expect_changes: true)

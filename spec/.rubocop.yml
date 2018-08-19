@@ -1,6 +1,25 @@
 ---
 inherit_from: ../.rubocop.yml
+
 AllCops:
   TargetRubyVersion: 2.3
 Layout/IndentHeredoc:
   EnforcedStyle: squiggly
+RSpec/BeforeAfterAll:
+  Exclude:
+  - 'acceptance/**/*'
+  - 'api/ipptool_spec.rb'
+RSpec/DescribeClass:
+  Enabled: false
+RSpec/ImplicitExpect:
+  EnforcedStyle: should
+RSpec/InstanceVariable:
+  Exclude:
+  - 'api/ipptool_spec.rb'
+RSpec/NestedGroups:
+  Enabled: false
+RSpec/NotToNot:
+  EnforcedStyle: to_not
+RSpec/RepeatedExample:
+  Exclude:
+  - 'classes/init_spec.rb'

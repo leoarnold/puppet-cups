@@ -3,9 +3,9 @@
 require 'spec_helper_acceptance'
 
 RSpec.describe 'Including class "cups"' do
-  context 'Default class inclusion' do
+  describe 'default class inclusion' do
     context 'when applying' do
-      manifest = 'include cups'
+      let(:manifest) { 'include cups' }
 
       it 'applies without error' do
         apply_manifest(manifest)
@@ -16,7 +16,7 @@ RSpec.describe 'Including class "cups"' do
       end
     end
 
-    context 'after applying' do
+    describe 'after applying' do
       describe service('cups') do
         it { should be_running }
         it { should be_enabled }

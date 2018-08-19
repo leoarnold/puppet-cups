@@ -4,18 +4,13 @@ require 'spec_helper'
 
 require 'puppet_x/cups/queue'
 
-RSpec.describe PuppetX::Cups::Queue do
-  describe '##attribute' do
-  end
-end
-
 RSpec.describe PuppetX::Cups::Queue::Attribute do
   describe '#value' do
     context 'when the query result is an empty array' do
       it 'returns an empty string' do
         attribute = described_class.new('Office', 'auth-info-required')
 
-        mock_query = double(PuppetX::Cups::Ipp::QueryC, results: [])
+        mock_query = instance_double(PuppetX::Cups::Ipp::QueryC, results: [])
 
         allow(PuppetX::Cups::Ipp).to receive(:query).and_return(mock_query)
 
@@ -27,7 +22,7 @@ RSpec.describe PuppetX::Cups::Queue::Attribute do
       it 'returns the first entry and strips surrounding quotes' do
         attribute = described_class.new('Office', 'printer-make-and-model')
 
-        mock_query = double(PuppetX::Cups::Ipp::QueryC, results: ['"HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3"'])
+        mock_query = instance_double(PuppetX::Cups::Ipp::QueryC, results: ['"HP Color LaserJet 4730mfp pcl3, hpcups 3.14.3"'])
 
         allow(PuppetX::Cups::Ipp).to receive(:query).and_return(mock_query)
 

@@ -133,7 +133,7 @@ RSpec.describe 'Ipptool' do
 
           describe 'stdout' do
             it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<-OUTPUT
+              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
         EXPECTED: STATUS successful-ok (got client-error-not-found)
         status-message="No destinations added."
               OUTPUT
@@ -161,7 +161,7 @@ RSpec.describe 'Ipptool' do
 
             it { expect(@result.stdout).to include 'EXPECTED: STATUS successful-ok (got client-error-not-found)' }
 
-            it { expect(@result.stdout).not_to include 'printer-name' }
+            it { expect(@result.stdout).to_not include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -215,7 +215,7 @@ RSpec.describe 'Ipptool' do
           describe 'stdout' do
             it { expect(@result.stdout).to include '[PASS]' }
 
-            it { expect(@result.stdout).not_to include 'printer-name' }
+            it { expect(@result.stdout).to_not include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -252,7 +252,7 @@ RSpec.describe 'Ipptool' do
 
           describe 'stdout' do
             it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<-OUTPUT
+              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
         EXPECTED: STATUS successful-ok (got client-error-not-found)
         status-message="No destinations added."
               OUTPUT
@@ -280,7 +280,7 @@ RSpec.describe 'Ipptool' do
 
             it { expect(@result.stdout).to include 'EXPECTED: STATUS successful-ok (got client-error-not-found)' }
 
-            it { expect(@result.stdout).not_to include 'printer-name' }
+            it { expect(@result.stdout).to_not include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -333,7 +333,7 @@ RSpec.describe 'Ipptool' do
           describe 'stdout' do
             it { expect(@result.stdout).to include '[PASS]' }
 
-            it { expect(@result.stdout).not_to include 'printer-name' }
+            it { expect(@result.stdout).to_not include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -398,7 +398,7 @@ RSpec.describe 'Ipptool' do
           describe 'stdout' do
             it { expect(@result.stdout).to include '[PASS]' }
 
-            it { expect(@result.stdout).not_to include 'printer-name' }
+            it { expect(@result.stdout).to_not include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -452,7 +452,7 @@ RSpec.describe 'Ipptool' do
           describe 'stdout' do
             it { expect(@result.stdout).to include '[PASS]' }
 
-            it { expect(@result.stdout).not_to include 'printer-name' }
+            it { expect(@result.stdout).to_not include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -492,24 +492,22 @@ RSpec.describe 'Ipptool' do
           end
 
           describe 'stdout' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
+            let(:expected) do
+              DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
                 printer-name
                 BackOffice
                 Office
                 Warehouse
               OUTPUT
-
-              expect(@result.stdout).to eq expected
             end
+
+            it { expect(@result.stdout).to eq expected }
           end
 
           describe 'stderr' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? "successful-ok\n" : ''
+            let(:expected) { DEBIAN_PWG_RASTER_PATCH ? "successful-ok\n" : '' }
 
-              expect(@result.stderr).to eq expected
-            end
+            it { expect(@result.stderr).to eq expected }
           end
         end
 
@@ -519,19 +517,15 @@ RSpec.describe 'Ipptool' do
           end
 
           describe 'exit code' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? 1 : 0
+            let(:expected) { DEBIAN_PWG_RASTER_PATCH ? 1 : 0 }
 
-              expect(@result.exit_code).to be expected
-            end
+            it { expect(@result.exit_code).to be expected }
           end
 
           describe 'stdout' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '[FAIL]' : '[PASS]'
+            let(:expected) { DEBIAN_PWG_RASTER_PATCH ? '[FAIL]' : '[PASS]' }
 
-              expect(@result.stdout).to include expected
-            end
+            it { expect(@result.stdout).to include expected }
 
             it { expect(@result.stdout).to include 'status-code = successful-ok (successful-ok)' } if DEBIAN_PWG_RASTER_PATCH
 
@@ -549,9 +543,9 @@ RSpec.describe 'Ipptool' do
       end
 
       context 'without STATUS clause' do
-        before(:all) do
-          @ipp_resource = '/'
-          @ipp_request = <<~REQUEST
+        let(:ipp_resource) { '/' }
+        let(:ipp_request) do
+          <<~REQUEST
             {
               OPERATION CUPS-Get-Printers
               GROUP operation
@@ -568,32 +562,28 @@ RSpec.describe 'Ipptool' do
           end
 
           describe 'exit code' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? 1 : 0
+            let(:expected) { DEBIAN_PWG_RASTER_PATCH ? 1 : 0 }
 
-              expect(@result.exit_code).to be expected
-            end
+            it { expect(@result.exit_code).to be expected }
           end
 
           describe 'stdout' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
+            let(:expected) do
+              DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
                 printer-name
                 BackOffice
                 Office
                 Warehouse
               OUTPUT
-
-              expect(@result.stdout).to eq expected
             end
+
+            it { expect(@result.stdout).to eq expected }
           end
 
           describe 'stderr' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? "successful-ok\n" : ''
+            let(:expected) { DEBIAN_PWG_RASTER_PATCH ? "successful-ok\n" : '' }
 
-              expect(@result.stderr).to eq expected
-            end
+            it { expect(@result.stderr).to eq expected }
           end
         end
 
@@ -603,19 +593,15 @@ RSpec.describe 'Ipptool' do
           end
 
           describe 'exit code' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? 1 : 0
+            let(:expected) { DEBIAN_PWG_RASTER_PATCH ? 1 : 0 }
 
-              expect(@result.exit_code).to be expected
-            end
+            it { expect(@result.exit_code).to be expected }
           end
 
           describe 'stdout' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '[FAIL]' : '[PASS]'
+            let(:expected) { DEBIAN_PWG_RASTER_PATCH ? '[FAIL]' : '[PASS]' }
 
-              expect(@result.stdout).to include expected
-            end
+            it { expect(@result.stdout).to include expected }
 
             it { expect(@result.stdout).to include 'status-code = successful-ok (successful-ok)' } if DEBIAN_PWG_RASTER_PATCH
 
@@ -647,9 +633,9 @@ RSpec.describe 'Ipptool' do
 
     describe 'CUPS-Get-Classes' do
       context 'with STATUS successful-ok' do
-        before(:all) do
-          @ipp_resource = '/'
-          @ipp_request = <<~REQUEST
+        let(:ipp_resource) { '/' }
+        let(:ipp_request) do
+          <<~REQUEST
             {
               OPERATION CUPS-Get-Classes
               GROUP operation
@@ -664,7 +650,7 @@ RSpec.describe 'Ipptool' do
 
         describe "'ipptool -c'" do
           before(:all) do
-            @result = ipptool('-c', @ipp_resource, @ipp_request)
+            @result = ipptool('-c', ipp_resource, ipp_request)
           end
 
           describe 'exit code' do
@@ -672,16 +658,16 @@ RSpec.describe 'Ipptool' do
           end
 
           describe 'stdout' do
-            it do
-              expected = <<~OUTPUT
+            let(:expected) do
+              <<~OUTPUT
                 printer-name,member-names
                 CrawlSpace,
                 GroundFloor,"Office,Warehouse"
                 UpperFloor,BackOffice
               OUTPUT
-
-              expect(@result.stdout).to eq expected
             end
+
+            it { expect(@result.stdout).to eq expected }
           end
 
           describe 'stderr' do
@@ -699,27 +685,27 @@ RSpec.describe 'Ipptool' do
           end
 
           describe 'stdout' do
+            let(:class_and_members) do
+              <<~OUTPUT
+                printer-name (nameWithoutLanguage) = GroundFloor
+                member-names (1setOf nameWithoutLanguage) = Office,Warehouse
+              OUTPUT
+            end
+
+            let(:printers) do
+              <<~OUTPUT
+                printer-name (nameWithoutLanguage) = UpperFloor
+                member-names (nameWithoutLanguage) = BackOffice
+              OUTPUT
+            end
+
             it { expect(@result.stdout).to include '[PASS]' }
 
             it { expect(@result.stdout).to include 'printer-name (nameWithoutLanguage) = CrawlSpace' }
 
-            it do
-              expected = <<-OUTPUT
-        printer-name (nameWithoutLanguage) = GroundFloor
-        member-names (1setOf nameWithoutLanguage) = Office,Warehouse
-              OUTPUT
+            it { expect(@result.stdout).to include class_and_members }
 
-              expect(@result.stdout).to include expected
-            end
-
-            it do
-              expected = <<-OUTPUT
-        printer-name (nameWithoutLanguage) = UpperFloor
-        member-names (nameWithoutLanguage) = BackOffice
-              OUTPUT
-
-              expect(@result.stdout).to include expected
-            end
+            it { expect(@result.stdout).to include printers }
           end
 
           describe 'stderr' do
@@ -729,9 +715,9 @@ RSpec.describe 'Ipptool' do
       end
 
       context 'without STATUS clause' do
-        before(:all) do
-          @ipp_resource = '/'
-          @ipp_request = <<~REQUEST
+        let(:ipp_resource) { '/' }
+        let(:ipp_request) do
+          <<~REQUEST
             {
               OPERATION CUPS-Get-Classes
               GROUP operation
@@ -745,7 +731,7 @@ RSpec.describe 'Ipptool' do
 
         describe "'ipptool -c'" do
           before(:all) do
-            @result = ipptool('-c', @ipp_resource, @ipp_request)
+            @result = ipptool('-c', ipp_resource, ipp_request)
           end
 
           describe 'exit code' do
@@ -753,16 +739,16 @@ RSpec.describe 'Ipptool' do
           end
 
           describe 'stdout' do
-            it do
-              expected = <<~OUTPUT
+            let(:expected) do
+              <<~OUTPUT
                 printer-name,member-names
                 CrawlSpace,
                 GroundFloor,"Office,Warehouse"
                 UpperFloor,BackOffice
               OUTPUT
-
-              expect(@result.stdout).to eq expected
             end
+
+            it { expect(@result.stdout).to eq expected }
           end
 
           describe 'stderr' do
@@ -772,7 +758,7 @@ RSpec.describe 'Ipptool' do
 
         describe "'ipptool -t'" do
           before(:all) do
-            @result = ipptool('-t', @ipp_resource, @ipp_request)
+            @result = ipptool('-t', ipp_resource, ipp_request)
           end
 
           describe 'exit code' do
@@ -780,27 +766,27 @@ RSpec.describe 'Ipptool' do
           end
 
           describe 'stdout' do
+            let(:class_and_members) do
+              <<~OUTPUT
+                printer-name (nameWithoutLanguage) = GroundFloor
+                member-names (1setOf nameWithoutLanguage) = Office,Warehouse
+              OUTPUT
+            end
+
+            let(:printers) do
+              <<~OUTPUT
+                printer-name (nameWithoutLanguage) = UpperFloor
+                member-names (nameWithoutLanguage) = BackOffice
+              OUTPUT
+            end
+
             it { expect(@result.stdout).to include '[PASS]' }
 
             it { expect(@result.stdout).to include 'printer-name (nameWithoutLanguage) = CrawlSpace' }
 
-            it do
-              expected = <<-OUTPUT
-        printer-name (nameWithoutLanguage) = GroundFloor
-        member-names (1setOf nameWithoutLanguage) = Office,Warehouse
-              OUTPUT
+            it { expect(@result.stdout).to include class_and_members }
 
-              expect(@result.stdout).to include expected
-            end
-
-            it do
-              expected = <<-OUTPUT
-        printer-name (nameWithoutLanguage) = UpperFloor
-        member-names (nameWithoutLanguage) = BackOffice
-              OUTPUT
-
-              expect(@result.stdout).to include expected
-            end
+            it { expect(@result.stdout).to include printers }
           end
 
           describe 'stderr' do
@@ -812,9 +798,9 @@ RSpec.describe 'Ipptool' do
 
     describe 'CUPS-Get-Printers' do
       context 'with STATUS successful-ok' do
-        before(:all) do
-          @ipp_resource = '/'
-          @ipp_request = <<~REQUEST
+        let(:ipp_resource) { '/' }
+        let(:ipp_request) do
+          <<~REQUEST
             {
               OPERATION CUPS-Get-Printers
               GROUP operation
@@ -828,20 +814,18 @@ RSpec.describe 'Ipptool' do
 
         describe "'ipptool -c'" do
           before(:all) do
-            @result = ipptool('-c', @ipp_resource, @ipp_request)
+            @result = ipptool('-c', ipp_resource, ipp_request)
           end
 
           describe 'exit code' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? 1 : 0
+            let(:expected) { DEBIAN_PWG_RASTER_PATCH ? 1 : 0 }
 
-              expect(@result.exit_code).to be expected
-            end
+            it { expect(@result.exit_code).to be expected }
           end
 
           describe 'stdout' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
+            let(:expected) do
+              DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
                 printer-name
                 BackOffice
                 CrawlSpace
@@ -850,23 +834,21 @@ RSpec.describe 'Ipptool' do
                 UpperFloor
                 Warehouse
               OUTPUT
-
-              expect(@result.stdout).to eq expected
             end
+
+            it { expect(@result.stdout).to eq expected }
           end
 
           describe 'stderr' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? "successful-ok\n" : ''
+            let(:expected) { DEBIAN_PWG_RASTER_PATCH ? "successful-ok\n" : '' }
 
-              expect(@result.stderr).to eq expected
-            end
+            it { expect(@result.stderr).to eq expected }
           end
         end
 
         describe "'ipptool -t'" do
           before(:all) do
-            @result = ipptool('-t', @ipp_resource, @ipp_request)
+            @result = ipptool('-t', ipp_resource, ipp_request)
           end
 
           describe 'exit code' do
@@ -933,8 +915,8 @@ RSpec.describe 'Ipptool' do
           end
 
           describe 'stdout' do
-            it do
-              expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
+            let(:expected) do
+              DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
                 printer-name
                 BackOffice
                 CrawlSpace
@@ -943,7 +925,9 @@ RSpec.describe 'Ipptool' do
                 UpperFloor
                 Warehouse
               OUTPUT
+            end
 
+            it do
               expect(@result.stdout).to eq expected
             end
           end

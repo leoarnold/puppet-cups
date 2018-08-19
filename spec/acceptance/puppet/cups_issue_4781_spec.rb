@@ -2,32 +2,36 @@
 
 require 'spec_helper_acceptance'
 
-def manifest(access)
-  "cups_queue { 'Office':
-    ensure  => 'printer',
-    access  => #{access},
-    enabled => true,
-  }"
-end
-
 RSpec.describe 'Circumventing CUPS issue #4781' do
+  let(:manifest) do
+    <<~MANIFEST
+      cups_queue { 'Office':
+        ensure  => 'printer',
+        access  => #{access},
+        enabled => true
+      }
+    MANIFEST
+  end
+
   before(:all) do
     ensure_cups_is_running
   end
 
-  context 'ensuring a queue' do
+  context 'when ensuring a queue' do
     context 'when the queue is absent' do
       context 'without specifying an ACL' do
         before(:all) do
           purge_all_queues
         end
 
-        manifest = <<-MANIFEST
-          cups_queue { 'Office':
-            ensure  => 'printer',
-            enabled => true,
-          }
-        MANIFEST
+        let(:manifest) do
+          <<~MANIFEST
+            cups_queue { 'Office':
+              ensure  => 'printer',
+              enabled => true,
+            }
+          MANIFEST
+        end
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
@@ -38,75 +42,83 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
         end
       end
 
-      context 'with access =' do
-        describe "{ 'policy' => 'allow', users => ['all'] }" do
-          before(:all) do
-            purge_all_queues
-          end
-
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
-
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+      context 'when admitting everybody' do
+        before(:all) do
+          purge_all_queues
         end
 
-        describe "{ 'policy' => 'allow', users => ['sshd'] }" do
-          before(:all) do
-            purge_all_queues
-          end
+        let(:access) { "{ 'policy' => 'allow', users => ['all'] }" }
 
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
-
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
         end
 
-        describe "{ 'policy' => 'deny', users => ['sshd'] }" do
-          before(:all) do
-            purge_all_queues
-          end
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
 
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
-
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+      context 'when admitting just one specific user' do
+        before(:all) do
+          purge_all_queues
         end
 
-        describe "{ 'policy' => 'deny', users => ['root', 'sshd'] }" do
-          before(:all) do
-            purge_all_queues
-          end
+        let(:access) { "{ 'policy' => 'allow', users => ['sshd'] }" }
 
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
-
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
         end
 
-        describe "{ 'policy' => 'deny', users => ['all'] }" do
-          before(:all) do
-            purge_all_queues
-          end
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
 
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
+      context 'when denying just one specific user' do
+        before(:all) do
+          purge_all_queues
+        end
 
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+        let(:access) { "{ 'policy' => 'deny', users => ['sshd'] }" }
+
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
+
+      context 'when denying several users' do
+        before(:all) do
+          purge_all_queues
+        end
+
+        let(:access) { "{ 'policy' => 'deny', users => ['root', 'sshd'] }" }
+
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
+
+      context 'when denying everybody' do
+        before(:all) do
+          purge_all_queues
+        end
+
+        let(:access) { "{ 'policy' => 'deny', users => ['all'] }" }
+
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
         end
       end
     end
@@ -118,12 +130,14 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
           shell('cupsdisable -E Office')
         end
 
-        manifest = <<-MANIFEST
-          cups_queue { 'Office':
-            ensure  => 'printer',
-            enabled => true,
-          }
-        MANIFEST
+        let(:manifest) do
+          <<~MANIFEST
+            cups_queue { 'Office':
+              ensure  => 'printer',
+              enabled => true,
+            }
+          MANIFEST
+        end
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)
@@ -134,95 +148,105 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
         end
       end
 
-      context 'with access =' do
-        describe "{ 'policy' => 'allow', users => ['all'] }" do
-          before(:all) do
-            shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-            shell('cupsdisable -E Office')
-          end
-
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
-
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+      context 'when admitting everybody' do
+        before(:all) do
+          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable -E Office')
         end
 
-        describe "{ 'policy' => 'allow', users => ['sshd'] }" do
-          before(:all) do
-            shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-            shell('cupsdisable -E Office')
-          end
+        let(:access) { "{ 'policy' => 'allow', users => ['all'] }" }
 
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
-
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
         end
 
-        describe "{ 'policy' => 'allow', users => ['root', 'sshd'] }" do
-          before(:all) do
-            shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-            shell('cupsdisable -E Office')
-          end
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
 
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
-
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+      context 'when admitting just one specific user' do
+        before(:all) do
+          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable -E Office')
         end
 
-        describe "{ 'policy' => 'deny', users => ['sshd'] }" do
-          before(:all) do
-            shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-            shell('cupsdisable -E Office')
-          end
+        let(:access) { "{ 'policy' => 'allow', users => ['sshd'] }" }
 
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
-
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
         end
 
-        describe "{ 'policy' => 'deny', users => ['root', 'sshd'] }" do
-          before(:all) do
-            shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-            shell('cupsdisable -E Office')
-          end
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
 
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
-
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+      context 'when denying several users' do
+        before(:all) do
+          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable -E Office')
         end
 
-        describe "{ 'policy' => 'deny', users => ['all'] }" do
-          before(:all) do
-            shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-            shell('cupsdisable -E Office')
-          end
+        let(:access) { "{ 'policy' => 'deny', users => ['root', 'sshd'] }" }
 
-          it 'applies changes' do
-            apply_manifest(manifest(subject), expect_changes: true)
-          end
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
+        end
 
-          it 'is idempotent' do
-            apply_manifest(manifest(subject), catch_changes: true)
-          end
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
+
+      context 'when denying just one specific user' do
+        before(:all) do
+          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable -E Office')
+        end
+
+        let(:access) { "{ 'policy' => 'deny', users => ['sshd'] }" }
+
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
+
+      context 'when denying several users' do
+        before(:all) do
+          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable -E Office')
+        end
+
+        let(:access) { "{ 'policy' => 'deny', users => ['root', 'sshd'] }" }
+
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
+      end
+
+      context 'when denying everybody' do
+        before(:all) do
+          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable -E Office')
+        end
+
+        let(:access) { "{ 'policy' => 'deny', users => ['all'] }" }
+
+        it 'applies changes' do
+          apply_manifest(manifest, expect_changes: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
         end
       end
     end
