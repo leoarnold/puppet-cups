@@ -34,11 +34,6 @@ end
 
 group :metatools do
   gem 'github-linguist', '6.4.1'
-  gem 'guard', '~> 2.14'
-  gem 'guard-bundler', '~> 2.1'
-  gem 'guard-livereload', '~> 2.5'
-  gem 'guard-rake', '~> 1.0'
-  gem 'guard-rubocop', '~> 1.3'
   gem 'overcommit', '0.45.0'
   gem 'rubocop', '0.58.2'
   gem 'rubocop-rspec', '1.28.0'
