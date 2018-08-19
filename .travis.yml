@@ -18,7 +18,7 @@ script: bundle exec rake travis:ci
 jobs:
   include:
   - stage: Report test coverage to code climate
-    if: branch = release
+    if: branch = master
     rvm: 2.5.1
     before_script:
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -29,7 +29,7 @@ jobs:
     after_script:
     - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   - stage: Release on Puppet Forge
-    if: branch = master
+    if: branch = release
     rvm: 2.5.1
     script: bundle exec rake travis:deploy?
     deploy:
