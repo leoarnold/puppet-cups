@@ -29,7 +29,7 @@ jobs:
     after_script:
     - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   - stage: Release on Puppet Forge
-    if: branch = release
+    if: branch = master
     rvm: 2.5.1
     script: bundle exec rake travis:deploy?
     deploy:
