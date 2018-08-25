@@ -489,13 +489,13 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
       context 'when the `options` property is specified' do
         before do
-          allow(resource).to receive(:should).with(:options).and_return(should)
+          allow(resource).to receive(:should).with(:options).and_return(desired)
           allow(provider).to receive(:supported_options_is).and_return(current)
         end
 
         context 'when using an unsupported option' do
           let(:current) { { 'PageSize' => 'Letter', 'Duplex' => 'None' } }
-          let(:should) { { 'TimeZone' => 'Saturn' } }
+          let(:desired) { { 'TimeZone' => 'Saturn' } }
 
           it 'fails' do
             expect { provider.options }.to raise_error(/TimeZone/)
@@ -504,7 +504,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
         context 'when only using only supported options' do
           let(:current) { { 'PageSize' => 'Letter', 'Duplex' => 'None' } }
-          let(:should) { { 'PageSize' => 'A4' } }
+          let(:desired) { { 'PageSize' => 'A4' } }
           let(:expected) { { 'PageSize' => 'Letter' } }
 
           it 'returns a hash of all specified options and their current values' do
@@ -636,24 +636,24 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     describe '#specified_options_is' do
       context 'when using an unsupported option' do
         let(:current) { { 'PageSize' => 'Letter', 'Duplex' => 'None' } }
-        let(:should) { { 'TimeZone' => 'Saturn' } }
+        let(:desired) { { 'TimeZone' => 'Saturn' } }
 
         it 'fails on unsupported options' do
           allow(provider).to receive(:supported_options_is).and_return(current)
 
-          expect { provider.send(:specified_options_is, should) }.to raise_error(/TimeZone/)
+          expect { provider.send(:specified_options_is, desired) }.to raise_error(/TimeZone/)
         end
       end
 
       context 'when using only supported options' do
         let(:current) { { 'PageSize' => 'Letter', 'Duplex' => 'None' } }
-        let(:should) { { 'PageSize' => 'A4' } }
+        let(:desired) { { 'PageSize' => 'A4' } }
         let(:expected) { { 'PageSize' => 'Letter' } }
 
         it 'returns a hash of all specified options and their current values' do
           allow(provider).to receive(:supported_options_is).and_return(current)
 
-          expect(provider.send(:specified_options_is, should)).to eq(expected)
+          expect(provider.send(:specified_options_is, desired)).to eq(expected)
         end
       end
     end

@@ -38,10 +38,7 @@ RSpec.describe 'cups' do
 
     it { should contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
 
-    it do
-      should contain_file('/etc/cups/cupsd.conf')
-        .with(ensure: 'file', owner: 'root', group: 'lp', mode: '0640', content: /\A#.*DO NOT EDIT/)
-    end
+    it { should contain_file('/etc/cups/cupsd.conf').with(ensure: 'file', owner: 'root', group: 'lp', mode: '0640', content: /\A#.*DO NOT/) }
 
     it { should contain_class('cups::server').that_requires('Class[cups::packages]') }
 
