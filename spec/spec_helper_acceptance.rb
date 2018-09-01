@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require 'shellwords'
+
+require 'beaker'
+require 'beaker-puppet'
 require 'beaker-rspec'
 
 # Beaker related configuration
