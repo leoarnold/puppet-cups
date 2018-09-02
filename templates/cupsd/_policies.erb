@@ -1,63 +1,115 @@
-<Policy default>
-  JobPrivateAccess default
-  JobPrivateValues default
-  SubscriptionPrivateAccess default
-  SubscriptionPrivateValues default
-  <Limit Create-Job Print-Job Print-URI Validate-Job>
-    Order deny,allow
+<%
+  default_policies = {
+    'default' => {
+      'JobPrivateAccess' => 'default',
+      'JobPrivateValues' => 'default',
+      'SubscriptionPrivateAccess' => 'default',
+      'SubscriptionPrivateValues' => 'default',
+      'Limit' => {
+        %w[Create-Job Print-Job Print-URI Validate-Job] => { 'Order' => 'deny,allow' },
+        %w[Send-Document Send-URI Hold-Job Release-Job Restart-Job Purge-Jobs Set-Job-Attributes Create-Job-Subscription Renew-Subscription Cancel-Subscription Get-Notifications Reprocess-Job Cancel-Current-Job Suspend-Current-Job Resume-Job Cancel-My-Jobs Close-Job CUPS-Move-Job CUPS-Get-Document] => { 'Require' => 'user @OWNER @SYSTEM', 'Order' => 'deny,allow' },
+        %w[CUPS-Add-Modify-Printer CUPS-Delete-Printer CUPS-Add-Modify-Class CUPS-Delete-Class CUPS-Set-Default CUPS-Get-Devices] => { 'AuthType' => 'Default', 'Require' => 'user @SYSTEM', 'Order' => 'deny,allow' },
+        %w[Pause-Printer Resume-Printer Enable-Printer Disable-Printer Pause-Printer-After-Current-Job Hold-New-Jobs Release-Held-New-Jobs Deactivate-Printer Activate-Printer Restart-Printer Shutdown-Printer Startup-Printer Promote-Job Schedule-Job-After Cancel-Jobs CUPS-Accept-Jobs CUPS-Reject-Jobs] => { 'AuthType' => 'Default', 'Require' => 'user @SYSTEM', 'Order' => 'deny,allow' },
+        %w[Cancel-Job CUPS-Authenticate-Job] => { 'Require' => 'user @OWNER @SYSTEM', 'Order' => 'deny,allow' },
+        'All' => { 'Order' => 'deny,allow' }
+      }
+    },
+    'authenticated' => {
+      'JobPrivateAccess' => 'default',
+      'JobPrivateValues' => 'default',
+      'SubscriptionPrivateAccess' => 'default',
+      'SubscriptionPrivateValues' => 'default',
+      'Limit' => {
+        %w[Create-Job Print-Job Print-URI Validate-Job] => { 'AuthType' => 'Default', 'Order' => 'deny,allow' },
+        %w[Send-Document Send-URI Hold-Job Release-Job Restart-Job Purge-Jobs Set-Job-Attributes Create-Job-Subscription Renew-Subscription Cancel-Subscription Get-Notifications Reprocess-Job Cancel-Current-Job Suspend-Current-Job Resume-Job Cancel-My-Jobs Close-Job CUPS-Move-Job CUPS-Get-Document] => { 'AuthType' => 'Default', 'Require' => 'user @OWNER @SYSTEM', 'Order' => 'deny,allow' },
+        %w[CUPS-Add-Modify-Printer CUPS-Delete-Printer CUPS-Add-Modify-Class CUPS-Delete-Class CUPS-Set-Default] => { 'AuthType' => 'Default', 'Require' => 'user @SYSTEM', 'Order' => 'deny,allow' },
+        %w[Pause-Printer Resume-Printer Enable-Printer Disable-Printer Pause-Printer-After-Current-Job Hold-New-Jobs Release-Held-New-Jobs Deactivate-Printer Activate-Printer Restart-Printer Shutdown-Printer Startup-Printer Promote-Job Schedule-Job-After Cancel-Jobs CUPS-Accept-Jobs CUPS-Reject-Jobs] => { 'AuthType' => 'Default', 'Require' => 'user @SYSTEM', 'Order' => 'deny,allow' },
+        %w[Cancel-Job CUPS-Authenticate-Job] => { 'AuthType' => 'Default', 'Require' => 'user @OWNER @SYSTEM', 'Order' => 'deny,allow' },
+        'All' => { 'Order' => 'deny,allow' }
+      }
+    },
+    'kerberos' => {
+      'JobPrivateAccess' => 'default',
+      'JobPrivateValues' => 'default',
+      'SubscriptionPrivateAccess' => 'default',
+      'SubscriptionPrivateValues' => 'default',
+      'Limit' => {
+        %w[Create-Job Print-Job Print-URI Validate-Job] => { 'AuthType' => 'Negotiate', 'Order' => 'deny,allow' },
+        %w[Send-Document Send-URI Hold-Job Release-Job Restart-Job Purge-Jobs Set-Job-Attributes Create-Job-Subscription Renew-Subscription Cancel-Subscription Get-Notifications Reprocess-Job Cancel-Current-Job Suspend-Current-Job Resume-Job Cancel-My-Jobs Close-Job CUPS-Move-Job CUPS-Get-Document] => { 'AuthType' => 'Negotiate', 'Require' => 'user @OWNER @SYSTEM', 'Order' => 'deny,allow' },
+        %w[CUPS-Add-Modify-Printer CUPS-Delete-Printer CUPS-Add-Modify-Class CUPS-Delete-Class CUPS-Set-Default] => { 'AuthType' => 'Default', 'Require' => 'user @SYSTEM', 'Order' => 'deny,allow' },
+        %w[Pause-Printer Resume-Printer Enable-Printer Disable-Printer Pause-Printer-After-Current-Job Hold-New-Jobs Release-Held-New-Jobs Deactivate-Printer Activate-Printer Restart-Printer Shutdown-Printer Startup-Printer Promote-Job Schedule-Job-After Cancel-Jobs CUPS-Accept-Jobs CUPS-Reject-Jobs] => { 'AuthType' => 'Default', 'Require' => 'user @SYSTEM', 'Order' => 'deny,allow' },
+        %w[Cancel-Job CUPS-Authenticate-Job] => { 'AuthType' => 'Negotiate', 'Require' => 'user @OWNER @SYSTEM', 'Order' => 'deny,allow' },
+        'All' => { 'Order' => 'deny,allow' }
+      }
+    }
+  }
+
+  policies = default_policies
+
+  overridden_policies = default_policies.keys & @policies.keys
+  overridden_policies.each do |policy|
+    if @policies[policy]['Limit'].is_a?(Hash) && !@policies[policy]['Limit'].empty?
+      default_limits = default_policies[policy]['Limit']
+      desired_limits = @policies[policy].delete('Limit')
+
+      actions = (default_limits.keys.flatten | desired_limits.keys.flatten)
+      limits = {}
+      actions.each do |action|
+        limits[action] = (desired_limits.find { |k, _v| k.include?(action) } || [])[1] || default_limits.find { |k, _v| k.include?(action) }[1]
+      end
+
+      policies[policy]['Limit'] = { 'All' => limits.delete('All') }
+      limits.values.uniq.each do |v|
+        actions = limits.keys.select { |k| limits[k] == v }
+        policies[policy]['Limit'][actions] = v
+      end
+    end
+
+    policies[policy].merge!(@policies[policy])
+  end
+
+  custom_policies = @policies.keys - default_policies.keys
+  custom_policies.each do |policy|
+    policies[policy] = default_policies['default'].dup
+
+    if @policies[policy]['Limit'].is_a?(Hash) && !@policies[policy]['Limit'].empty?
+      default_limits = default_policies['default']['Limit']
+      desired_limits = @policies[policy].delete('Limit')
+
+      actions = (default_limits.keys.flatten | desired_limits.keys.flatten)
+      limits = {}
+      actions.each do |action|
+        limit[action] = (desired_limits.find { |k, _v| k.include?(action) } || [])[1] || default_limits.find { |k, _v| k.include?(action) }[1]
+      end
+
+      policies[policy]['Limit'] = { 'All' => limits['All'] }
+      limits.values.uniq.each do |v|
+        actions = limits.keys.select { |k| limits[k] == v } - ['All']
+        policies[policy]['Limit'][actions] = v
+      end
+    end
+
+    policies[policy].merge!(@policies[policy])
+  end
+-%>
+<% policies.each do |policy, config| -%>
+<Policy <%= policy %>>
+  JobPrivateAccess <%= config['JobPrivateAccess'] %>
+  JobPrivateValues <%= config['JobPrivateValues'] %>
+  SubscriptionPrivateAccess <%= config['SubscriptionPrivateAccess'] %>
+  SubscriptionPrivateValues <%= config['SubscriptionPrivateValues'] %>
+<% config['Limit'].each do |actions, restrictions| -%>
+<%   next if actions == 'All' -%>
+<%= "  <Limit #{actions.join(' ')}>" %>
+<%   restrictions.each do |k, v| -%>
+<%= "    #{k} #{v}" %>
+<%   end -%>
   </Limit>
-  <Limit Send-Document Send-URI Hold-Job Release-Job Restart-Job Purge-Jobs Set-Job-Attributes Create-Job-Subscription Renew-Subscription Cancel-Subscription Get-Notifications Reprocess-Job Cancel-Current-Job Suspend-Current-Job Resume-Job Cancel-My-Jobs Close-Job CUPS-Move-Job CUPS-Get-Document>
-    Require user @OWNER @SYSTEM
-    Order deny,allow
-  </Limit>
-  <Limit CUPS-Add-Modify-Printer CUPS-Delete-Printer CUPS-Add-Modify-Class CUPS-Delete-Class CUPS-Set-Default CUPS-Get-Devices>
-    AuthType Default
-    Require user @SYSTEM
-    Order deny,allow
-  </Limit>
-  <Limit Pause-Printer Resume-Printer Enable-Printer Disable-Printer Pause-Printer-After-Current-Job Hold-New-Jobs Release-Held-New-Jobs Deactivate-Printer Activate-Printer Restart-Printer Shutdown-Printer Startup-Printer Promote-Job Schedule-Job-After Cancel-Jobs CUPS-Accept-Jobs CUPS-Reject-Jobs>
-    AuthType Default
-    Require user @SYSTEM
-    Order deny,allow
-  </Limit>
-  <Limit Cancel-Job CUPS-Authenticate-Job>
-    Require user @OWNER @SYSTEM
-    Order deny,allow
-  </Limit>
+<% end -%>
   <Limit All>
-    Order deny,allow
+<% config['Limit']['All'].each do |k, v| -%>
+<%= "    #{k} #{v}" %>
+<% end -%>
   </Limit>
 </Policy>
-<Policy authenticated>
-  JobPrivateAccess default
-  JobPrivateValues default
-  SubscriptionPrivateAccess default
-  SubscriptionPrivateValues default
-  <Limit Create-Job Print-Job Print-URI Validate-Job>
-    AuthType Default
-    Order deny,allow
-  </Limit>
-  <Limit Send-Document Send-URI Hold-Job Release-Job Restart-Job Purge-Jobs Set-Job-Attributes Create-Job-Subscription Renew-Subscription Cancel-Subscription Get-Notifications Reprocess-Job Cancel-Current-Job Suspend-Current-Job Resume-Job Cancel-My-Jobs Close-Job CUPS-Move-Job CUPS-Get-Document>
-    AuthType Default
-    Require user @OWNER @SYSTEM
-    Order deny,allow
-  </Limit>
-  <Limit CUPS-Add-Modify-Printer CUPS-Delete-Printer CUPS-Add-Modify-Class CUPS-Delete-Class CUPS-Set-Default>
-    AuthType Default
-    Require user @SYSTEM
-    Order deny,allow
-  </Limit>
-  <Limit Pause-Printer Resume-Printer Enable-Printer Disable-Printer Pause-Printer-After-Current-Job Hold-New-Jobs Release-Held-New-Jobs Deactivate-Printer Activate-Printer Restart-Printer Shutdown-Printer Startup-Printer Promote-Job Schedule-Job-After Cancel-Jobs CUPS-Accept-Jobs CUPS-Reject-Jobs>
-    AuthType Default
-    Require user @SYSTEM
-    Order deny,allow
-  </Limit>
-  <Limit Cancel-Job CUPS-Authenticate-Job>
-    AuthType Default
-    Require user @OWNER @SYSTEM
-    Order deny,allow
-  </Limit>
-  <Limit All>
-    Order deny,allow
-  </Limit>
-</Policy>
+<% end -%>

@@ -67,3 +67,9 @@ end
 Dir["#{PROJECT_ROOT}/lib/puppet_x/**/*.rb"].each do |file|
   require file
 end
+
+def file_fixture(*relative_path)
+  path = File.expand_path(File.join(__dir__, 'fixtures', 'files', *relative_path))
+
+  Pathname.new(path)
+end

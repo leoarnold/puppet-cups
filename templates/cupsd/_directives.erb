@@ -1,7 +1,7 @@
 <% COMMENT_OUT ||= '# '.freeze -%>
-<%= COMMENT_OUT if @access_log_level.nil? -%>AccessLogLevel <%= @access_log_level %>
-<%= COMMENT_OUT if @browse_dnssd_subtypes.nil? -%>BrowseDNSSDSubTypes_<%= @browse_dnssd_subtypes.is_a?(Array) ? @browse_dnssd_subtypes.join(',_') : @browse_dnssd_subtypes %>
-<%= COMMENT_OUT if @browse_local_protocols.nil? -%>BrowseLocalProtocols <%= @browse_local_protocols.is_a?(Array) ? @browse_local_protocols.join(' ') : @browse_local_protocols %>
+<%= COMMENT_OUT if @access_log_level.nil? -%>AccessLogLevel <%= @access_log_level || 'actions' %>
+<%= COMMENT_OUT if @browse_dnssd_subtypes.nil? -%>BrowseDNSSDSubTypes_<%= @browse_dnssd_subtypes.is_a?(Array) ? @browse_dnssd_subtypes.join(',_') : (@browse_dnssd_subtypes || 'cups') %>
+<%= COMMENT_OUT if @browse_local_protocols.nil? -%>BrowseLocalProtocols <%= @browse_local_protocols.is_a?(Array) ? @browse_local_protocols.join(' ') : (@browse_local_protocols || 'dnssd') %>
 <%= COMMENT_OUT if @browse_web_if.nil? -%>BrowseWebIF <%= (@browse_web_if ? 'Yes' : 'No') %>
 <%= COMMENT_OUT if @browsing.nil? -%>Browsing <%= (@browsing ? 'Yes' : 'No') %>
 DefaultAuthType Basic
@@ -10,14 +10,14 @@ DefaultAuthType Basic
 <%=    "Listen #{l}" %>
 <%   end -%>
 <% end -%>
-<%= COMMENT_OUT if @log_debug_history.nil? -%>LogDebugHistory <%= @log_debug_history %>
-<%= COMMENT_OUT if @log_level.nil? -%>LogLevel <%= @log_level %>
-<%= COMMENT_OUT if @log_time_format.nil? -%>LogTimeFormat <%= @log_time_format %>
-<%= COMMENT_OUT if @max_clients.nil? -%>MaxClients <%= @max_clients %>
-<%= COMMENT_OUT if @max_clients_per_host.nil? -%>MaxClientsPerHost <%= @max_clients_per_host %>
-<%= COMMENT_OUT if @max_log_size.nil? -%>MaxLogSize <%= @max_log_size %>
-<%= COMMENT_OUT if @max_request_size.nil? -%>MaxRequestSize <%= @max_request_size %>
-<%= COMMENT_OUT if @page_log_format.nil? -%>PageLogFormat "<%= @page_log_format %>"
-<%= COMMENT_OUT if @server_alias.nil? -%>ServerAlias <%= @server_alias.is_a?(Array) ? @server_alias.join(' ') : @server_alias %>
-<%= COMMENT_OUT if @server_name.nil? -%>ServerName <%= @server_name %>
+<%= COMMENT_OUT if @log_debug_history.nil? -%>LogDebugHistory <%= @log_debug_history || '0' %>
+<%= COMMENT_OUT if @log_level.nil? -%>LogLevel <%= @log_level || 'warn' %>
+<%= COMMENT_OUT if @log_time_format.nil? -%>LogTimeFormat <%= @log_time_format || 'standard' %>
+<%= COMMENT_OUT if @max_clients.nil? -%>MaxClients <%= @max_clients || '100' %>
+<%= COMMENT_OUT if @max_clients_per_host.nil? -%>MaxClientsPerHost <%= @max_clients_per_host || '100' %>
+<%= COMMENT_OUT if @max_log_size.nil? -%>MaxLogSize <%= @max_log_size || '1048576' %>
+<%= COMMENT_OUT if @max_request_size.nil? -%>MaxRequestSize <%= @max_request_size || '0' %>
+<%= COMMENT_OUT if @page_log_format.nil? -%>PageLogFormat "<%= @page_log_format || '%p %u %j %T %P %C %{job-billing} %{job-originating-host-name} %{job-name} %{media} %{sides}'  %>"
+<%= COMMENT_OUT if @server_alias.nil? -%>ServerAlias <%= @server_alias.is_a?(Array) ? @server_alias.join(' ') : (@server_alias || '*') %>
+<%= COMMENT_OUT if @server_name.nil? -%>ServerName <%= @server_name || 'localhost' %>
 <%= COMMENT_OUT if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>
