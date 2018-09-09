@@ -28,21 +28,29 @@ RSpec.describe 'cups' do
       ]
     end
 
-    it { should contain_class('cups::params') }
+    it { is_expected.to contain_class('cups::params') }
 
-    it { should contain_class('cups').with(defaults) }
+    it { is_expected.to contain_class('cups').with(defaults) }
 
-    it { should contain_class('cups').without(undefs) }
+    it { is_expected.to contain_class('cups').without(undefs) }
 
-    it { should contain_class('cups::packages') }
+    it { is_expected.to contain_class('cups::packages') }
 
-    it { should contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
+    it { is_expected.to contain_file('/etc/cups/lpoptions').with(ensure: 'absent') }
 
-    it { should contain_file('/etc/cups/cupsd.conf').with(ensure: 'file', owner: 'root', group: 'lp', mode: '0640', content: /\A#.*DO NOT/) }
+    it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(ensure: 'file') }
 
-    it { should contain_class('cups::server').that_requires('Class[cups::packages]') }
+    it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(owner: 'root') }
 
-    it { should contain_class('cups::queues').that_requires('Class[cups::server]') }
+    it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(group: 'lp') }
+
+    it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(mode: '0640') }
+
+    it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /\A#.*DO NOT/) }
+
+    it { is_expected.to contain_class('cups::server').that_requires('Class[cups::packages]') }
+
+    it { is_expected.to contain_class('cups::queues').that_requires('Class[cups::server]') }
   end
 
   context 'with attribute' do
@@ -50,24 +58,24 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not provided' do
-        it { should_not contain_exec('cups::queues::default') }
+        it { is_expected.to_not contain_exec('cups::queues::default') }
       end
 
       context "when set to 'Office'" do
         let(:params) { { default_queue: 'Office' } }
 
         context "when the catalog does NOT contain the corresponding 'cups_queue' resource" do
-          it { should_not compile }
+          it { is_expected.to_not compile }
         end
 
         context "when the catalog contains the corresponding 'cups_queue' resource" do
           let(:pre_condition) { "cups_queue { 'Office':  ensure => 'printer' }" }
 
-          it { should contain_exec('cups::queues::default').with(command: "lpadmin -E -d 'Office'") }
+          it { is_expected.to contain_exec('cups::queues::default').with(command: "lpadmin -E -d 'Office'") }
 
-          it { should contain_exec('cups::queues::default').with(unless: "lpstat -d | grep -w 'Office'") }
+          it { is_expected.to contain_exec('cups::queues::default').with(unless: "lpstat -d | grep -w 'Office'") }
 
-          it { should contain_exec('cups::queues::default').that_requires('Cups_queue[Office]') }
+          it { is_expected.to contain_exec('cups::queues::default').that_requires('Cups_queue[Office]') }
         end
       end
     end
@@ -76,23 +84,23 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       describe 'by default' do
-        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen localhost:631$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Listen localhost:631$/) }
 
-        it { should contain_file('/etc/cups/cupsd.conf').with(content: %r{^Listen /var/run/cups/cups.sock$}) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^Listen /var/run/cups/cups.sock$}) }
       end
 
       context "when set to '*:631'" do
         let(:params) { { listen: '*:631' } }
 
-        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen \*:631$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Listen \*:631$/) }
       end
 
       context "when set to ['*:631', 'localhost:8080']" do
         let(:params) { { listen: ['*:631', 'localhost:8080'] } }
 
-        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen \*:631$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Listen \*:631$/) }
 
-        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^Listen localhost:8080$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Listen localhost:8080$/) }
       end
     end
 
@@ -107,32 +115,32 @@ RSpec.describe 'cups' do
                 context "on #{os}" do
                   let(:facts) { facts }
 
-                  it { should contain_package('cups').with(ensure: package_ensure) }
+                  it { is_expected.to contain_package('cups').with(ensure: package_ensure) }
 
                   case facts[:os]['family']
                   when 'Debian'
                     case facts[:os]['name']
                     when 'Debian'
                       if facts[:os]['release']['major'].to_f < 9
-                        it { should_not contain_package('cups-ipp-utils') }
+                        it { is_expected.to_not contain_package('cups-ipp-utils') }
                       else
-                        it { should contain_package('cups-ipp-utils').with(ensure: package_ensure) }
+                        it { is_expected.to contain_package('cups-ipp-utils').with(ensure: package_ensure) }
                       end
                     when 'Ubuntu'
                       if facts[:os]['release']['major'].to_f < 15.10
-                        it { should_not contain_package('cups-ipp-utils') }
+                        it { is_expected.to_not contain_package('cups-ipp-utils') }
                       else
-                        it { should contain_package('cups-ipp-utils').with(ensure: package_ensure) }
+                        it { is_expected.to contain_package('cups-ipp-utils').with(ensure: package_ensure) }
                       end
                     when 'LinuxMint'
                       if facts[:os]['release']['major'].to_f < 18
-                        it { should_not contain_package('cups-ipp-utils') }
+                        it { is_expected.to_not contain_package('cups-ipp-utils') }
                       else
-                        it { should contain_package('cups-ipp-utils').with(ensure: package_ensure) }
+                        it { is_expected.to contain_package('cups-ipp-utils').with(ensure: package_ensure) }
                       end
                     end
                   when 'RedHat'
-                    it { should contain_package('cups-ipptool').with(ensure: package_ensure) }
+                    it { is_expected.to contain_package('cups-ipptool').with(ensure: package_ensure) }
                   end
                 end
               end
@@ -153,7 +161,7 @@ RSpec.describe 'cups' do
                 }
               end
 
-              it { should contain_package('mycupsipp').with(ensure: package_ensure) }
+              it { is_expected.to contain_package('mycupsipp').with(ensure: package_ensure) }
             end
           end
         end
@@ -171,9 +179,9 @@ RSpec.describe 'cups' do
                 }
               end
 
-              it { should contain_package('mycups').with(ensure: package_ensure) }
+              it { is_expected.to contain_package('mycups').with(ensure: package_ensure) }
 
-              it { should contain_package('myipp').with(ensure: package_ensure) }
+              it { is_expected.to contain_package('myipp').with(ensure: package_ensure) }
             end
           end
         end
@@ -187,11 +195,11 @@ RSpec.describe 'cups' do
             context "on #{os}" do
               let(:facts) { facts }
 
-              it { should_not contain_package('cups') }
+              it { is_expected.to_not contain_package('cups') }
 
-              it { should_not contain_package('cups-ipp-utils') }
+              it { is_expected.to_not contain_package('cups-ipp-utils') }
 
-              it { should_not contain_package('cups-ipptool') }
+              it { is_expected.to_not contain_package('cups-ipptool') }
             end
           end
         end
@@ -201,9 +209,9 @@ RSpec.describe 'cups' do
 
           let(:params) { { package_manage: false, package_names: %w[mycups myipp] } }
 
-          it { should_not contain_package('mycups') }
+          it { is_expected.to_not contain_package('mycups') }
 
-          it { should_not contain_package('myipp') }
+          it { is_expected.to_not contain_package('myipp') }
         end
       end
     end
@@ -212,15 +220,15 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when set to undef' do
-        it { should_not contain_exec('cups::papersize') }
+        it { is_expected.to_not contain_exec('cups::papersize') }
       end
 
       context 'when set to a4' do
         let(:params) { { papersize: 'a4' } }
 
-        it { should contain_exec('cups::papersize').with(command: 'paperconfig -p a4') }
+        it { is_expected.to contain_exec('cups::papersize').with(command: 'paperconfig -p a4') }
 
-        it { should contain_exec('cups::papersize').with(unless: 'cat /etc/papersize | grep -w a4') }
+        it { is_expected.to contain_exec('cups::papersize').with(unless: 'cat /etc/papersize | grep -w a4') }
       end
     end
 
@@ -230,13 +238,13 @@ RSpec.describe 'cups' do
       context 'when set to true' do
         let(:params) { { purge_unmanaged_queues: true } }
 
-        it { should contain_resources('cups_queue').with(purge: 'true') }
+        it { is_expected.to contain_resources('cups_queue').with(purge: 'true') }
       end
 
       context 'when set to false' do
         let(:params) { { purge_unmanaged_queues: false } }
 
-        it { should contain_resources('cups_queue').with(purge: 'false') }
+        it { is_expected.to contain_resources('cups_queue').with(purge: 'false') }
       end
     end
 
@@ -253,9 +261,9 @@ RSpec.describe 'cups' do
           }
         end
 
-        it { should contain_cups_queue('BackOffice').with(ensure: 'printer') }
+        it { is_expected.to contain_cups_queue('BackOffice').with(ensure: 'printer') }
 
-        it { should contain_cups_queue('UpperFloor').with(ensure: 'class', members: ['BackOffice']) }
+        it { is_expected.to contain_cups_queue('UpperFloor').with(ensure: 'class', members: ['BackOffice']) }
       end
     end
 
@@ -277,7 +285,7 @@ RSpec.describe 'cups' do
                     }
                   end
 
-                  it { should contain_service('mycups').with(ensure: service_ensure, enable: service_enable) }
+                  it { is_expected.to contain_service('mycups').with(ensure: service_ensure, enable: service_enable) }
                 end
               end
             end
@@ -298,9 +306,9 @@ RSpec.describe 'cups' do
                     }
                   end
 
-                  it { should contain_service('mycups').with(ensure: service_ensure, enable: service_enable) }
+                  it { is_expected.to contain_service('mycups').with(ensure: service_ensure, enable: service_enable) }
 
-                  it { should contain_service('mycups-browsed').with(ensure: service_ensure, enable: service_enable) }
+                  it { is_expected.to contain_service('mycups-browsed').with(ensure: service_ensure, enable: service_enable) }
                 end
               end
             end
@@ -313,7 +321,7 @@ RSpec.describe 'cups' do
           context "with service_names => #{service_names}," do
             let(:params) { { service_manage: false, service_names: service_names } }
 
-            it { should_not contain_service(service_names) }
+            it { is_expected.to_not contain_service(service_names) }
           end
         end
       end
@@ -331,7 +339,7 @@ RSpec.describe 'cups' do
               }
             end
 
-            it { should_not contain_service('mycups') }
+            it { is_expected.to_not contain_service('mycups') }
           end
         end
       end
@@ -343,13 +351,13 @@ RSpec.describe 'cups' do
       context 'when set to true' do
         let(:params) { { web_interface: true } }
 
-        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface Yes$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface Yes$/) }
       end
 
       context 'when set to false' do
         let(:params) { { web_interface: false } }
 
-        it { should contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface No$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface No$/) }
       end
     end
   end

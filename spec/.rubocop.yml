@@ -11,8 +11,6 @@ RSpec/BeforeAfterAll:
   - 'api/ipptool_spec.rb'
 RSpec/DescribeClass:
   Enabled: false
-RSpec/ImplicitExpect:
-  EnforcedStyle: should
 RSpec/ImplicitSubject:
   EnforcedStyle: single_line_only
 RSpec/InstanceVariable:

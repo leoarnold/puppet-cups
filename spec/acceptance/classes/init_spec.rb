@@ -18,12 +18,12 @@ RSpec.describe 'Including class "cups"' do
 
     describe 'after applying' do
       describe service('cups') do
-        it { should be_running }
-        it { should be_enabled }
+        it { is_expected.to be_running }
+        it { is_expected.to be_enabled }
       end
 
       describe file('/usr/bin/ipptool') do
-        it { should be_executable }
+        it { is_expected.to be_executable }
       end
     end
   end

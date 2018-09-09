@@ -298,7 +298,7 @@ RSpec.describe "Type 'cups_queue'" do
 
   describe 'parameter' do
     describe 'model' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts a string' do
         manifest = minimal_printer.merge(model: 'This is a string')
@@ -310,7 +310,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'name' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts a string with international characters, numbers and underscores' do
         manifest = minimal_printer.merge(name: 'RSpec_Test_äöü_абв_Nr1')
@@ -382,7 +382,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'ppd' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts an absolute UNIX file path' do
         manifest = minimal_printer.merge(ppd: '/usr/share/cups/model/myprinter.ppd')
@@ -402,7 +402,7 @@ RSpec.describe "Type 'cups_queue'" do
 
   describe 'property' do
     describe 'ensure' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       context 'when set to class' do
         let(:resource) { type.new(manifest) }
@@ -601,7 +601,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'accepting' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts :true' do
         resource[:held] = :true
@@ -615,7 +615,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'access' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it "accepts { 'policy' => 'allow', 'users' => ['all'] }" do
         resource[:access] = { 'policy' => 'allow', 'users' => ['all'] }
@@ -662,7 +662,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'description' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts a string' do
         resource[:description] = 'This is a string'
@@ -671,7 +671,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'enabled' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts :true' do
         resource[:held] = :true
@@ -685,7 +685,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'held' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts :true' do
         resource[:held] = :true
@@ -699,7 +699,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'location' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts a string' do
         resource[:location] = 'This is a string'
@@ -708,7 +708,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'make_and_model' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts a string' do
         resource[:make_and_model] = 'This is a string'
@@ -717,11 +717,11 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'members' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
     end
 
     describe 'options' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts an empty hash' do
         resource[:options] = {}
@@ -771,7 +771,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'shared' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts :true' do
         resource[:held] = :true
@@ -785,7 +785,7 @@ RSpec.describe "Type 'cups_queue'" do
     end
 
     describe 'uri' do
-      it { should have_documentation }
+      it { is_expected.to have_documentation }
 
       it 'accepts a typical absolute UNIX file URI' do
         resource[:uri] = 'file:///dev/printer0'

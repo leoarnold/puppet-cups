@@ -16,10 +16,10 @@ RSpec.describe 'nina.initech.com' do
   end
 
   context 'when using a hiera example' do
-    it { should contain_class('cups').with(web_interface: true) }
+    it { is_expected.to contain_class('cups').with(web_interface: true) }
 
-    it { should contain_cups_queue('Warehouse').with(ensure: 'printer') }
+    it { is_expected.to contain_cups_queue('Warehouse').with(ensure: 'printer') }
 
-    it { should contain_cups_queue('GroundFloor').with(ensure: 'class', members: %w[Office Warehouse]) }
+    it { is_expected.to contain_cups_queue('GroundFloor').with(ensure: 'class', members: %w[Office Warehouse]) }
   end
 end
