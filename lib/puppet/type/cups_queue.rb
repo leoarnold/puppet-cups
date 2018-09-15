@@ -103,6 +103,7 @@ Puppet::Type.newtype(:cups_queue) do
     def change_to_s(current_value, new_value)
       return "created a #{should_to_s(new_value)}" unless %i[class printer].include?(current_value)
       return "#{is_to_s(current_value)} removed" unless %i[class printer].include?(new_value)
+
       "changed from #{is_to_s(current_value)} to #{should_to_s(new_value)}"
     end
 
@@ -141,6 +142,7 @@ Puppet::Type.newtype(:cups_queue) do
       raise ArgumentError, "The value 'policy => #{value['policy']}' is unsupported. Valid values are 'allow' and 'deny'." \
         if value.key?('policy') && !%(allow, deny).include?(value['policy'])
       raise ArgumentError, 'Please provide a non-empty array of user names.' unless value['users'].is_a?(Array) && !value['users'].empty?
+
       value['users'].each do |name|
         raise ArgumentError, "The user or group name '#{name}' seems malformed" unless name =~ /\A@?[\w\-]+\Z/
       end

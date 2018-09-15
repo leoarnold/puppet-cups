@@ -48,6 +48,7 @@ class ForgeModule
     changes = []
     @changelog.each_line do |line|
       break if line =~ /^## / && !title.nil?
+
       changes << line unless title.nil?
       title = line.match(/^## \d+-\d+-\d+ - (?<title>.*)$/)[:title] if line =~ /^## /
     end
