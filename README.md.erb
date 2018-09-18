@@ -479,6 +479,11 @@ Installs, configures, and manages the CUPS service.
 
 ##### Attributes
 
+* `server_alias`: Specifies an alternate name that the server is known by.
+  The special name "*" allows any name to be used.
+  Accepts (an array of) strings or a string.
+  Defaults to undef.
+
 * `default_queue`: The name of the default destination for all print jobs.
   Requires the catalog to contain a `cups_queue` resource with the same name.
 
