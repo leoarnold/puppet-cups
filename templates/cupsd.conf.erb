@@ -1,3 +1,8 @@
+<% if @server_alias.kind_of? Array -%>
+ServerAlias <% @server_aliases = [] %><% @server_alias.sort.each {| value | @server_aliases.insert(-1, "#{value}") } %><%= @server_aliases.join(" ") %>
+<% elsif @server_alias.kind_of? String -%>
+ServerAlias <%= @server_alias %>
+<% end -%>
 LogLevel warn
 PageLogFormat
 MaxLogSize 0

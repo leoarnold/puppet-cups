@@ -21,6 +21,7 @@ RSpec.describe 'cups' do
 
     let(:undefs) do
       %i[
+        server_alias
         default_queue
         papersize
         resources
@@ -54,6 +55,26 @@ RSpec.describe 'cups' do
   end
 
   context 'with attribute' do
+    describe 'server_alias' do
+      let(:facts) { any_supported_os }
+
+      context 'when set to undef' do
+        it { is_expected.to_not contain_exec('cups::server_alias') }
+      end
+
+      context "when set to '*'" do
+        let(:params) { { server_alias: '*' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias \*$/) }
+      end
+
+      context "when set to ['foo', 'foo.bar']" do
+        let(:params) { { listen: ['foo', 'foo.bar'] } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias foo foo.bar$/) }
+      end
+    end
+
     describe 'default_queue' do
       let(:facts) { any_supported_os }
 
