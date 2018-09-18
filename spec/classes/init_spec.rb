@@ -69,7 +69,7 @@ RSpec.describe 'cups' do
       end
 
       context "when set to ['foo', 'foo.bar']" do
-        let(:params) { { listen: ['foo', 'foo.bar'] } }
+        let(:params) { { server_alias: ['foo', 'foo.bar'] } }
 
         it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias foo foo.bar$/) }
       end
