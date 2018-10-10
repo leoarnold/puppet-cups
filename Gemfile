@@ -6,11 +6,11 @@ gem 'puppet', (puppet_version.nil? ? '~> 5.0' : puppet_version)
 
 group :development do
   gem 'bundler', '~> 1.16'
-  gem 'codacy-coverage', '2.0.1'
+  gem 'codacy-coverage', '2.1.0'
   gem 'coderay', '1.1.2'
   gem 'mdl', '0.5.0'
   gem 'metadata-json-lint', '2.2.0'
-  gem 'puppetlabs_spec_helper', '2.10.0'
+  gem 'puppetlabs_spec_helper', '2.11.0'
   gem 'rake', '12.3.1'
   gem 'rspec-puppet-facts', '1.9.0'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
@@ -35,9 +35,9 @@ group :release do
 end
 
 group :metatools do
-  gem 'github-linguist', '6.4.1'
+  gem 'github-linguist', '7.0.0'
   gem 'overcommit', '0.46.0'
-  gem 'rubocop', '0.59.1'
-  gem 'rubocop-rspec', '1.29.1'
+  gem 'rubocop', '0.59.2'
+  gem 'rubocop-rspec', '1.30.0'
   gem 'travis', '1.8.9'
 end
