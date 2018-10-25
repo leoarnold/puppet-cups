@@ -12,7 +12,7 @@ group :development do
   gem 'metadata-json-lint', '2.2.0'
   gem 'puppetlabs_spec_helper', '2.11.0'
   gem 'rake', '12.3.1'
-  gem 'rspec-puppet-facts', '1.9.0'
+  gem 'rspec-puppet-facts', '1.9.2'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
   gem 'simplecov', '0.16.1'
 end
