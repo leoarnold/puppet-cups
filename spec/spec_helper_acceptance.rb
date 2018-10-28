@@ -16,7 +16,7 @@ RSpec.configure do |c|
         install_package(host, 'ruby')
         install_package(host, 'rubygem-json')
       end
-      install_puppet_from_gem_on(host, version: ENV['PUPPET_GEM_VERSION'] || '~> 5')
+      install_puppet_from_gem_on(host, version: ENV['PUPPET_GEM_VERSION'] || '~> 6')
       copy_module_to(host, module_name: 'cups', source: project_root, target_module_path: '/etc/puppetlabs/code/modules')
       scp_to(host, File.join(project_root, 'spec/fixtures/ppd/textonly.ppd'), '/tmp/')
     end
