@@ -51,7 +51,8 @@
 # @param page_log_format Sets the `PageLogFormat` directive of the CUPS server.
 # @param papersize Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
 # @param purge_unmanaged_queues Setting `true` will remove all queues from the node
-#   which do not match a `cups_queue` resource in the current catalog.
+#   which do not match a `cups_queue` resource in the current catalog. Silently
+#   ignored if the Cups server is not reachable when Puppet starts.
 # @param resources This attribute is intended for use with Hiera or any other ENC.
 # @param server_alias Sets the `ServerAlias` directive of the CUPS server.
 # @param server_name Sets the `ServerName` directive of the CUPS server.

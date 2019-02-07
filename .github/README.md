@@ -543,7 +543,9 @@ Installs, configures, and manages the CUPS service.
 * `papersize`: Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
 
 * `purge_unmanaged_queues`: Setting `true` will remove all queues from the node
-  which do not match a `cups_queue` resource in the current catalog. Defaults to `false`.
+  which do not match a `cups_queue` resource in the current catalog. Silently
+  ignored if the Cups server is not reachable when Puppet starts. Defaults to
+  `false`.
 
 * `resources`: This attribute is intended for use with Hiera or any other ENC (see the [example above](#using-hiera)).
 

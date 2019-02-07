@@ -15,12 +15,34 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   ### Static provider methods
 
   def self.instances
+    discover_class_instances + discover_printer_instances
+  rescue PuppetX::Cups::Ipp::QueryError => e
+    # Connecting to Cups may fail because it is not running yet. As Puppet
+    # tries to enumerate instances before applying the catalog, no amount of
+    # resource ordering will allow to start the service before we try to
+    # connect to it.
+    #
+    # Furthermore, the desired state might be to stop the service or to not
+    # manage it at all.
+    #
+    # Therefore, purge_unmanaged_queues => true may fail for reasons we can't
+    # fix, and scare the users with a big red error message (or worse, lead to
+    # ignore-the-errors mindset). We thus prefer to silence the error here.
+    # It's still in the debug log if one cares.
+    debug("Cups queues enumeration failed (this is normal if the cups service isn't running yet):\n" + e.message)
+    []
+  end
+
+  def self.discover_class_instances
     providers = []
-    # Discover class instances
     PuppetX::Cups::Instances.class_members.each do |class_name, member_names|
       providers << new(name: class_name, ensure: :class, members: member_names)
     end
-    # Discover printer instances
+    providers
+  end
+
+  def self.discover_printer_instances
+    providers = []
     PuppetX::Cups::Instances.printers.each do |printer_name|
       providers << new(name: printer_name, ensure: :printer)
     end
