@@ -45,9 +45,9 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
       context 'with printers and classes installed' do
         include_examples 'correct instances', [{
-          'CrawlSpace'  => %w[],
+          'CrawlSpace' => %w[],
           'GroundFloor' => %w[Office Warehouse],
-          'UpperFloor'  => %w[BackOffice]
+          'UpperFloor' => %w[BackOffice]
         }, %w[BackOffice Office Warehouse]]
       end
     end

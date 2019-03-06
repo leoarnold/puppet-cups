@@ -625,9 +625,9 @@ RSpec.describe 'Ipptool' do
       purge_all_queues
       add_printers('BackOffice', 'Office', 'Warehouse')
       add_printers_to_classes(
-        'CrawlSpace'  => %w[],
+        'CrawlSpace' => %w[],
         'GroundFloor' => %w[Office Warehouse],
-        'UpperFloor'  => %w[BackOffice]
+        'UpperFloor' => %w[BackOffice]
       )
     end
 

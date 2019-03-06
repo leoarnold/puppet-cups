@@ -123,9 +123,9 @@ RSpec.describe PuppetX::Cups::Instances do
 
       let(:expected) do
         {
-          'CrawlSpace'  => %w[],
+          'CrawlSpace' => %w[],
           'GroundFloor' => %w[Office Warehouse],
-          'UpperFloor'  => %w[BackOffice]
+          'UpperFloor' => %w[BackOffice]
         }
       end
 
