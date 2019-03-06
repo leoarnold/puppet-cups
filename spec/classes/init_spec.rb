@@ -24,6 +24,8 @@ RSpec.describe 'cups' do
         default_queue
         papersize
         resources
+        server_alias
+        server_name
         web_interface
       ]
     end
@@ -345,8 +347,58 @@ RSpec.describe 'cups' do
       end
     end
 
+    describe 'server_alias' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        let(:params) { {} }
+
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias/) }
+      end
+
+      context 'when set to *' do
+        let(:params) { { server_alias: '*' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias \*$/) }
+      end
+
+      context 'when set to office.initech.com' do
+        let(:params) { { server_alias: 'office.initech.com' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias office.initech.com$/) }
+      end
+
+      context "when set to ['office.initech.com', 'warehouse.initech.com']" do
+        let(:params) { { server_alias: ['office.initech.com', 'warehouse.initech.com'] } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias office.initech.com warehouse.initech.com$/) }
+      end
+    end
+
+    describe 'server_name' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        let(:params) { {} }
+
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^ServerName/) }
+      end
+
+      context 'when set to office.initech.com' do
+        let(:params) { { server_name: 'office.initech.com' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerName office.initech.com$/) }
+      end
+    end
+
     describe 'web_interface' do
       let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        let(:params) { {} }
+
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface/) }
+      end
 
       context 'when set to true' do
         let(:params) { { web_interface: true } }

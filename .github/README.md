@@ -500,6 +500,10 @@ Installs, configures, and manages the CUPS service.
 
 * `resources`: This attribute is intended for use with Hiera or any other ENC (see the [example above](#using-hiera)).
 
+* `server_alias`: Sets the `ServerAlias` directive of the CUPS server.
+
+* `server_name`: Sets the `ServerName` directive of the CUPS server.
+
 * `service_enable`: Whether the CUPS services should be enabled to run at boot.
   Defaults to `true`.
 

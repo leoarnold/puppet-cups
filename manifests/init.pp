@@ -37,6 +37,8 @@
 # @param purge_unmanaged_queues Setting `true` will remove all queues from the node
 #   which do not match a `cups_queue` resource in the current catalog.
 # @param resources This attribute is intended for use with Hiera or any other ENC.
+# @param server_alias Sets the `ServerAlias` directive of the CUPS server.
+# @param server_name Sets the `ServerName` directive of the CUPS server.
 # @param service_enable Whether the CUPS services should be enabled to run at boot.
 # @param service_ensure Whether the CUPS services should be `running` or `stopped`.
 # @param service_manage Whether to manage services at all.
@@ -44,19 +46,21 @@
 # @param web_interface Boolean value to enable or disable the server's web interface.
 #
 class cups (
-  Optional[String]               $default_queue          = undef,
-  Variant[String, Array[String]] $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
-  String                         $package_ensure         = 'present',
-  Boolean                        $package_manage         = true,
-  Variant[String, Array[String]] $package_names          = $::cups::params::package_names,
-  Optional[String]               $papersize              = undef,
-  Boolean                        $purge_unmanaged_queues = false,
-  Optional[Hash]                 $resources              = undef,
-  Boolean                        $service_enable         = true,
-  String                         $service_ensure         = 'running',
-  Boolean                        $service_manage         = true,
-  Variant[String, Array[String]] $service_names          = 'cups',
-  Optional[Boolean]              $web_interface          = undef,
+  Optional[String]                         $default_queue          = undef,
+  Variant[String, Array[String]]           $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
+  String                                   $package_ensure         = 'present',
+  Boolean                                  $package_manage         = true,
+  Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,
+  Optional[String]                         $papersize              = undef,
+  Boolean                                  $purge_unmanaged_queues = false,
+  Optional[Hash]                           $resources              = undef,
+  Optional[Variant[String, Array[String]]] $server_alias           = undef,
+  Optional[String]                         $server_name            = undef,
+  Boolean                                  $service_enable         = true,
+  String                                   $service_ensure         = 'running',
+  Boolean                                  $service_manage         = true,
+  Variant[String, Array[String]]           $service_names          = 'cups',
+  Optional[Boolean]                        $web_interface          = undef,
 ) inherits cups::params {
 
   contain cups::packages
