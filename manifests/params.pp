@@ -47,7 +47,7 @@ class cups::params {
     }
 
     'RedHat': {
-      $package_names = ['cups', 'cups-ipptool']
+      $package_names = ['cups', 'cups-ipptool', 'libpaper']
     }
     'Suse': {
       $package_names = ['cups']

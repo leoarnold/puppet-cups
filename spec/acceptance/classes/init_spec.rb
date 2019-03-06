@@ -27,4 +27,24 @@ RSpec.describe 'Including class "cups"' do
       end
     end
   end
+
+  context 'when setting parameter' do
+    describe 'papersize' do
+      let(:manifest) do
+        <<~MANIFEST
+          class { '::cups':
+            papersize => 'a4'
+          }
+        MANIFEST
+      end
+
+      it 'applies without error' do
+        apply_manifest(manifest)
+      end
+
+      it 'is idempotent' do
+        apply_manifest(manifest, catch_changes: true)
+      end
+    end
+  end
 end
