@@ -12,11 +12,15 @@ RSpec.configure do |c|
   project_root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
   c.before(:suite) do
     hosts.each do |host|
-      if host.name =~ /^fedora/
-        install_package(host, 'ruby')
-        install_package(host, 'rubygem-json')
+      shell("sed -i 's/^nameserver.*/nameserver 8.8.8.8/' /etc/resolv.conf")
+      case host['platform']
+      when /el-|redhat|fedora|sles|centos|cisco_/
+        shell('rpm -U https://yum.puppet.com/puppet6/puppet6-release-el-7.noarch.rpm')
+      when /debian|ubuntu|cumulus|huaweios/
+        shell('wget https://apt.puppetlabs.com/puppet6-release-xenial.deb -O /tmp/puppet6-release-xenial.deb')
+        shell('dpkg -i /tmp/puppet6-release-xenial.deb')
       end
-      install_puppet_from_gem_on(host, version: ENV['PUPPET_GEM_VERSION'] || '~> 6')
+      install_puppet_agent_on(host)
       copy_module_to(host, module_name: 'cups', source: project_root, target_module_path: '/etc/puppetlabs/code/modules')
       scp_to(host, File.join(project_root, 'spec/fixtures/ppd/textonly.ppd'), '/tmp/')
     end
