@@ -13,14 +13,7 @@ RSpec.configure do |c|
   c.before(:suite) do
     hosts.each do |host|
       shell("sed -i 's/^nameserver.*/nameserver 8.8.8.8/' /etc/resolv.conf")
-      case host['platform']
-      when /el-|redhat|fedora|sles|centos|cisco_/
-        shell('rpm -U https://yum.puppet.com/puppet6/puppet6-release-el-7.noarch.rpm')
-      when /debian|ubuntu|cumulus|huaweios/
-        shell('wget https://apt.puppetlabs.com/puppet6-release-xenial.deb -O /tmp/puppet6-release-xenial.deb')
-        shell('dpkg -i /tmp/puppet6-release-xenial.deb')
-      end
-      install_puppet_agent_on(host)
+      install_puppet_agent_on(host, puppet_collection: 'puppet6')
       copy_module_to(host, module_name: 'cups', source: project_root, target_module_path: '/etc/puppetlabs/code/modules')
       scp_to(host, File.join(project_root, 'spec/fixtures/ppd/textonly.ppd'), '/tmp/')
     end
