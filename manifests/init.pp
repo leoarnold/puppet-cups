@@ -29,6 +29,9 @@
 #   Accepts (an array of) strings.
 #   Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
 #   *Warning*: For this module to work, it is *mandatory* that CUPS is listening on `localhost:631`.
+# @param location Sets the access control lists for the CUPS web interface.
+#   Restricts access to localhost by default.
+#   Set the value `'remote-admin'` to enable remote access to the web interface.
 # @param package_ensure Whether CUPS packages should be `present` or `absent`.
 # @param package_manage Whether to manage package installation at all.
 # @param package_names A name or an array of names of all packages needed to be installed
@@ -48,6 +51,7 @@
 class cups (
   Optional[String]                         $default_queue          = undef,
   Variant[String, Array[String]]           $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
+  Optional[String]                         $location               = undef,
   String                                   $package_ensure         = 'present',
   Boolean                                  $package_manage         = true,
   Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,

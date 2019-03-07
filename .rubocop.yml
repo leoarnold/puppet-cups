@@ -22,6 +22,8 @@ Metrics/LineLength:
     - lpd
     - socket
     - puppet
+  Exclude:
+    - 'spec/classes/init_spec.rb'
 Metrics/BlockLength:
   Enabled: false
 Naming/PredicateName:

@@ -106,6 +106,32 @@ RSpec.describe 'cups' do
       end
     end
 
+    describe 'location' do
+      let(:facts) { any_supported_os }
+
+      describe 'by default' do
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location />\s*Order allow,deny\s*</Location>}) }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin>\s*Order allow,deny\s*</Location>}) }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/conf>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*</Location>}) }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/log>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*</Location>}) }
+      end
+
+      context "when set to 'remote-admin'" do
+        let(:params) { { location: 'remote-admin' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location />\s*Order allow,deny\s*Allow @LOCAL\s*</Location>}) }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin>\s*Order allow,deny\s*Allow @LOCAL\s*</Location>}) }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/conf>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*Allow @LOCAL\s*</Location>}) }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/log>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*Allow @LOCAL\s*</Location>}) }
+      end
+    end
+
     describe 'package_manage' do
       context 'when set to true' do
         context 'with default package_names' do

@@ -486,6 +486,10 @@ Installs, configures, and manages the CUPS service.
   Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
   *Warning*: For this module to work, it is *mandatory* that CUPS is listening on `localhost:631`.
 
+* `location`: Sets the access control lists for the CUPS web interface.
+   Restricts access to localhost by default.
+   Set the value `'remote-admin'` to enable remote access to the web interface.
+
 * `package_ensure`: Whether CUPS packages should be `present` or `absent`. Defaults to `present`.
 
 * `package_manage`: Whether to manage package installation at all. Defaults to `true`.

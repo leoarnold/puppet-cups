@@ -12,6 +12,7 @@ DefaultAuthType Basic
 <%= '#' if @server_alias.nil? -%>ServerAlias <%= @server_alias.is_a?(Array) ? @server_alias.join(' ') : @server_alias %>
 <%= '#' if @server_name.nil? -%>ServerName <%= @server_name %>
 <%= '#' if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>
+<% if @location.nil? -%>
 <Location />
   Order allow,deny
 </Location>
@@ -28,6 +29,28 @@ DefaultAuthType Basic
   Require user @SYSTEM
   Order allow,deny
 </Location>
+<% elsif @location == 'remote-admin' -%>
+<Location />
+  Order allow,deny
+  Allow @LOCAL
+</Location>
+<Location /admin>
+  Order allow,deny
+  Allow @LOCAL
+</Location>
+<Location /admin/conf>
+  AuthType Default
+  Require user @SYSTEM
+  Order allow,deny
+  Allow @LOCAL
+</Location>
+<Location /admin/log>
+  AuthType Default
+  Require user @SYSTEM
+  Order allow,deny
+  Allow @LOCAL
+</Location>
+<% end %>
 <Policy default>
   JobPrivateAccess default
   JobPrivateValues default
