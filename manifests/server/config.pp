@@ -28,7 +28,12 @@ class cups::server::config inherits cups::server {
   file { '/etc/cups/cupsd.conf':
     ensure  => 'file',
     mode    => '0640',
-    content => template('cups/header.erb', 'cups/cupsd.conf.erb'),
+    content => template(
+      'cups/_header.erb',
+      'cups/cupsd/_directives.erb',
+      'cups/cupsd/_locations.erb',
+      'cups/cupsd/_policies.erb'
+    )
   }
 
   if ($::cups::papersize) {

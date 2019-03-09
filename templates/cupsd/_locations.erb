@@ -1,0 +1,39 @@
+<% if @location.nil? -%>
+<Location />
+  Order allow,deny
+</Location>
+<Location /admin>
+  Order allow,deny
+</Location>
+<Location /admin/conf>
+  AuthType Default
+  Require user @SYSTEM
+  Order allow,deny
+</Location>
+<Location /admin/log>
+  AuthType Default
+  Require user @SYSTEM
+  Order allow,deny
+</Location>
+<% elsif @location == 'remote-admin' -%>
+<Location />
+  Order allow,deny
+  Allow @LOCAL
+</Location>
+<Location /admin>
+  Order allow,deny
+  Allow @LOCAL
+</Location>
+<Location /admin/conf>
+  AuthType Default
+  Require user @SYSTEM
+  Order allow,deny
+  Allow @LOCAL
+</Location>
+<Location /admin/log>
+  AuthType Default
+  Require user @SYSTEM
+  Order allow,deny
+  Allow @LOCAL
+</Location>
+<% end %>
