@@ -1,39 +1,67 @@
-<% if @location.nil? -%>
-<Location />
-  Order allow,deny
-</Location>
-<Location /admin>
-  Order allow,deny
-</Location>
-<Location /admin/conf>
-  AuthType Default
-  Require user @SYSTEM
-  Order allow,deny
-</Location>
-<Location /admin/log>
-  AuthType Default
-  Require user @SYSTEM
-  Order allow,deny
-</Location>
-<% elsif @location == 'remote-admin' -%>
-<Location />
-  Order allow,deny
-  Allow @LOCAL
-</Location>
-<Location /admin>
-  Order allow,deny
-  Allow @LOCAL
-</Location>
-<Location /admin/conf>
-  AuthType Default
-  Require user @SYSTEM
-  Order allow,deny
-  Allow @LOCAL
-</Location>
-<Location /admin/log>
-  AuthType Default
-  Require user @SYSTEM
-  Order allow,deny
-  Allow @LOCAL
+<%
+  cups_location_defaults = {
+    '/'           => {
+      'Order'     => 'allow,deny'
+    },
+    '/admin'      => {
+      'Order'     => 'allow,deny'
+    },
+    '/admin/conf' => {
+      'AuthType'  => 'Default',
+      'Require'   => 'user @SYSTEM',
+      'Order'     => 'allow,deny'
+    },
+    '/admin/log'  => {
+      'AuthType'  => 'Default',
+      'Require'   => 'user @SYSTEM',
+      'Order'     => 'allow,deny'
+    }
+  }
+
+  cups_location_presets = {
+    'remote-admin'  => {
+      '/'           => {
+        'Order'     => 'allow,deny',
+        'Allow'     => '@LOCAL'
+      },
+      '/admin'      => {
+        'Order'     => 'allow,deny',
+        'Allow'     => '@LOCAL'
+      },
+      '/admin/conf' => {
+        'AuthType'  => 'Default',
+        'Require'   => 'user @SYSTEM',
+        'Order'     => 'allow,deny',
+        'Allow'     => '@LOCAL'
+      },
+      '/admin/log'  => {
+        'AuthType'  => 'Default',
+        'Require'   => 'user @SYSTEM',
+        'Order'     => 'allow,deny',
+        'Allow'     => '@LOCAL'
+      }
+    },
+    'share-printers' => {
+      '/'           => {
+        'Order'     => 'allow,deny',
+        'Allow'     => '@LOCAL'
+      }
+    }
+  }
+
+  @location = cups_location_presets[@location.strip] if @location.is_a?(String)
+  @location ||= {}
+
+  cups_location_defaults.each_pair do |path, directives|
+    @location[path] ||= directives
+  end
+-%>
+
+<% @location.each_pair do |path, directives| -%>
+<% next if directives.nil? || directives.empty? -%>
+<Location <%= path -%>>
+<% directives.each_pair do |directive, parameters| -%>
+  <%= [directive, parameters].join(' ') %>
+<% end -%>
 </Location>
 <% end %>

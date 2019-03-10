@@ -9,6 +9,6 @@ MaxLogSize 0
 Browsing Off
 BrowseLocalProtocols dnssd
 DefaultAuthType Basic
-<%= '#' if @server_alias.nil? -%>ServerAlias <%= @server_alias.is_a?(Array) ? @server_alias.join(' ') : @server_alias %>
-<%= '#' if @server_name.nil? -%>ServerName <%= @server_name %>
-<%= '#' if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>
+<%= '# ' if @server_alias.nil? -%>ServerAlias <%= @server_alias.is_a?(Array) ? @server_alias.join(' ') : @server_alias %>
+<%= '# ' if @server_name.nil? -%>ServerName <%= @server_name %>
+<%= '# ' if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>

@@ -486,9 +486,25 @@ Installs, configures, and manages the CUPS service.
   Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
   *Warning*: For this module to work, it is *mandatory* that CUPS is listening on `localhost:631`.
 
-* `location`: Sets the access control lists for the CUPS web interface.
-   Restricts access to localhost by default.
-   Set the value `'remote-admin'` to enable remote access to the web interface.
+* `location`: Sets the access control lists for the CUPS web interface. Restricts access to localhost by default.
+   Use the presets `'share-printers`' or `'remote-admin'`
+   (inspired by the [`cupsctl`](https://www.cups.org/doc/man-cupsctl.html) commandline utility)
+   or specify the relevant endpoints directly:
+
+   ```puppet
+     class { '::cups':
+       # Unless specified here, default values will be applied for
+       # the locations '/', '/admin', '/admin/conf' and '/admin/log'
+       location => {
+         '/admin/conf' => {
+           'AuthType' => 'Default',
+           'Require'  => 'user @SYSTEM',
+           'Order'    => 'allow,deny',
+           'Allow'    => '@LOCAL'
+         }
+       }
+     }
+   ```
 
 * `package_ensure`: Whether CUPS packages should be `present` or `absent`. Defaults to `present`.
 

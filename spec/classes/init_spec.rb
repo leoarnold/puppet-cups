@@ -22,6 +22,7 @@ RSpec.describe 'cups' do
     let(:undefs) do
       %i[
         default_queue
+        location
         papersize
         resources
         server_alias
@@ -48,7 +49,7 @@ RSpec.describe 'cups' do
 
     it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(mode: '0640') }
 
-    it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /\A#.*DO NOT/) }
+    it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /\A###\n### This file is managed by Puppet. DO NOT EDIT.\n###\n\n/) }
 
     it { is_expected.to contain_class('cups::server').that_requires('Class[cups::packages]') }
 
@@ -129,6 +130,64 @@ RSpec.describe 'cups' do
         it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/conf>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*Allow @LOCAL\s*</Location>}) }
 
         it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/log>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*Allow @LOCAL\s*</Location>}) }
+      end
+
+      context "when set to 'share-printers'" do
+        let(:params) { { location: 'share-printers' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location />\s*Order allow,deny\s*Allow @LOCAL\s*</Location>}) }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin>\s*Order allow,deny\s*</Location>}) }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/conf>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*</Location>}) }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/log>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*</Location>}) }
+      end
+
+      context 'when set to a Hash' do
+        context 'when the default locations are NOT affected' do
+          let(:params) do
+            {
+              location: {
+                '/endpoint' => {
+                  'Directive' => 'option1 option2',
+                  'Key' => 'value'
+                }
+              }
+            }
+          end
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /endpoint>\s*Directive option1 option2\s*Key value\s*</Location>}) }
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location />\s*Order allow,deny\s*</Location>}) }
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin>\s*Order allow,deny\s*</Location>}) }
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/conf>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*</Location>}) }
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/log>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*</Location>}) }
+        end
+
+        context 'when the default locations are affected' do
+          let(:params) do
+            {
+              location: {
+                '/' => {
+                  'Directive' => 'option1 option2',
+                  'Key' => 'value'
+                }
+              }
+            }
+          end
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location />\s*Directive option1 option2\s*Key value\s*</Location>}) }
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin>\s*Order allow,deny\s*</Location>}) }
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/conf>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*</Location>}) }
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Location /admin/log>\s*AuthType Default\s*Require user @SYSTEM\s*Order allow,deny\s*</Location>}) }
+        end
       end
     end
 
