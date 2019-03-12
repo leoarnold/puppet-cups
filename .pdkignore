@@ -1,0 +1,17 @@
+/.??*
+/bin/
+/coverage/
+/doc/
+/junit/
+/log/
+/pkg/
+/rakelib/
+/spec/
+/vendor/
+/Gemfile
+/Gemfile.lock
+/Guardfile
+/gems.rb
+/gems.locked
+/rakefile.rb
+/README.md.erb
