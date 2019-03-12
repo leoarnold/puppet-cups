@@ -57,6 +57,94 @@ RSpec.describe 'cups' do
   end
 
   context 'with attribute' do
+    describe 'browse_dnssd_subtypes' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        let(:params) { {} }
+
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseDNSSDSubTypes/) }
+      end
+
+      context "when set to 'cups'" do
+        let(:params) { { browse_dnssd_subtypes: 'cups' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseDNSSDSubTypes_cups$/) }
+      end
+
+      context "when set to ['cups', 'print']" do
+        let(:params) { { browse_dnssd_subtypes: %w[cups print] } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseDNSSDSubTypes_cups,_print$/) }
+      end
+    end
+
+    describe 'browse_local_protocols' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        let(:params) { {} }
+
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseLocalProtocols/) }
+      end
+
+      context "when set to 'none'" do
+        let(:params) { { browse_local_protocols: ['none'] } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseLocalProtocols none$/) }
+      end
+
+      context "when set to ['cups', 'print']" do
+        let(:params) { { browse_local_protocols: %w[dnssd ldap] } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseLocalProtocols dnssd ldap$/) }
+      end
+    end
+
+    describe 'browse_web_if' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        let(:params) { {} }
+
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseWebIF/) }
+      end
+
+      context 'when set to true' do
+        let(:params) { { browse_web_if: true } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseWebIF Yes$/) }
+      end
+
+      context 'when set to false' do
+        let(:params) { { browse_web_if: false } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseWebIF No$/) }
+      end
+    end
+
+    describe 'browsing' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        let(:params) { {} }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Browsing No$/) }
+      end
+
+      context 'when set to true' do
+        let(:params) { { browsing: true } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Browsing Yes$/) }
+      end
+
+      context 'when set to false' do
+        let(:params) { { browsing: false } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Browsing No$/) }
+      end
+    end
+
     describe 'default_queue' do
       let(:facts) { any_supported_os }
 

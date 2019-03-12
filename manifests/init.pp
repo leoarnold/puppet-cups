@@ -23,6 +23,12 @@
 #     require => Package['hplip']
 #   }
 #
+# @param browse_dnssd_subtypes Sets the `BrowseDNSSDSubTypes` directive of the CUPS server.
+#   Accepts a string or an array of supported subtypes without leading underscore, e.g. `['cups', 'print']`.
+# @param browse_local_protocols Sets the `BrowseLocalProtocols` directive of the CUPS server.
+#   Accepts a string or an array of supported protocols.
+# @param browse_web_if Boolean value for the `BrowseWebIF` directive of the CUPS server.
+# @param browsing Boolean value for the `Browsing` directive of the CUPS server.
 # @param default_queue The name of the default destination for all print jobs.
 #   Requires the catalog to contain a `cups_queue` resource with the same name.
 # @param listen Which addresses to the CUPS daemon should listen to.
@@ -47,6 +53,10 @@
 # @param web_interface Boolean value to enable or disable the server's web interface.
 #
 class cups (
+  Optional[Variant[String, Array[String]]] $browse_dnssd_subtypes  = undef,
+  Optional[Variant[String, Array[String]]] $browse_local_protocols = undef,
+  Optional[Boolean]                        $browse_web_if          = undef,
+  Boolean                                  $browsing               = false,
   Optional[String]                         $default_queue          = undef,
   Variant[String, Array[String]]           $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
   Optional[Variant[String, Hash]]          $location               = undef,

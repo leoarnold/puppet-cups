@@ -477,6 +477,16 @@ Installs, configures, and manages the CUPS service.
 
 ##### Attributes
 
+* `browse_dnssd_subtypes`: Sets the `BrowseDNSSDSubTypes` directive of the CUPS server.
+  Accepts a string or an array of supported subtypes without leading underscore, e.g. `['cups', 'print']`.
+
+* `browse_local_protocols`: Sets the `BrowseLocalProtocols` directive of the CUPS server.
+  Accepts a string or an array of supported protocols.
+
+* `browse_web_if`: Boolean value for the `BrowseWebIF` directive of the CUPS server.
+
+* `browsing`: Boolean value for the `Browsing` directive of the CUPS server. Defaults to `false`.
+
 * `default_queue`: The name of the default destination for all print jobs.
   Requires the catalog to contain a `cups_queue` resource with the same name.
 
