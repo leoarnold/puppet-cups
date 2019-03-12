@@ -482,7 +482,7 @@ Installs, configures, and manages the CUPS service.
 * `default_queue`: The name of the default destination for all print jobs.
   Requires the catalog to contain a `cups_queue` resource with the same name.
 
-* `listen`: Which addresses to the CUPS daemon should listen to.
+* `listen`: Which addresses the CUPS daemon should listen to.
   Accepts (an array of) strings.
   Defaults to `['localhost:631', '/var/run/cups/cups.sock']`.
   Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
