@@ -30,8 +30,7 @@ module PuppetX
       # @return [String] The requested value
       def self.query(resource, request)
         QueryC.new(resource, request)
-      rescue QueryError => e
-        Puppet.debug(e.message) if defined? Puppet
+      rescue QueryError
         QueryT.new(resource, request)
       end
 
