@@ -36,6 +36,9 @@
 #   Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
 #   *Warning*: For this module to work, it is *mandatory* that CUPS is listening on `localhost:631`.
 # @param location Sets the access control lists for the CUPS web interface. Restricts access to localhost by default.
+# @param max_clients Specifies the maximum number of simultaneous clients to support.
+# @param max_clients_per_host Specifies the maximum number of simultaneous clients to support from a single address.
+# @param max_request_size Specifies the maximum request/file size in bytes.
 # @param package_ensure Whether CUPS packages should be `present` or `absent`.
 # @param package_manage Whether to manage package installation at all.
 # @param package_names A name or an array of names of all packages needed to be installed
@@ -60,6 +63,9 @@ class cups (
   Optional[String]                         $default_queue          = undef,
   Variant[String, Array[String]]           $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
   Optional[Variant[String, Hash]]          $location               = undef,
+  Optional[Integer]                        $max_clients            = undef,
+  Optional[Integer]                        $max_clients_per_host   = undef,
+  Optional[Integer]                        $max_request_size       = undef,
   String                                   $package_ensure         = 'present',
   Boolean                                  $package_manage         = true,
   Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,

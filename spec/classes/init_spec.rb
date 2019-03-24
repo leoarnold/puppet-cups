@@ -279,6 +279,48 @@ RSpec.describe 'cups' do
       end
     end
 
+    describe 'max_clients' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxClients/) }
+      end
+
+      context 'when set to 200' do
+        let(:params) { { max_clients: 200 } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxClients 200$/) }
+      end
+    end
+
+    describe 'max_clients_per_host' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxClientsPerHost/) }
+      end
+
+      context 'when set to 200' do
+        let(:params) { { max_clients_per_host: 200 } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxClientsPerHost 200$/) }
+      end
+    end
+
+    describe 'max_request_size' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxRequestSize/) }
+      end
+
+      context 'when set to 200' do
+        let(:params) { { max_request_size: 200 } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxRequestSize 200$/) }
+      end
+    end
+
     describe 'package_manage' do
       context 'when set to true' do
         context 'with default package_names' do

@@ -1,3 +1,4 @@
+<% COMMENT_OUT ||= '# '.freeze -%>
 LogLevel warn
 PageLogFormat
 MaxLogSize 0
@@ -6,11 +7,14 @@ MaxLogSize 0
 <%=    "Listen #{l}" %>
 <%   end -%>
 <% end -%>
-<%= '# ' if @browse_dnssd_subtypes.nil? -%>BrowseDNSSDSubTypes_<%= @browse_dnssd_subtypes.is_a?(Array) ? @browse_dnssd_subtypes.join(',_') : @browse_dnssd_subtypes %>
-<%= '# ' if @browse_local_protocols.nil? -%>BrowseLocalProtocols <%= @browse_local_protocols.is_a?(Array) ? @browse_local_protocols.join(' ') : @browse_local_protocols %>
-<%= '# ' if @browse_web_if.nil? -%>BrowseWebIF <%= (@browse_web_if ? 'Yes' : 'No') %>
-<%= '# ' if @browsing.nil? -%>Browsing <%= (@browsing ? 'Yes' : 'No') %>
+<%= COMMENT_OUT if @browse_dnssd_subtypes.nil? -%>BrowseDNSSDSubTypes_<%= @browse_dnssd_subtypes.is_a?(Array) ? @browse_dnssd_subtypes.join(',_') : @browse_dnssd_subtypes %>
+<%= COMMENT_OUT if @browse_local_protocols.nil? -%>BrowseLocalProtocols <%= @browse_local_protocols.is_a?(Array) ? @browse_local_protocols.join(' ') : @browse_local_protocols %>
+<%= COMMENT_OUT if @browse_web_if.nil? -%>BrowseWebIF <%= (@browse_web_if ? 'Yes' : 'No') %>
+<%= COMMENT_OUT if @browsing.nil? -%>Browsing <%= (@browsing ? 'Yes' : 'No') %>
 DefaultAuthType Basic
-<%= '# ' if @server_alias.nil? -%>ServerAlias <%= @server_alias.is_a?(Array) ? @server_alias.join(' ') : @server_alias %>
-<%= '# ' if @server_name.nil? -%>ServerName <%= @server_name %>
-<%= '# ' if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>
+<%= COMMENT_OUT if @max_clients.nil? -%>MaxClients <%= @max_clients %>
+<%= COMMENT_OUT if @max_clients_per_host.nil? -%>MaxClientsPerHost <%= @max_clients_per_host %>
+<%= COMMENT_OUT if @max_request_size.nil? -%>MaxRequestSize <%= @max_request_size %>
+<%= COMMENT_OUT if @server_alias.nil? -%>ServerAlias <%= @server_alias.is_a?(Array) ? @server_alias.join(' ') : @server_alias %>
+<%= COMMENT_OUT if @server_name.nil? -%>ServerName <%= @server_name %>
+<%= COMMENT_OUT if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>

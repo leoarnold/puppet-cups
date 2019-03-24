@@ -499,24 +499,30 @@ Installs, configures, and manages the CUPS service.
   *Warning*: For this module to work, it is *mandatory* that CUPS is listening on `localhost:631`.
 
 * `location`: Sets the access control lists for the CUPS web interface. Restricts access to localhost by default.
-   Use the presets `'share-printers`' or `'remote-admin'`
-   (inspired by the [`cupsctl`](https://www.cups.org/doc/man-cupsctl.html) commandline utility)
-   or specify the relevant endpoints directly:
+  Use the presets `'share-printers`' or `'remote-admin'`
+  (inspired by the [`cupsctl`](https://www.cups.org/doc/man-cupsctl.html) commandline utility)
+  or specify the relevant endpoints directly:
 
-   ```puppet
-     class { '::cups':
-       # Unless specified here, default values will be applied for
-       # the locations '/', '/admin', '/admin/conf' and '/admin/log'
-       location => {
-         '/admin/conf' => {
-           'AuthType' => 'Default',
-           'Require'  => 'user @SYSTEM',
-           'Order'    => 'allow,deny',
-           'Allow'    => '@LOCAL'
-         }
-       }
-     }
-   ```
+  ```puppet
+    class { '::cups':
+      # Unless specified here, default values will be applied for
+      # the locations '/', '/admin', '/admin/conf' and '/admin/log'
+      location => {
+        '/admin/conf' => {
+          'AuthType' => 'Default',
+          'Require'  => 'user @SYSTEM',
+          'Order'    => 'allow,deny',
+          'Allow'    => '@LOCAL'
+        }
+      }
+    }
+  ```
+
+* `max_clients`: Specifies the maximum number of simultaneous clients to support.
+
+* `max_clients_per_host`: Specifies the maximum number of simultaneous clients to support from a single address.
+
+* `max_request_size`: Specifies the maximum request/file size in bytes.
 
 * `package_ensure`: Whether CUPS packages should be `present` or `absent`. Defaults to `present`.
 
