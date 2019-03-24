@@ -13,7 +13,7 @@ This release exposes more CUPS directives through `class { '::cups': }`.
 
 - CUPS Browsing directives are now configurable
 - `ServerAlias` and `ServerName` directives are now configurable
-- `MaxClients`, `MaxRequestSize` and `SystemGroup` directives are now configurable
+- `MaxClients` and `MaxRequestSize` directives are now configurable
 - ACLs for CUPS endpoints (`LOCATION` directives) are now configurable
   and support some well-known frequently used presets
 
