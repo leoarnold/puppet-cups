@@ -1,5 +1,27 @@
 # Changelog
 
+## 2019-03-24 - Bugfix release 2.1.0
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.1.0)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.1.0).
+
+### Summary
+
+This release exposes more CUPS directives through `class { '::cups': }`.
+
+### Features
+
+- CUPS Browsing directives are now configurable
+- `ServerAlias` and `ServerName` directives are now configurable
+- `MaxClients`, `MaxRequestSize` and `SystemGroup` directives are now configurable
+- ACLs for CUPS endpoints (`LOCATION` directives) are now configurable
+  and support some well-known frequently used presets
+
+### Bugfixes
+
+- The module will now ensure that the `paperconfig` command of `libpaper`
+  is actually available
+
 ## 2017-01-18 - Bugfix release 2.0.3
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.0.3)

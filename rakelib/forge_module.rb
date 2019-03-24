@@ -53,7 +53,7 @@ class ForgeModule
       title = line.match(/^## \d+-\d+-\d+ - (?<title>.*)$/)[:title] if line =~ /^## /
     end
 
-    { title: title.strip, changes: changes.join("\n").strip, version: metadata['version'].strip }
+    { title: title.strip, changes: changes.join.strip, version: metadata['version'].strip }
   end
 
   def releases
