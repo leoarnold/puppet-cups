@@ -6,7 +6,7 @@
 <title>
   Puppet Class: cups::params
   
-    &mdash; Documentation by YARD 0.9.12
+    &mdash; Documentation by YARD 0.9.18
   
 </title>
 
@@ -93,6 +93,8 @@ operating systems are stored here and determined through facts.</p>
 
   </div>
 </div>
+
+
 <div class="tags">
   
 <p class="tag_title">Author:</p>
@@ -226,7 +228,7 @@ class cups::params {
     }
 
     &#39;RedHat&#39;: {
-      $package_names = [&#39;cups&#39;, &#39;cups-ipptool&#39;]
+      $package_names = [&#39;cups&#39;, &#39;cups-ipptool&#39;, &#39;libpaper&#39;]
     }
     &#39;Suse&#39;: {
       $package_names = [&#39;cups&#39;]

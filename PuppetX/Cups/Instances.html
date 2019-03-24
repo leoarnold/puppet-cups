@@ -6,7 +6,7 @@
 <title>
   Module: PuppetX::Cups::Instances
   
-    &mdash; Documentation by YARD 0.9.12
+    &mdash; Documentation by YARD 0.9.18
   
 </title>
 
@@ -144,6 +144,29 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#class_members-class_method" title="class_members (class method)">.<strong>class_members</strong>  &#x21d2; Hash </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Sends a <span class='object_link'><a href="#cups_get_classes-class_method" title="PuppetX::Cups::Instances.cups_get_classes (method)">Instances.cups_get_classes</a></span> request and parses the names of class queues and their members.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#classes-class_method" title="classes (class method)">.<strong>classes</strong>  &#x21d2; Array </a>
     
 
@@ -159,29 +182,6 @@
 
   
     <span class="summary_desc"><div class='inline'><p>Returns an array with the names of all installed classes.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#classmembers-class_method" title="classmembers (class method)">.<strong>classmembers</strong>  &#x21d2; Hash </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'><p>Sends a <span class='object_link'><a href="#cups_get_classes-class_method" title="PuppetX::Cups::Instances.cups_get_classes (method)">Instances.cups_get_classes</a></span> request and parses the names of class queues and their members.</p>
 </div></span>
   
 </li>
@@ -289,96 +289,9 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="classes-class_method">
+  <h3 class="signature first" id="class_members-class_method">
   
-    .<strong>classes</strong>  &#x21d2; <tt>Array</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p>Returns an array with the names of all installed classes</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>Array</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'><p>The names of all installed class queues</p>
-</div>
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Author:</p>
-<ul class="author">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>Leo Arnold</p>
-</div>
-      
-    </li>
-  
-</ul>
-<p class="tag_title">Since:</p>
-<ul class="since">
-  
-    <li>
-      
-      
-      
-      
-        
-        <div class='inline'><p>1.0.0</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-19
-20
-21</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/puppet_x/cups/instances.rb', line 19</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_classes'>classes</span>
-  <span class='id identifier rubyid_classmembers'>classmembers</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="classmembers-class_method">
-  
-    .<strong>classmembers</strong>  &#x21d2; <tt>Hash</tt> 
+    .<strong>class_members</strong>  &#x21d2; <tt>Hash</tt> 
   
 
   
@@ -479,7 +392,7 @@ UpperFloor,BackOffice
     <td>
       <pre class="code"><span class="info file"># File 'lib/puppet_x/cups/instances.rb', line 48</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_classmembers'>classmembers</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class_members'>class_members</span>
   <span class='id identifier rubyid_answer'>answer</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
 
   <span class='id identifier rubyid_query'>query</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../PuppetX.html" title="PuppetX (module)">PuppetX</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Cups.html" title="PuppetX::Cups (module)">Cups</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Ipp.html" title="PuppetX::Cups::Ipp (module)">Ipp</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Ipp/QueryC.html" title="PuppetX::Cups::Ipp::QueryC (class)">QueryC</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Ipp/Query.html#initialize-instance_method" title="PuppetX::Cups::Ipp::Query#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_cups_get_classes'>cups_get_classes</span><span class='rparen'>)</span>
@@ -489,6 +402,93 @@ UpperFloor,BackOffice
   <span class='kw'>end</span>
 
   <span class='id identifier rubyid_answer'>answer</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="classes-class_method">
+  
+    .<strong>classes</strong>  &#x21d2; <tt>Array</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns an array with the names of all installed classes</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The names of all installed class queues</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Author:</p>
+<ul class="author">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>Leo Arnold</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Since:</p>
+<ul class="since">
+  
+    <li>
+      
+      
+      
+      
+        
+        <div class='inline'><p>1.0.0</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+19
+20
+21</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/puppet_x/cups/instances.rb', line 19</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_classes'>classes</span>
+  <span class='id identifier rubyid_class_members'>class_members</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>

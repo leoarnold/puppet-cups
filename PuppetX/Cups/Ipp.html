@@ -6,7 +6,7 @@
 <title>
   Module: PuppetX::Cups::Ipp
   
-    &mdash; Documentation by YARD 0.9.12
+    &mdash; Documentation by YARD 0.9.18
   
 </title>
 
@@ -302,16 +302,14 @@ to parse the value from the output of <code>ipptool -t</code>.</p>
 32
 33
 34
-35
-36</pre>
+35</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/puppet_x/cups/ipp.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_query'>query</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_request'>request</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="Ipp/QueryC.html" title="PuppetX::Cups::Ipp::QueryC (class)">QueryC</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Ipp/Query.html#initialize-instance_method" title="PuppetX::Cups::Ipp::Query#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_request'>request</span><span class='rparen'>)</span>
-<span class='kw'>rescue</span> <span class='const'><span class='object_link'><a href="Ipp/QueryError.html" title="PuppetX::Cups::Ipp::QueryError (class)">QueryError</a></span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
-  <span class='const'>Puppet</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='kw'>defined?</span> <span class='const'>Puppet</span>
+<span class='kw'>rescue</span> <span class='const'><span class='object_link'><a href="Ipp/QueryError.html" title="PuppetX::Cups::Ipp::QueryError (class)">QueryError</a></span></span>
   <span class='const'><span class='object_link'><a href="Ipp/QueryT.html" title="PuppetX::Cups::Ipp::QueryT (class)">QueryT</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Ipp/Query.html#initialize-instance_method" title="PuppetX::Cups::Ipp::Query#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_request'>request</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>

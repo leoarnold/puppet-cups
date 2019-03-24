@@ -6,7 +6,7 @@
 <title>
   Puppet Class: cups::server::config
   
-    &mdash; Documentation by YARD 0.9.12
+    &mdash; Documentation by YARD 0.9.18
   
 </title>
 
@@ -88,6 +88,8 @@
 
   </div>
 </div>
+
+
 <div class="tags">
   
   <div class="examples">
@@ -168,7 +170,12 @@
 39
 40
 41
-42</pre>
+42
+43
+44
+45
+46
+47</pre>
       </td>
       <td>
         <pre class="code"><span class="info file"># File 'manifests/server/config.pp', line 17</span>
@@ -187,7 +194,12 @@ class cups::server::config inherits cups::server {
   file { &#39;/etc/cups/cupsd.conf&#39;:
     ensure  =&gt; &#39;file&#39;,
     mode    =&gt; &#39;0640&#39;,
-    content =&gt; template(&#39;cups/header.erb&#39;, &#39;cups/cupsd.conf.erb&#39;),
+    content =&gt; template(
+      &#39;cups/_header.erb&#39;,
+      &#39;cups/cupsd/_directives.erb&#39;,
+      &#39;cups/cupsd/_locations.erb&#39;,
+      &#39;cups/cupsd/_policies.erb&#39;
+    )
   }
 
   if ($::cups::papersize) {
