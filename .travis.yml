@@ -18,7 +18,7 @@ jobs:
   include:
   - stage: Report test coverage to code climate
     if: branch = master
-    rvm: 2.5.3
+    rvm: 2.6.1
     before_script:
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
