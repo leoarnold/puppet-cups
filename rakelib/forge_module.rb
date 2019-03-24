@@ -30,7 +30,9 @@ class ForgeModule
 
     raise ArgumentError, "metadata.json: Value for key 'source' is not a GitHub repository" unless source =~ regex
 
-    @github = metadata['source'].match(regex).named_captures
+    match_data = metadata['source'].match(regex)
+
+    @github = { owner: match_data['owner'], repo: match_data['repo'] }
   end
 
   def name
@@ -53,7 +55,7 @@ class ForgeModule
       title = line.match(/^## \d+-\d+-\d+ - (?<title>.*)$/)[:title] if line =~ /^## /
     end
 
-    { title: title.strip, changes: changes.join.strip, version: metadata['version'].strip }
+    { title: title.strip, changes: changes.join.strip, version: version }
   end
 
   def releases
@@ -78,6 +80,10 @@ class ForgeModule
 
     content = File.read('metadata.json')
     @metadata = JSON.parse(content)
+  end
+
+  def version
+    metadata['version'].strip
   end
 end
 

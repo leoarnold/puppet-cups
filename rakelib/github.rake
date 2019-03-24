@@ -26,6 +26,9 @@ namespace :github do
       prerelease: false
     }
 
+    puts '[GitHub] Creating new release ...'
+    pp release
+
     response = github.repos.releases.create release
 
     asset = {
@@ -37,6 +40,10 @@ namespace :github do
       content_type: 'application/gzip'
     }
 
+    puts "[GitHub] Adding new asset #{asset[:name]} ..."
+
     github.repos.releases.assets.upload asset
+
+    puts '[GitHub] Module successfully released'
   end
 end

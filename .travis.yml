@@ -4,8 +4,8 @@ language: ruby
 cache: bundler
 bundler_args: --without acceptance_testing metatools
 env:
-- PUPPET_GEM_VERSION='~> 5.0'
 - PUPPET_GEM_VERSION='~> 6.0'
+- PUPPET_GEM_VERSION='~> 5.0'
 rvm:
 - 2.4.5
 - 2.5.3
@@ -29,7 +29,7 @@ jobs:
     - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   - stage: Release on Puppet Forge
     if: branch = release
-    rvm: 2.5.3
+    rvm: 2.6.1
     script: bundle exec rake travis:deploy?
     deploy:
       provider: puppetforge
@@ -41,11 +41,11 @@ jobs:
         branch: release
   - stage: Release on GitHub
     if: branch = release
-    rvm: 2.5.3
+    rvm: 2.6.1
     script: bundle exec rake github:release
   - stage: Update GitHub Pages
     if: branch = release
-    rvm: 2.5.3
+    rvm: 2.6.1
     script: skip
     before_deploy: bundle exec rake github:pages
     deploy:
