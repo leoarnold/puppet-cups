@@ -10,7 +10,7 @@ group :development do
   gem 'mdl', '0.5.0'
   gem 'metadata-json-lint', '2.2.0'
   gem 'pdk', '1.9.1'
-  gem 'puppetlabs_spec_helper', '2.13.1'
+  gem 'puppetlabs_spec_helper', '2.14.0'
   gem 'rake', '12.3.2'
   gem 'rspec-puppet-facts', '1.9.2'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
