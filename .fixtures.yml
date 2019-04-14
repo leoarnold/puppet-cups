@@ -1,5 +1,12 @@
 ---
 fixtures:
+  repositories:
+    stdlib: # dependency of camptocamp-systemd
+      repo: "https://github.com/puppetlabs/puppetlabs-stdlib"
+      ref: "4.13.1"
+    systemd:
+      repo: "https://github.com/camptocamp/puppet-systemd"
+      ref: "1.0.0"
   symlinks:
     cups: "#{source_dir}"
 

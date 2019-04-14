@@ -34,6 +34,7 @@
 1. [Limitations](#limitations)
     * [Evince (aka Document Viewer)](#evince-aka-document-viewer)
     * [Option defaults](#option-defaults)
+    * [Systemd based Linux distributions](#systemd-based-linux-distributions)
 1. [Contributing - Guidelines for users and developers](#contributing)
 
 ## Description
@@ -363,7 +364,7 @@ because `all` is interpreted by CUPS as a wildcard, not as an account name.
 Now that you have created manifest for all your queues, you may want to set the default destination.
 
   ```puppet
-  class { '::cups'
+  class { '::cups':
     default_queue => 'Office',
   }
   ```
@@ -646,6 +647,36 @@ If local defaults aren't used, the command `lpoptions -p [queue_name] -l` will r
 
 In order to provide a stable and idempotent way for Puppet to set default option values for all jobs sent to a queue,
 this module will *disable* the use of local defaults by deleting the file `/etc/cups/lpoptions`.
+
+### Systemd based Linux distributions
+
+On some systemd based Linux distributions the Puppet run fails because
+during service restart systemd would prematurely yield back control to
+Puppet which would then fail to install print queues.
+
+You can deal with this by installing the Puppet systemd module
+
+```shell
+puppet module install camptocamp-systemd
+```
+
+and then include a workaround class in your catalog
+
+```puppet
+include '::cups::workarounds::systemd_service_restart'
+```
+
+which makes the `cups.socket` unit wait for CUPS to listen on `localhost:631`
+before systemd yields back control.
+
+If you want to add the `ListenStream` to a different systemd unit,
+you can include
+
+```puppet
+class { '::cups::workarounds::systemd_service_restart':
+  unit => 'mycups.socket'
+}
+```
 
 ## Contributing
 

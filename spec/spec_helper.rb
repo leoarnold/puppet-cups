@@ -38,13 +38,18 @@ require 'rspec-puppet/spec_helper'
 
 require 'rspec-puppet-facts'
 include RspecPuppetFacts # rubocop:disable Style/MixinUsage
+add_custom_fact :systemd, nil
 
-def any_supported_os(morefacts = {})
-  {
-    operatingsystem: 'CentOS',
-    osfamily: 'Suse',
-    os: { 'family' => 'Suse', 'name' => 'CentOS' }
-  }.merge(morefacts)
+def any_supported_os(more_facts = {})
+  facts_for(osfamily: 'Debian', operatingsystem: 'Ubuntu', lsbdistcodename: 'bionic').merge(more_facts)
+end
+
+def facts_for(operating_system)
+  facter_db_facts = FacterDB
+                    .get_facts(operating_system)
+                    .max_by { |facts| Gem::Version.new(facts[:facterversion]) }
+
+  RspecPuppetFacts.with_custom_facts('', facter_db_facts)
 end
 
 # RSpec-Puppet configuration

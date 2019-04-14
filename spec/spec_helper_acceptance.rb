@@ -14,6 +14,7 @@ RSpec.configure do |c|
     hosts.each do |host|
       shell("sed -i 's/^nameserver.*/nameserver 8.8.8.8/' /etc/resolv.conf")
       install_puppet_agent_on(host, puppet_collection: 'puppet6')
+      install_puppet_module_via_pmt_on(host, module_name: 'camptocamp-systemd', version: '1.0.0')
       copy_module_to(host, module_name: 'cups', source: project_root, target_module_path: '/etc/puppetlabs/code/modules')
       scp_to(host, File.join(project_root, 'spec/fixtures/ppd/textonly.ppd'), '/tmp/')
     end
