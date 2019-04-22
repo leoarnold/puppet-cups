@@ -30,15 +30,7 @@ jobs:
   - stage: Release on Puppet Forge
     if: branch = release
     rvm: 2.6.1
-    script: bundle exec rake travis:deploy?
-    deploy:
-      provider: puppetforge
-      user: leoarnold
-      password:
-        secure: DmGRS18jo30F7o4TVgf8GR61JrnqQC+l4Lb8Khm7rjOBxEgpIsdIvKpNAbBX7uzEP6oSKEN/Zr2mFCwG8nY6dzJzoeHhzSkq7JG25nvPELQMkeuNy+wCvYgrfW5HRuFolNQFayztL9PjVYU9lFfk6RnK+J75eKNpzETdMtkYoagd6x0AQ3lSqH3Ked2gEc0xr7SYKgdVTOzFrKHiR7ti39HBFluj1hX5TTIz64Kl6U/V0rkNRoKgL2CQWrr7zVhAgzDvRd/jrWurJe02bV5DUo9xjwGN7HSjdNssC7UZloz+N8KQ6ki1sCFMPn9ZDHIJzyoUNm703SMHKXPRvuOWyXxZgF9j8AOg5FmSYjz6HyJKlshKb/Q5px9yAUWrGahGHkFgRJBIht1HEFYMHGH6aAfPEfCrwvhItARxtRXotx6oQCMBdFsQyMr1CYTPbZ9etQWeIJijayRKoZIuPdhuJ+k0zgrfT1IpKmk1jCXzb6FdDd2JgoubQ3sEWQH2+rpR9/ZC8Kv8In0jHKt3qs8fnKsNPAaJtX25JKQcAgt0ccKY/rzmoi+Xk4jE+vUGPuHgwswmtlt+DZJwZi38CEVfAd/EhykhGz5TDdY0SDpIPJYtgQCTZQVEr/YBZI3Zo3s319gUIFPz68v4VR/uNuIQnL+N53XXgDh6WJAzfum8mAg=
-      skip_cleanup: true
-      on:
-        branch: release
+    script: bundle exec rake forge:release
   - stage: Release on GitHub
     if: branch = release
     rvm: 2.6.1

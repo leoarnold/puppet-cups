@@ -8,12 +8,4 @@ namespace :travis do
 
   desc 'Perform all static code analysis checks'
   task ci: %i[release_checks mdl]
-
-  desc 'Preflight checks before deployments'
-  task :deploy? do
-    unless FORGE_MODULE.candidate[:title] =~ /\b#{FORGE_MODULE.candidate[:version]}\b/
-      puts "Could not find CHANGELOG entries for release #{FORGE_MODULE.candidate[:version]}"
-      exit(1)
-    end
-  end
 end
