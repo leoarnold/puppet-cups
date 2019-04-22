@@ -1,6 +1,27 @@
 # Changelog
 
-## 2019-03-24 - Bugfix release 2.1.0
+## 2019-04-22 - Release 2.1.1
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.1.1)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.1.1).
+
+### Summary
+
+This release provides a workaround for a known shortcoming
+in some systemd based Linux distributions.
+Thanks to [Thomas Equeter](https://github.com/tequeter)!
+
+### Workaround
+
+On some systemd based Linux distributions the Puppet run fails because
+during service restart systemd would prematurely yield back control to
+Puppet which would then fail to install print queues.
+
+The module now offers a workaround which will make
+the systemd unit `cups.socket` wait for CUPS to listen on `localhost:631`
+before yielding back control.
+
+## 2019-03-24 - Release 2.1.0
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.1.0)
 and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.1.0).

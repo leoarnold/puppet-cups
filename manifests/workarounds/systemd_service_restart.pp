@@ -10,7 +10,7 @@
 # @param unit The name of the systemd unit which should wait for CUPS to listen on port 631
 #
 # @author Thomas Equeter
-# @since 2.2.1
+# @since 2.1.1
 #
 # @example The default inclusion
 #   include '::cups::workarounds::systemd_service_restart'
