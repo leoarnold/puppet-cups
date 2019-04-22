@@ -1,5 +1,14 @@
 # Changelog
 
+## 2019-04-23 - Release 2.2.0
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.2.0)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.2.0).
+
+### Summary
+
+This release adds control over all `cupsd.conf` directives related to logging.
+
 ## 2019-04-22 - Release 2.1.1
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.1.1)
