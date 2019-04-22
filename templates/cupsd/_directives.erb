@@ -10,7 +10,7 @@ DefaultAuthType Basic
 <%=    "Listen #{l}" %>
 <%   end -%>
 <% end -%>
-<%= COMMENT_OUT if @log_debug_level.nil? -%>LogDebugLevel <%= @log_debug_level %>
+<%= COMMENT_OUT if @log_debug_history.nil? -%>LogDebugHistory <%= @log_debug_history %>
 <%= COMMENT_OUT if @log_level.nil? -%>LogLevel <%= @log_level %>
 <%= COMMENT_OUT if @log_time_format.nil? -%>LogTimeFormat <%= @log_time_format %>
 <%= COMMENT_OUT if @max_clients.nil? -%>MaxClients <%= @max_clients %>

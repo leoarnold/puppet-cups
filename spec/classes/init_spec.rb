@@ -293,6 +293,48 @@ RSpec.describe 'cups' do
       end
     end
 
+    describe 'log_debug_history' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^LogDebugHistory/) }
+      end
+
+      context 'when set to 5' do
+        let(:params) { { log_debug_history: 5 } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^LogDebugHistory 5$/) }
+      end
+    end
+
+    describe 'log_level' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^LogLevel/) }
+      end
+
+      context "when set to 'debug2'" do
+        let(:params) { { log_level: 'debug2' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^LogLevel debug2$/) }
+      end
+    end
+
+    describe 'log_time_format' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^LogTimeFormat/) }
+      end
+
+      context "when set to 'usecs'" do
+        let(:params) { { log_time_format: 'usecs' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^LogTimeFormat usecs$/) }
+      end
+    end
+
     describe 'max_clients' do
       let(:facts) { any_supported_os }
 

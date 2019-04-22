@@ -517,7 +517,7 @@ Installs, configures, and manages the CUPS service.
     }
   ```
 
-* `log_debug_level`: Sets the `LogDebugLevel` directive of the CUPS server.
+* `log_debug_history`: Sets the `LogDebugHistory` directive of the CUPS server.
 
 * `log_level`: Sets the `LogLevel` directive of the CUPS server.
 
