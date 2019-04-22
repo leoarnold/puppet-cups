@@ -479,8 +479,7 @@ Cups_queue[&#39;Office&#39;]               Cups_queue[&#39;Warehouse&#39;]
 <p>Make sure your Puppet setup includes the <code>::cups</code> class on the relevant nodes.
 Configuration is straightforward:</p>
 
-<pre class="code YAML"><code class="YAML">---
-cups::default_queue: Warehouse
+<pre class="code YAML"><code class="YAML">cups::default_queue: Warehouse
 cups::web_interface: true
 </code></pre>
 
@@ -509,8 +508,7 @@ cups_queue { &#39;Warehouse&#39;:
 
 <p>with the Hiera data</p>
 
-<pre class="code YAML"><code class="YAML">---
-cups::default_queue: Warehouse
+<pre class="code YAML"><code class="YAML">cups::default_queue: Warehouse
 cups::web_interface: true
 cups::resources:
   GroundFloor:
@@ -547,6 +545,7 @@ cups::resources:
 <h5>Attributes</h5>
 
 <ul>
+<li><p><code>access_log_level</code>: Sets the <code>AccessLogLevel</code> directive of the CUPS server.</p></li>
 <li><p><code>browse_dnssd_subtypes</code>: Sets the <code>BrowseDNSSDSubTypes</code> directive of the CUPS server.
 Accepts a string or an array of supported subtypes without leading underscore, e.g. <code>[&#39;cups&#39;, &#39;print&#39;]</code>.</p></li>
 <li><p><code>browse_local_protocols</code>: Sets the <code>BrowseLocalProtocols</code> directive of the CUPS server.
@@ -581,13 +580,18 @@ or specify the relevant endpoints directly:</p></li>
 </code></pre>
 
 <ul>
+<li><p><code>log_debug_history</code>: Sets the <code>LogDebugHistory</code> directive of the CUPS server.</p></li>
+<li><p><code>log_level</code>: Sets the <code>LogLevel</code> directive of the CUPS server.</p></li>
+<li><p><code>log_time_format</code>: Sets the <code>LogTimeFormat</code> directive of the CUPS server.</p></li>
 <li><p><code>max_clients</code>: Specifies the maximum number of simultaneous clients to support.</p></li>
 <li><p><code>max_clients_per_host</code>: Specifies the maximum number of simultaneous clients to support from a single address.</p></li>
+<li><p><code>max_log_size</code>: Sets the <code>MaxLogSize</code> directive of the CUPS server.</p></li>
 <li><p><code>max_request_size</code>: Specifies the maximum request/file size in bytes.</p></li>
 <li><p><code>package_ensure</code>: Whether CUPS packages should be <code>present</code> or <code>absent</code>. Defaults to <code>present</code>.</p></li>
 <li><p><code>package_manage</code>: Whether to manage package installation at all. Defaults to <code>true</code>.</p></li>
 <li><p><code>package_names</code>: A name or an array of names of all packages needed to be installed
 in order to run CUPS and provide <code>ipptool</code>. OS dependent defaults apply.</p></li>
+<li><p><code>page_log_format</code>: Sets the <code>PageLogFormat</code> directive of the CUPS server.</p></li>
 <li><p><code>papersize</code>: Sets the system&#39;s default <code>/etc/papersize</code>. See <code>man papersize</code> for supported values.</p></li>
 <li><p><code>purge_unmanaged_queues</code>: Setting <code>true</code> will remove all queues from the node
 which do not match a <code>cups_queue</code> resource in the current catalog. Defaults to <code>false</code>.</p></li>

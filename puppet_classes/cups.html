@@ -139,6 +139,23 @@ class { &#39;::cups&#39;:
   
     <li>
       
+        <span class='name'>access_log_level</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Sets the <code>AccessLogLevel</code> directive of the CUPS server.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>browse_dnssd_subtypes</span>
       
       
@@ -264,6 +281,57 @@ Note that the <code>cupsd.conf</code> directive <code>Port 631</code> is equival
   
     <li>
       
+        <span class='name'>log_debug_history</span>
+      
+      
+        <span class='type'>(<tt>Optional[Integer]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Sets the <code>LogDebugHistory</code> directive of the CUPS server.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>log_level</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Sets the <code>LogLevel</code> directive of the CUPS server.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>log_time_format</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Sets the <code>LogTimeFormat</code> directive of the CUPS server.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>max_clients</span>
       
       
@@ -292,6 +360,23 @@ Note that the <code>cupsd.conf</code> directive <code>Port 631</code> is equival
       
         &mdash;
         <div class='inline'><p>Specifies the maximum number of simultaneous clients to support from a single address.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>max_log_size</span>
+      
+      
+        <span class='type'>(<tt>Optional[Variant[Integer, String]]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Sets the <code>MaxLogSize</code> directive of the CUPS server.</p>
 </div>
       
     </li>
@@ -361,6 +446,23 @@ Note that the <code>cupsd.conf</code> directive <code>Port 631</code> is equival
         &mdash;
         <div class='inline'><p>A name or an array of names of all packages needed to be installed
 in order to run CUPS and provide <code>ipptool</code>. OS dependent defaults apply.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>page_log_format</span>
+      
+      
+        <span class='type'>(<tt>Optional[String]</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>undef</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Sets the <code>PageLogFormat</code> directive of the CUPS server.</p>
 </div>
       
     </li>
@@ -576,12 +678,6 @@ which do not match a <code>cups_queue</code> resource in the current catalog.</p
         <pre class="lines">
 
 
-58
-59
-60
-61
-62
-63
 64
 65
 66
@@ -610,12 +706,25 @@ which do not match a <code>cups_queue</code> resource in the current catalog.</p
 89
 90
 91
-92</pre>
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 58</span>
+        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 64</span>
 
 class cups (
+  Optional[String]                         $access_log_level       = undef,
   Optional[Variant[String, Array[String]]] $browse_dnssd_subtypes  = undef,
   Optional[Variant[String, Array[String]]] $browse_local_protocols = undef,
   Optional[Boolean]                        $browse_web_if          = undef,
@@ -623,12 +732,17 @@ class cups (
   Optional[String]                         $default_queue          = undef,
   Variant[String, Array[String]]           $listen                 = [&#39;localhost:631&#39;, &#39;/var/run/cups/cups.sock&#39;],
   Optional[Variant[String, Hash]]          $location               = undef,
+  Optional[Integer]                        $log_debug_history      = undef,
+  Optional[String]                         $log_level              = undef,
+  Optional[String]                         $log_time_format        = undef,
   Optional[Integer]                        $max_clients            = undef,
   Optional[Integer]                        $max_clients_per_host   = undef,
+  Optional[Variant[Integer, String]]       $max_log_size           = undef,
   Optional[Integer]                        $max_request_size       = undef,
   String                                   $package_ensure         = &#39;present&#39;,
   Boolean                                  $package_manage         = true,
   Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,
+  Optional[String]                         $page_log_format        = undef,
   Optional[String]                         $papersize              = undef,
   Boolean                                  $purge_unmanaged_queues = false,
   Optional[Hash]                           $resources              = undef,
