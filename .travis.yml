@@ -1,8 +1,7 @@
----
 sudo: false
 language: ruby
 cache: bundler
-bundler_args: --without acceptance_testing metatools
+bundler_args: "--without acceptance_testing metatools"
 env:
 - PUPPET_GEM_VERSION='~> 6.0'
 - PUPPET_GEM_VERSION='~> 5.0'
@@ -20,13 +19,14 @@ jobs:
     if: branch = master
     rvm: 2.6.1
     before_script:
-    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+      > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
-    - ./cc-test-reporter before-build
+    - "./cc-test-reporter before-build"
     script:
     - bundle exec rake spec
     after_script:
-    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+    - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
   - stage: Release on Puppet Forge
     if: branch = release
     rvm: 2.6.1
@@ -35,7 +35,7 @@ jobs:
       provider: puppetforge
       user: leoarnold
       password:
-        secure: n9Ba1nVpdhMuM73rmX7qBR49HK7SXvhpVqNYT8MTgCTLYfpQ0m4U9Y6jL7KL2UsNVr4DBITpdN0gHOCKRqjwN3/zxs4Kh+NAWTWTho3hnDMEQXoMctOZ6qdyXC1PoR8bu7HLbK3ZspGLFzzKHMumCp3Nn35rnmW3FM67hM/Lg3jJTmTioHuoDnAkh5cwspUIRPEPWvZamht2Adtj6k8gmMhwXDp76vbivA8LZd4Z43lb2hPECzMaSSap+rTHvnc67W9AYgOMwNJJ4eAjJvXwUsyviVfwHpYfp+UiL3qg/HOC8CwrCgIEQ88tCW0llG06vD3FEDDLr+BWqEMFaOtmHY4FGMP6p+eIFgucWLAZVws13ekiFQ61529R1dJD/yOJNciCYczjHX/mO4yJ5CU7TM2zhE04xdt1DrCKB/ctmzWiZNUjgWVkE0h/jPaoG6vy7l77lpYkMP5XUpWoyc/VSqlnaBshhS3M/QWiiyUlGIYZJ0gwtnmI4zRxUbI+j7xTM2wkkb0e5eVBqB8VXnBlau6Fz4PUlqLgb4K/G46G5d/+hZlL2vovDJNCH1ak20NVRMOOdwnl1yZfEQpZ8bu9pz0HuAT1X8iIxk5OZIQCVphRr9ao5Pct6yQs+BLH8itFEX9U+r5VWeCntoz+SBllFogr+EvNk+9kZcv3RhD356w=
+        secure: DmGRS18jo30F7o4TVgf8GR61JrnqQC+l4Lb8Khm7rjOBxEgpIsdIvKpNAbBX7uzEP6oSKEN/Zr2mFCwG8nY6dzJzoeHhzSkq7JG25nvPELQMkeuNy+wCvYgrfW5HRuFolNQFayztL9PjVYU9lFfk6RnK+J75eKNpzETdMtkYoagd6x0AQ3lSqH3Ked2gEc0xr7SYKgdVTOzFrKHiR7ti39HBFluj1hX5TTIz64Kl6U/V0rkNRoKgL2CQWrr7zVhAgzDvRd/jrWurJe02bV5DUo9xjwGN7HSjdNssC7UZloz+N8KQ6ki1sCFMPn9ZDHIJzyoUNm703SMHKXPRvuOWyXxZgF9j8AOg5FmSYjz6HyJKlshKb/Q5px9yAUWrGahGHkFgRJBIht1HEFYMHGH6aAfPEfCrwvhItARxtRXotx6oQCMBdFsQyMr1CYTPbZ9etQWeIJijayRKoZIuPdhuJ+k0zgrfT1IpKmk1jCXzb6FdDd2JgoubQ3sEWQH2+rpR9/ZC8Kv8In0jHKt3qs8fnKsNPAaJtX25JKQcAgt0ccKY/rzmoi+Xk4jE+vUGPuHgwswmtlt+DZJwZi38CEVfAd/EhykhGz5TDdY0SDpIPJYtgQCTZQVEr/YBZI3Zo3s319gUIFPz68v4VR/uNuIQnL+N53XXgDh6WJAzfum8mAg=
       skip_cleanup: true
       on:
         branch: release
@@ -51,7 +51,7 @@ jobs:
     deploy:
       provider: pages
       local-dir: doc
-      github-token: $GITHUB_TOKEN
+      github-token: "$GITHUB_TOKEN"
       keep-history: true
       skip_cleanup: true
       on:
