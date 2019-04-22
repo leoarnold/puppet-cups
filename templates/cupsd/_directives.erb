@@ -1,16 +1,16 @@
 <% COMMENT_OUT ||= '# '.freeze -%>
-LogLevel warn
-<% unless @listen.empty? -%>
-<%   [@listen].flatten.each do |l| -%>
-<%=    "Listen #{l}" %>
-<%   end -%>
-<% end -%>
 <%= COMMENT_OUT if @access_log_level.nil? -%>AccessLogLevel <%= @access_log_level %>
 <%= COMMENT_OUT if @browse_dnssd_subtypes.nil? -%>BrowseDNSSDSubTypes_<%= @browse_dnssd_subtypes.is_a?(Array) ? @browse_dnssd_subtypes.join(',_') : @browse_dnssd_subtypes %>
 <%= COMMENT_OUT if @browse_local_protocols.nil? -%>BrowseLocalProtocols <%= @browse_local_protocols.is_a?(Array) ? @browse_local_protocols.join(' ') : @browse_local_protocols %>
 <%= COMMENT_OUT if @browse_web_if.nil? -%>BrowseWebIF <%= (@browse_web_if ? 'Yes' : 'No') %>
 <%= COMMENT_OUT if @browsing.nil? -%>Browsing <%= (@browsing ? 'Yes' : 'No') %>
 DefaultAuthType Basic
+<% unless @listen.empty? -%>
+<%   [@listen].flatten.each do |l| -%>
+<%=    "Listen #{l}" %>
+<%   end -%>
+<% end -%>
+LogLevel warn
 <%= COMMENT_OUT if @max_clients.nil? -%>MaxClients <%= @max_clients %>
 <%= COMMENT_OUT if @max_clients_per_host.nil? -%>MaxClientsPerHost <%= @max_clients_per_host %>
 <%= COMMENT_OUT if @max_log_size.nil? -%>MaxLogSize <%= @max_log_size %>

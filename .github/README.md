@@ -413,7 +413,6 @@ Make sure your Puppet setup includes the `::cups` class on the relevant nodes.
 Configuration is straightforward:
 
 ```YAML
----
 cups::default_queue: Warehouse
 cups::web_interface: true
 ```
@@ -445,7 +444,6 @@ cups_queue { 'Warehouse':
 with the Hiera data
 
 ```YAML
----
 cups::default_queue: Warehouse
 cups::web_interface: true
 cups::resources:
