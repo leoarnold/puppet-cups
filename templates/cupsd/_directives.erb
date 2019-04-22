@@ -10,7 +10,9 @@ DefaultAuthType Basic
 <%=    "Listen #{l}" %>
 <%   end -%>
 <% end -%>
-LogLevel warn
+<%= COMMENT_OUT if @log_debug_level.nil? -%>LogDebugLevel <%= @log_debug_level %>
+<%= COMMENT_OUT if @log_level.nil? -%>LogLevel <%= @log_level %>
+<%= COMMENT_OUT if @log_time_format.nil? -%>LogTimeFormat <%= @log_time_format %>
 <%= COMMENT_OUT if @max_clients.nil? -%>MaxClients <%= @max_clients %>
 <%= COMMENT_OUT if @max_clients_per_host.nil? -%>MaxClientsPerHost <%= @max_clients_per_host %>
 <%= COMMENT_OUT if @max_log_size.nil? -%>MaxLogSize <%= @max_log_size %>

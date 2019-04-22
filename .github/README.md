@@ -517,6 +517,12 @@ Installs, configures, and manages the CUPS service.
     }
   ```
 
+* `log_debug_level`: Sets the `LogDebugLevel` directive of the CUPS server.
+
+* `log_level`: Sets the `LogLevel` directive of the CUPS server.
+
+* `log_time_format`: Sets the `LogTimeFormat` directive of the CUPS server.
+
 * `max_clients`: Specifies the maximum number of simultaneous clients to support.
 
 * `max_clients_per_host`: Specifies the maximum number of simultaneous clients to support from a single address.

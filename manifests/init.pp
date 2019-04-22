@@ -37,6 +37,9 @@
 #   Note that the `cupsd.conf` directive `Port 631` is equivalent to `Listen *:631`.
 #   *Warning*: For this module to work, it is *mandatory* that CUPS is listening on `localhost:631`.
 # @param location Sets the access control lists for the CUPS web interface. Restricts access to localhost by default.
+# @param log_debug_level Sets the `LogDebugLevel` directive of the CUPS server.
+# @param log_level Sets the `LogLevel` directive of the CUPS server.
+# @param log_time_format Sets the `LogTimeFormat` directive of the CUPS server.
 # @param max_clients Specifies the maximum number of simultaneous clients to support.
 # @param max_clients_per_host Specifies the maximum number of simultaneous clients to support from a single address.
 # @param max_log_size Sets the `MaxLogSize` directive of the CUPS server.
@@ -67,6 +70,9 @@ class cups (
   Optional[String]                         $default_queue          = undef,
   Variant[String, Array[String]]           $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
   Optional[Variant[String, Hash]]          $location               = undef,
+  Optional[Integer]                        $log_debug_level        = undef,
+  Optional[String]                         $log_level              = undef,
+  Optional[String]                         $log_time_format        = undef,
   Optional[Integer]                        $max_clients            = undef,
   Optional[Integer]                        $max_clients_per_host   = undef,
   Optional[Variant[Integer, String]]       $max_log_size           = undef,
