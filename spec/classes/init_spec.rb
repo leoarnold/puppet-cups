@@ -57,6 +57,20 @@ RSpec.describe 'cups' do
   end
 
   context 'with attribute' do
+    describe 'access_log_level' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^AccessLogLevel/) }
+      end
+
+      context "when set to 'config'" do
+        let(:params) { { access_log_level: 'config' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^AccessLogLevel config$/) }
+      end
+    end
+
     describe 'browse_dnssd_subtypes' do
       let(:facts) { any_supported_os }
 

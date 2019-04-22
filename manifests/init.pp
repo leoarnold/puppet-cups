@@ -23,6 +23,7 @@
 #     require => Package['hplip']
 #   }
 #
+# @param access_log_level Sets the `AccessLogLevel` directive of the CUPS server.
 # @param browse_dnssd_subtypes Sets the `BrowseDNSSDSubTypes` directive of the CUPS server.
 #   Accepts a string or an array of supported subtypes without leading underscore, e.g. `['cups', 'print']`.
 # @param browse_local_protocols Sets the `BrowseLocalProtocols` directive of the CUPS server.
@@ -58,6 +59,7 @@
 # @param web_interface Boolean value to enable or disable the server's web interface.
 #
 class cups (
+  Optional[String]                         $access_log_level       = undef,
   Optional[Variant[String, Array[String]]] $browse_dnssd_subtypes  = undef,
   Optional[Variant[String, Array[String]]] $browse_local_protocols = undef,
   Optional[Boolean]                        $browse_web_if          = undef,

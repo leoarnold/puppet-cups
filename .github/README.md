@@ -478,6 +478,8 @@ Installs, configures, and manages the CUPS service.
 
 ##### Attributes
 
+* `access_log_level`: Sets the `AccessLogLevel` directive of the CUPS server.
+
 * `browse_dnssd_subtypes`: Sets the `BrowseDNSSDSubTypes` directive of the CUPS server.
   Accepts a string or an array of supported subtypes without leading underscore, e.g. `['cups', 'print']`.
 
