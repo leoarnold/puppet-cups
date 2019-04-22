@@ -9,7 +9,7 @@ namespace :github do
   end
 
   desc 'Generate Yard documentation in /doc'
-  task pages: ['strings:generate', 'strings:gh_pages:configure']
+  task pages: %i[github:token strings:gh_pages:update]
 
   desc 'Release the module on GitHub'
   task release: %i[clean build] do
@@ -45,5 +45,16 @@ namespace :github do
     github.repos.releases.assets.upload asset
 
     puts '[GitHub] Module successfully released'
+  end
+
+  task :token do
+    require 'uri'
+
+    remote_uri = URI(`git remote get-url origin`.strip)
+
+    remote_uri.user = ENV['GITHUB_USERNAME']
+    remote_uri.password = ENV['GITHUB_TOKEN']
+
+    system("git remote set-url origin #{remote_uri}")
   end
 end
