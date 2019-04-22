@@ -307,6 +307,26 @@ RSpec.describe 'cups' do
       end
     end
 
+    describe 'max_log_size' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxLogSize/) }
+      end
+
+      context 'when set to 0' do
+        let(:params) { { max_log_size: 0 } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxLogSize 0$/) }
+      end
+
+      context 'when set to 32m' do
+        let(:params) { { max_log_size: '32m' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxLogSize 32m$/) }
+      end
+    end
+
     describe 'max_request_size' do
       let(:facts) { any_supported_os }
 
@@ -559,6 +579,20 @@ RSpec.describe 'cups' do
             it { is_expected.to_not contain_service('mycups') }
           end
         end
+      end
+    end
+
+    describe 'page_log_format' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^PageLogFormat/) }
+      end
+
+      context "when set to '%p %u %j %T %P %C'" do
+        let(:params) { { page_log_format: '%p %u %j %T %P %C' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^PageLogFormat "%p %u %j %T %P %C"$/) }
       end
     end
 

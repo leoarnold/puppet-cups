@@ -1,7 +1,5 @@
 <% COMMENT_OUT ||= '# '.freeze -%>
 LogLevel warn
-PageLogFormat
-MaxLogSize 0
 <% unless @listen.empty? -%>
 <%   [@listen].flatten.each do |l| -%>
 <%=    "Listen #{l}" %>
@@ -14,7 +12,9 @@ MaxLogSize 0
 DefaultAuthType Basic
 <%= COMMENT_OUT if @max_clients.nil? -%>MaxClients <%= @max_clients %>
 <%= COMMENT_OUT if @max_clients_per_host.nil? -%>MaxClientsPerHost <%= @max_clients_per_host %>
+<%= COMMENT_OUT if @max_log_size.nil? -%>MaxLogSize <%= @max_log_size %>
 <%= COMMENT_OUT if @max_request_size.nil? -%>MaxRequestSize <%= @max_request_size %>
+<%= COMMENT_OUT if @page_log_format.nil? -%>PageLogFormat "<%= @page_log_format %>"
 <%= COMMENT_OUT if @server_alias.nil? -%>ServerAlias <%= @server_alias.is_a?(Array) ? @server_alias.join(' ') : @server_alias %>
 <%= COMMENT_OUT if @server_name.nil? -%>ServerName <%= @server_name %>
 <%= COMMENT_OUT if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>

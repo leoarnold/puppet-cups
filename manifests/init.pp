@@ -38,11 +38,13 @@
 # @param location Sets the access control lists for the CUPS web interface. Restricts access to localhost by default.
 # @param max_clients Specifies the maximum number of simultaneous clients to support.
 # @param max_clients_per_host Specifies the maximum number of simultaneous clients to support from a single address.
+# @param max_log_size Sets the `MaxLogSize` directive of the CUPS server.
 # @param max_request_size Specifies the maximum request/file size in bytes.
 # @param package_ensure Whether CUPS packages should be `present` or `absent`.
 # @param package_manage Whether to manage package installation at all.
 # @param package_names A name or an array of names of all packages needed to be installed
 #   in order to run CUPS and provide `ipptool`. OS dependent defaults apply.
+# @param page_log_format Sets the `PageLogFormat` directive of the CUPS server.
 # @param papersize Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
 # @param purge_unmanaged_queues Setting `true` will remove all queues from the node
 #   which do not match a `cups_queue` resource in the current catalog.
@@ -65,10 +67,12 @@ class cups (
   Optional[Variant[String, Hash]]          $location               = undef,
   Optional[Integer]                        $max_clients            = undef,
   Optional[Integer]                        $max_clients_per_host   = undef,
+  Optional[Variant[Integer, String]]       $max_log_size           = undef,
   Optional[Integer]                        $max_request_size       = undef,
   String                                   $package_ensure         = 'present',
   Boolean                                  $package_manage         = true,
   Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,
+  Optional[String]                         $page_log_format        = undef,
   Optional[String]                         $papersize              = undef,
   Boolean                                  $purge_unmanaged_queues = false,
   Optional[Hash]                           $resources              = undef,

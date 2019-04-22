@@ -523,6 +523,8 @@ Installs, configures, and manages the CUPS service.
 
 * `max_clients_per_host`: Specifies the maximum number of simultaneous clients to support from a single address.
 
+* `max_log_size`: Sets the `MaxLogSize` directive of the CUPS server.
+
 * `max_request_size`: Specifies the maximum request/file size in bytes.
 
 * `package_ensure`: Whether CUPS packages should be `present` or `absent`. Defaults to `present`.
@@ -531,6 +533,8 @@ Installs, configures, and manages the CUPS service.
 
 * `package_names`: A name or an array of names of all packages needed to be installed
   in order to run CUPS and provide `ipptool`. OS dependent defaults apply.
+
+* `page_log_format`: Sets the `PageLogFormat` directive of the CUPS server.
 
 * `papersize`: Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
 
