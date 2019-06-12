@@ -20,14 +20,14 @@ RSpec.describe 'cups' do
     end
 
     let(:undefs) do
-      %i[
-        default_queue
-        location
-        papersize
-        resources
-        server_alias
-        server_name
-        web_interface
+      [
+        :default_queue,
+        :location,
+        :papersize,
+        :resources,
+        :server_alias,
+        :server_name,
+        :web_interface
       ]
     end
 

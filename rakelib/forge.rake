@@ -10,7 +10,7 @@ namespace :forge do
   end
 
   desc 'Release module on the Puppet forge'
-  task release: %i[forge:release? module:push]
+  task release: [:'forge:release?', :'module:push']
 
   desc 'List all versions of this module already published on the Puppet Forge'
   task :releases do

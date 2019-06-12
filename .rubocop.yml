@@ -4,7 +4,7 @@ require:
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.2
+  TargetRubyVersion: 2.4
   Exclude:
     - 'pkg/**/*'
     - 'spec/fixtures/**/*'
@@ -31,7 +31,13 @@ Metrics/BlockLength:
 Naming/PredicateName:
   Exclude:
     - 'lib/puppet/type/cups_queue.rb'
+Performance/RegexpMatch:
+  Enabled: false
 Style/AccessModifierDeclarations:
   Exclude:
     - 'lib/puppet/provider/cups_queue/cups.rb'
     - 'lib/puppet/type/cups_queue.rb'
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/SymbolArray:
+  EnforcedStyle: brackets

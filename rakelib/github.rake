@@ -9,10 +9,10 @@ namespace :github do
   end
 
   desc 'Generate Yard documentation in /doc'
-  task pages: %i[github:token strings:gh_pages:update]
+  task pages: [:'github:token', :'strings:gh_pages:update']
 
   desc 'Release the module on GitHub'
-  task release: %i[clean build] do
+  task release: [:clean, :build] do
     github = Github.new oauth_token: ENV['GITHUB_TOKEN']
 
     release = {

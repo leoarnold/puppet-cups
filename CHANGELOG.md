@@ -1,5 +1,15 @@
 # Changelog
 
+## 2019-06-13 - Release 2.2.1
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.2.1)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.2.1).
+
+### Summary
+
+This release drops the use of Array percent literals in order to support
+a wider range of JRuby based Puppet servers.
+
 ## 2019-04-23 - Release 2.2.0
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.2.0)

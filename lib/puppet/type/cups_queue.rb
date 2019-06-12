@@ -101,8 +101,8 @@ Puppet::Type.newtype(:cups_queue) do
     end
 
     def change_to_s(current_value, new_value)
-      return "created a #{should_to_s(new_value)}" unless %i[class printer].include?(current_value)
-      return "#{is_to_s(current_value)} removed" unless %i[class printer].include?(new_value)
+      return "created a #{should_to_s(new_value)}" unless [:class, :printer].include?(current_value)
+      return "#{is_to_s(current_value)} removed" unless [:class, :printer].include?(new_value)
 
       "changed from #{is_to_s(current_value)} to #{should_to_s(new_value)}"
     end
