@@ -165,7 +165,7 @@ class cups::queues::default inherits cups::queues {
 
   if ($::cups::default_queue) {
     exec { &#39;cups::queues::default&#39;:
-      command =&gt; &quot;lpadmin -E -d &#39;${::cups::default_queue}&#39;&quot;,
+      command =&gt; &quot;lpadmin -d &#39;${::cups::default_queue}&#39;&quot;,
       unless  =&gt; &quot;lpstat -d | grep -w &#39;${::cups::default_queue}&#39;&quot;,
       path    =&gt; [&#39;/usr/sbin/&#39;, &#39;/usr/bin/&#39;, &#39;/sbin/&#39;, &#39;/bin/&#39;],
       require =&gt; Cups_queue[$::cups::default_queue]
