@@ -108,13 +108,13 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         it 'adds the first printer to the class' do
           provider.create_class
 
-          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-c', 'GroundFloor')
+          expect(provider).to have_received(:lpadmin).with('-p', 'Office', '-c', 'GroundFloor')
         end
 
         it 'adds the second printer to the class' do
           provider.create_class
 
-          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Warehouse', '-c', 'GroundFloor')
+          expect(provider).to have_received(:lpadmin).with('-p', 'Warehouse', '-c', 'GroundFloor')
         end
       end
     end
@@ -126,7 +126,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
         provider.destroy
 
-        expect(provider).to have_received(:lpadmin).with('-E', '-x', 'GroundFloor')
+        expect(provider).to have_received(:lpadmin).with('-x', 'GroundFloor')
       end
     end
   end
@@ -148,13 +148,13 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         it 'installs a print queue' do
           provider.create_printer
 
-          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-v', 'file:///dev/null')
+          expect(provider).to have_received(:lpadmin).with('-p', 'Office', '-v', 'file:///dev/null')
         end
 
         it 'sets the driver' do
           provider.create_printer
 
-          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', switch[method], manifest[method]) if method
+          expect(provider).to have_received(:lpadmin).with('-p', 'Office', switch[method], manifest[method]) if method
         end
 
         it 'checks for correct make and model' do
@@ -171,7 +171,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
           provider.destroy
 
-          expect(provider).to have_received(:lpadmin).with('-E', '-x', 'Office')
+          expect(provider).to have_received(:lpadmin).with('-x', 'Office')
         end
       end
     end
@@ -227,7 +227,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
           provider.accepting = :true
 
-          expect(provider).to have_received(:cupsaccept).with('-E', 'Office')
+          expect(provider).to have_received(:cupsaccept).with('Office')
         end
       end
 
@@ -237,7 +237,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
           provider.accepting = :false
 
-          expect(provider).to have_received(:cupsreject).with('-E', 'Office')
+          expect(provider).to have_received(:cupsreject).with('Office')
         end
       end
     end
@@ -278,7 +278,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
           provider.access = { 'policy' => 'allow', 'users' => ['@council', 'lumbergh', 'nina'] }
 
-          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-u', 'allow:@council,lumbergh,nina')
+          expect(provider).to have_received(:lpadmin).with('-p', 'Office', '-u', 'allow:@council,lumbergh,nina')
         end
       end
 
@@ -288,7 +288,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
           provider.access = { 'policy' => 'deny', 'users' => ['@council', 'lumbergh', 'nina'] }
 
-          expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-u', 'deny:@council,lumbergh,nina')
+          expect(provider).to have_received(:lpadmin).with('-p', 'Office', '-u', 'deny:@council,lumbergh,nina')
         end
       end
     end
@@ -307,7 +307,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
         provider.description = 'color / duplex / stapling'
 
-        expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-D', 'color / duplex / stapling')
+        expect(provider).to have_received(:lpadmin).with('-p', 'Office', '-D', 'color / duplex / stapling')
       end
     end
 
@@ -349,7 +349,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
           provider.enabled = :true
 
-          expect(provider).to have_received(:cupsenable).with('-E', 'Office')
+          expect(provider).to have_received(:cupsenable).with('Office')
         end
       end
 
@@ -359,7 +359,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
           provider.enabled = :false
 
-          expect(provider).to have_received(:cupsdisable).with('-E', 'Office')
+          expect(provider).to have_received(:cupsdisable).with('Office')
         end
       end
     end
@@ -389,7 +389,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
           provider.held = :true
 
-          expect(provider).to have_received(:cupsdisable).with('-E', '--hold', 'Office')
+          expect(provider).to have_received(:cupsdisable).with('--hold', 'Office')
         end
       end
 
@@ -399,7 +399,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
           provider.held = :false
 
-          expect(provider).to have_received(:cupsenable).with('-E', '--release', 'Office')
+          expect(provider).to have_received(:cupsenable).with('--release', 'Office')
         end
       end
     end
@@ -418,7 +418,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
         provider.location = 'Room 101'
 
-        expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-L', 'Room 101')
+        expect(provider).to have_received(:lpadmin).with('-p', 'Office', '-L', 'Room 101')
       end
     end
 
@@ -522,7 +522,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
             provider.options = options
 
-            expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-o', 'PageSize=A4')
+            expect(provider).to have_received(:lpadmin).with('-p', 'Office', '-o', 'PageSize=A4')
           end
 
           it 'sets the duplex mode' do
@@ -530,7 +530,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
             provider.options = options
 
-            expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-o', 'Duplex=None')
+            expect(provider).to have_received(:lpadmin).with('-p', 'Office', '-o', 'Duplex=None')
           end
         end
       end
@@ -562,7 +562,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
         provider.shared = :true
 
-        expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-o', 'printer-is-shared=true')
+        expect(provider).to have_received(:lpadmin).with('-p', 'Office', '-o', 'printer-is-shared=true')
       end
     end
 
@@ -583,7 +583,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
 
         provider.uri = 'file:///dev/null'
 
-        expect(provider).to have_received(:lpadmin).with('-E', '-p', 'Office', '-v', 'file:///dev/null')
+        expect(provider).to have_received(:lpadmin).with('-p', 'Office', '-v', 'file:///dev/null')
       end
     end
   end
@@ -707,7 +707,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         it 'returns an empty hash' do
           input = "lpoptions: Unable to get PPD file for Raw: Not Found\n"
 
-          allow(provider).to receive(:lpoptions).with('-E', '-p', 'Office', '-l').and_return(input)
+          allow(provider).to receive(:lpoptions).with('-p', 'Office', '-l').and_return(input)
 
           expect(provider.send(:vendor_options_is)).to eq({})
         end
@@ -733,7 +733,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         end
 
         it 'returns a hash of vendor options and their current values' do
-          allow(provider).to receive(:lpoptions).with('-E', '-p', 'Office', '-l').and_return(input)
+          allow(provider).to receive(:lpoptions).with('-p', 'Office', '-l').and_return(input)
 
           expect(provider.send(:vendor_options_is)).to eq(expected)
         end

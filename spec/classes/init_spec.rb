@@ -176,7 +176,7 @@ RSpec.describe 'cups' do
         context "when the catalog contains the corresponding 'cups_queue' resource" do
           let(:pre_condition) { "cups_queue { 'Office':  ensure => 'printer' }" }
 
-          it { is_expected.to contain_exec('cups::queues::default').with(command: "lpadmin -E -d 'Office'") }
+          it { is_expected.to contain_exec('cups::queues::default').with(command: "lpadmin -d 'Office'") }
 
           it { is_expected.to contain_exec('cups::queues::default').with(unless: "lpstat -d | grep -w 'Office'") }
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## 2019-06-16 - Release 2.2.2
+
+Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.2.2)
+and [GitHub](https://github.com/leoarnold/puppet-cups/releases/tag/2.2.2).
+
+### Summary
+
+This release drops the use of encryption while talking to localhost via IPP.
+On localhost, HTTPS technically isn't necessary and since some users experienced
+CUPS SSL errors, we stop using it.
+
 ## 2019-06-13 - Release 2.2.1
 
 Published at [Puppet Forge](https://forge.puppet.com/leoarnold/cups/2.2.1)

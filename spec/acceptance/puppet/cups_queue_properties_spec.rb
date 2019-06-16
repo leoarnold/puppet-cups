@@ -18,7 +18,7 @@ RSpec.describe 'Custom type `cups_queue`' do
     context 'when changing only the property' do
       describe 'access' do
         before(:all) do
-          shell("lpadmin -E -p #{Shellwords.escape(name)} -u allow:all")
+          shell("lpadmin -p #{Shellwords.escape(name)} -u allow:all")
         end
 
         context 'with policy => allow' do
@@ -134,7 +134,7 @@ RSpec.describe 'Custom type `cups_queue`' do
 
       describe 'accepting' do
         before(:all) do
-          shell("cupsreject -E #{Shellwords.escape(name)}")
+          shell("cupsreject #{Shellwords.escape(name)}")
         end
 
         context 'when set to true' do
@@ -186,7 +186,7 @@ RSpec.describe 'Custom type `cups_queue`' do
 
       describe 'description' do
         before(:all) do
-          shell("lpadmin -E -p #{Shellwords.escape(name)} -D 'color'")
+          shell("lpadmin -p #{Shellwords.escape(name)} -D 'color'")
         end
 
         let(:manifest) do
@@ -213,7 +213,7 @@ RSpec.describe 'Custom type `cups_queue`' do
 
       describe 'enabled' do
         before(:all) do
-          shell("cupsdisable -E #{Shellwords.escape(name)}")
+          shell("cupsdisable #{Shellwords.escape(name)}")
         end
 
         context 'when set to true' do
@@ -265,7 +265,7 @@ RSpec.describe 'Custom type `cups_queue`' do
 
       describe 'held' do
         before(:all) do
-          shell("cupsenable -E --release #{Shellwords.escape(name)}")
+          shell("cupsenable --release #{Shellwords.escape(name)}")
         end
 
         context 'when set to true' do
@@ -317,7 +317,7 @@ RSpec.describe 'Custom type `cups_queue`' do
 
       describe 'location' do
         before(:all) do
-          shell("lpadmin -E -p #{Shellwords.escape(name)} -L 'Room 451'")
+          shell("lpadmin -p #{Shellwords.escape(name)} -L 'Room 451'")
         end
 
         let(:manifest) do
@@ -345,7 +345,7 @@ RSpec.describe 'Custom type `cups_queue`' do
       describe 'options' do
         context 'when using native options' do
           before(:all) do
-            shell("lpadmin -E -p #{Shellwords.escape(name)}" \
+            shell("lpadmin -p #{Shellwords.escape(name)}" \
               ' -o auth-info-required=negotiate' \
               ' -o job-sheets-default=banner,banner' \
               ' -o printer-error-policy=retry-current-job')
@@ -375,7 +375,7 @@ RSpec.describe 'Custom type `cups_queue`' do
 
         context 'when using vendor options' do
           before(:all) do
-            shell("lpadmin -E -p #{Shellwords.escape(name)} -o Duplex=None")
+            shell("lpadmin -p #{Shellwords.escape(name)} -o Duplex=None")
           end
 
           let(:manifest) do
@@ -407,7 +407,7 @@ RSpec.describe 'Custom type `cups_queue`' do
 
       describe 'shared' do
         before(:all) do
-          shell("lpadmin -E -p #{Shellwords.escape(name)} -o printer-is-shared=false")
+          shell("lpadmin -p #{Shellwords.escape(name)} -o printer-is-shared=false")
         end
 
         context 'when set to true' do

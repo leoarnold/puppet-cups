@@ -126,8 +126,8 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
     context "when the queue is present, disabled and restricted to user 'sshd'" do
       context 'without specifying an ACL' do
         before(:all) do
-          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-          shell('cupsdisable -E Office')
+          shell('lpadmin -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable Office')
         end
 
         let(:manifest) do
@@ -150,8 +150,8 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
 
       context 'when admitting everybody' do
         before(:all) do
-          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-          shell('cupsdisable -E Office')
+          shell('lpadmin -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable Office')
         end
 
         let(:access) { "{ 'policy' => 'allow', users => ['all'] }" }
@@ -167,8 +167,8 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
 
       context 'when admitting just one specific user' do
         before(:all) do
-          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-          shell('cupsdisable -E Office')
+          shell('lpadmin -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable Office')
         end
 
         let(:access) { "{ 'policy' => 'allow', users => ['sshd'] }" }
@@ -184,8 +184,8 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
 
       context 'when denying several users' do
         before(:all) do
-          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-          shell('cupsdisable -E Office')
+          shell('lpadmin -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable Office')
         end
 
         let(:access) { "{ 'policy' => 'deny', users => ['root', 'sshd'] }" }
@@ -201,8 +201,8 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
 
       context 'when denying just one specific user' do
         before(:all) do
-          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-          shell('cupsdisable -E Office')
+          shell('lpadmin -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable Office')
         end
 
         let(:access) { "{ 'policy' => 'deny', users => ['sshd'] }" }
@@ -218,8 +218,8 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
 
       context 'when denying several users' do
         before(:all) do
-          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-          shell('cupsdisable -E Office')
+          shell('lpadmin -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable Office')
         end
 
         let(:access) { "{ 'policy' => 'deny', users => ['root', 'sshd'] }" }
@@ -235,8 +235,8 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
 
       context 'when denying everybody' do
         before(:all) do
-          shell('lpadmin -E -p Office -v /dev/null -u allow:sshd')
-          shell('cupsdisable -E Office')
+          shell('lpadmin -p Office -v /dev/null -u allow:sshd')
+          shell('cupsdisable Office')
         end
 
         let(:access) { "{ 'policy' => 'deny', users => ['all'] }" }

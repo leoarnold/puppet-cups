@@ -29,7 +29,7 @@ end
 
 def add_printers(*names)
   names.each do |name|
-    shell("lpadmin -E -p #{Shellwords.escape(name)} -m drv:///sample.drv/generic.ppd -o printer-is-shared=false")
+    shell("lpadmin -p #{Shellwords.escape(name)} -m drv:///sample.drv/generic.ppd -o printer-is-shared=false")
   end
 end
 
@@ -39,16 +39,16 @@ def add_printers_to_classes(class_members)
     members = class_members[classname]
     members = %w[Dummy] if members.empty?
     members.each do |printername|
-      shell("lpadmin -E -p #{Shellwords.escape(printername)} -c #{Shellwords.escape(classname)}")
+      shell("lpadmin -p #{Shellwords.escape(printername)} -c #{Shellwords.escape(classname)}")
     end
-    shell("lpadmin -E -p #{Shellwords.escape(classname)} -o printer-is-shared=false")
+    shell("lpadmin -p #{Shellwords.escape(classname)} -o printer-is-shared=false")
   end
   remove_queues('Dummy')
 end
 
 def remove_queues(*names)
   names.flatten.each do |name|
-    shell("lpadmin -E -x #{Shellwords.escape(name)}", acceptable_exit_codes: [0, 1])
+    shell("lpadmin -x #{Shellwords.escape(name)}", acceptable_exit_codes: [0, 1])
   end
 end
 
