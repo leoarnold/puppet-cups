@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 puppet_version = ENV['PUPPET_GEM_VERSION']
 
-gem 'puppet', (puppet_version.nil? ? '~> 6.0' : puppet_version)
+gem 'puppet', '6.5.0', (puppet_version.nil? ? '~> 6.0' : puppet_version)
 
 group :development do
   gem 'codacy-coverage', '2.1.0'
