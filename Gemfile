@@ -12,7 +12,7 @@ group :development do
   gem 'pdk', '1.11.1'
   gem 'puppetlabs_spec_helper', '2.14.1'
   gem 'rake', '12.3.3'
-  gem 'rspec-puppet-facts', '1.9.2'
+  gem 'rspec-puppet-facts', '1.9.5'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
   gem 'simplecov', '0.17.0'
 end
