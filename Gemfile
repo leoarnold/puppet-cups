@@ -31,7 +31,7 @@ end
 
 group :release do
   gem 'github_api', '0.18.2'
-  gem 'puppet-blacksmith', '4.1.2'
+  gem 'puppet-blacksmith', '5.0.0'
 end
 
 group :metatools do
