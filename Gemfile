@@ -7,7 +7,7 @@ gem 'puppet', (puppet_version.nil? ? '~> 6.0' : puppet_version)
 group :development do
   gem 'codacy-coverage', '2.1.5'
   gem 'coderay', '1.1.2'
-  gem 'mdl', '0.7.0'
+  gem 'mdl', '0.8.0'
   gem 'metadata-json-lint', '2.2.0'
   gem 'pdk', '1.14.0'
   gem 'puppetlabs_spec_helper', '2.14.1'
