@@ -39,6 +39,6 @@ group :metatools do
   gem 'overcommit', '0.52.0'
   gem 'rubocop', '0.77.0'
   gem 'rubocop-performance', '1.5.1'
-  gem 'rubocop-rspec', '1.37.0'
+  gem 'rubocop-rspec', '1.37.1'
   gem 'travis', '1.8.10'
 end
