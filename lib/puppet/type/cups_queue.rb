@@ -270,7 +270,7 @@ Puppet::Type.newtype(:cups_queue) do
     validate do |value|
       raise ArgumentError, "The absolute local file path '#{value}' seems malformed." unless Pathname(value).absolute?
       raise ArgumentError, "Putting your PPD files into '/etc/cups/ppd/' is error prone. Please use '/usr/share/cups/model/' instead." \
-        if Pathname(value).dirname.to_s =~ %r{\A/etc/cups/ppd}
+        if Pathname(value).dirname.to_s.start_with?('/etc/cups/ppd')
     end
   end
 

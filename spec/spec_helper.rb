@@ -64,6 +64,6 @@ RSpec.configure do |c|
 end
 
 # Make Puppet eXtension modules available
-Dir["#{PROJECT_ROOT}/lib/puppet_x/**/*.rb"].each do |file|
+Dir["#{PROJECT_ROOT}/lib/puppet_x/**/*.rb"].sort.each do |file|
   require file
 end
