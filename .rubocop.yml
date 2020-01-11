@@ -13,7 +13,13 @@ AllCops:
 Layout/HeredocIndentation:
   Enabled: false
 
-Layout/LineLength:
+Lint/BooleanSymbol:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/LineLength:
   Max: 144
   AllowURI: true
   URISchemes:
@@ -26,12 +32,6 @@ Layout/LineLength:
     - puppet
   Exclude:
     - 'spec/classes/init_spec.rb'
-
-Lint/BooleanSymbol:
-  Enabled: false
-
-Metrics/BlockLength:
-  Enabled: false
 
 Naming/PredicateName:
   Exclude:
