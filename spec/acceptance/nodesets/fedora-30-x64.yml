@@ -1,9 +1,9 @@
 HOSTS:
-  ubuntu-17.04-x64:
+  fedora-30-x64:
     roles:
       - master
-    platform: ubuntu-17.04-x64
-    box: bento/ubuntu-17.04
+    platform: fedora-30-x64
+    box: bento/fedora-30
     hypervisor: vagrant
 CONFIG:
   type: foss
