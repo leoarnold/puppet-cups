@@ -1,9 +1,9 @@
 HOSTS:
-  fedora-26-x64:
+  debian-10-x64:
     roles:
       - master
-    platform: fedora-26-x64
-    box: bento/fedora-26
+    platform: debian-10-x64
+    box: debian/buster64
     hypervisor: vagrant
 CONFIG:
   type: foss
