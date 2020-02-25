@@ -7,6 +7,9 @@
 # This class makes the configured systemd unit for CUPS to listen on port 631
 # before control is yielded back to Puppet thereby preventing the failure.
 #
+# Multiple CUPS service names (`$::cups::service_names`) are not supported,
+# only the first one is considered.
+#
 # @param ensure Enable or disable this workaround
 # @param unit The name of the systemd unit which should wait for CUPS to listen on port 631
 #
@@ -25,14 +28,14 @@
 #
 class cups::workarounds::systemd_service_restart (
   Enum['present', 'absent'] $ensure = 'present',
-  String $unit = 'cups.socket',
+  Pattern[/\.socket\Z/] $unit = 'cups.socket',
 ) {
 
   if ($::systemd) {
 
     include '::cups'
 
-    systemd::dropin_file { 'wait_until_cups_listens_on_port_631.conf':
+    $_dropin_file = systemd::dropin_file { 'wait_until_cups_listens_on_port_631.conf':
       ensure  => $ensure,
       unit    => $unit,
       content => template(
@@ -41,7 +44,20 @@ class cups::workarounds::systemd_service_restart (
       )
     }
 
-    Systemd::Dropin_file['wait_until_cups_listens_on_port_631.conf'] ~> Class['cups::server::services']
+    $_main_service_name = any2array($::cups::service_names)[0]
+    $_safe_service_name = shell_escape($_main_service_name)
+    $_safe_socket_name  = shell_escape($unit)
+
+    $_socket_service = service { $unit:
+      ensure  => $::cups::service_ensure,
+      # Both units listen to port 631, however cups.service will play nice if
+      # cups.socket is started first. See sd_listen_fds(3).
+      start   => "systemctl stop ${_safe_service_name} && systemctl start ${_safe_socket_name}",
+      restart => "systemctl stop ${_safe_service_name} && systemctl restart ${_safe_socket_name}",
+    }
+
+    $_dropin_file ~> [ Class['cups::server::services'], $_socket_service ]
+    Class['systemd::systemctl::daemon_reload'] -> $_socket_service -> Class['cups::server::services']
 
   }
 
