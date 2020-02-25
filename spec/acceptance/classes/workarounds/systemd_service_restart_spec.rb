@@ -58,6 +58,12 @@ RSpec.describe 'Including class "cups::workarounds::systemd_service_restart"', s
         end
 
         it 'is idempotent' do
+          # Avoid idempotence failures when /etc/systemd/system/cups.socket.d
+          # is created as cupsd_unit_file_t and fixed to systemd_unit_file_t on
+          # second run. That's a systemd/Puppet/OS/whatever bug, not something
+          # we can fix in this module.
+          shell('restorecon -Rv /etc/systemd/system/cups.socket.d')
+
           apply_manifest(manifest, catch_changes: true)
         end
       end
