@@ -2,13 +2,36 @@
 
 require 'spec_helper_acceptance'
 
-RSpec.describe 'Including class "cups::workarounds::systemd_service_restart"' do
+def service_and_queue_pp(ensure_workaround)
+  <<-MANIFEST
+    class { 'cups':
+      service_ensure => 'running',
+    }
+    cups_queue { 'Office':
+      ensure => 'printer',
+    }
+    class { 'cups::workarounds::systemd_service_restart':
+      ensure => '#{ensure_workaround}',
+    }
+  MANIFEST
+end
+
+wrong_platform = default_node.platform !~ /\Acentos-7/
+
+RSpec.shared_examples 'a systemd EL7 CUPS without the workaround' do
+  let(:manifest) { service_and_queue_pp('absent') }
+
+  it 'fails to connect to CUPS' do
+    result = apply_manifest(manifest, expect_failures: true)
+    expect(result.stderr).to include('Unable to connect to localhost on port 631')
+  end
+end
+
+RSpec.describe 'Including class "cups::workarounds::systemd_service_restart"', skip: wrong_platform do
   before(:all) do
     ensure_cups_is_running
     purge_all_queues
   end
-
-  let(:manifest) { "include '::cups::workarounds::systemd_service_restart'" }
 
   describe 'restarting the CUPS server' do
     before(:all) do
@@ -24,13 +47,24 @@ RSpec.describe 'Including class "cups::workarounds::systemd_service_restart"' do
         add_printers(*names)
       end
 
-      it 'applies without error' do
-        apply_manifest(manifest)
+      # Test before applying the workaround below
+      it_behaves_like 'a systemd EL7 CUPS without the workaround'
+
+      context 'with the workaround' do
+        let(:manifest) { service_and_queue_pp('present') }
+
+        it 'applies without error' do
+          apply_manifest(manifest)
+        end
+
+        it 'is idempotent' do
+          apply_manifest(manifest, catch_changes: true)
+        end
       end
 
-      it 'is idempotent' do
-        apply_manifest(manifest, catch_changes: true)
-      end
+      # Test again to make sure disabling works and we leave a clean system for
+      # the rest of the suite.
+      it_behaves_like 'a systemd EL7 CUPS without the workaround'
     end
   end
 end

@@ -19,13 +19,19 @@ RSpec.describe 'cups::workarounds::systemd_service_restart' do
     it { is_expected.to contain_systemd__dropin_file(dropin_name).that_notifies('Class[cups::server::services]') }
 
     context 'without params' do
-      it { is_expected.to contain_systemd__dropin_file(dropin_name).with(unit: 'cups.socket', content: dropin_content) }
+      it { is_expected.to contain_systemd__dropin_file(dropin_name).with(ensure: 'present', unit: 'cups.socket', content: dropin_content) }
     end
 
     context "with unit = 'mycups.socket'" do
       let(:params) { { unit: 'mycups.socket' } }
 
-      it { is_expected.to contain_systemd__dropin_file(dropin_name).with(unit: 'mycups.socket', content: dropin_content) }
+      it { is_expected.to contain_systemd__dropin_file(dropin_name).with(ensure: 'present', unit: 'mycups.socket', content: dropin_content) }
+    end
+
+    context 'with ensure = absent' do
+      let(:params) { { ensure: 'absent' } }
+
+      it { is_expected.to contain_systemd__dropin_file(dropin_name).with(ensure: 'absent') }
     end
   end
 end

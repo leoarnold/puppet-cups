@@ -7,6 +7,7 @@
 # This class makes the configured systemd unit for CUPS to listen on port 631
 # before control is yielded back to Puppet thereby preventing the failure.
 #
+# @param ensure Enable or disable this workaround
 # @param unit The name of the systemd unit which should wait for CUPS to listen on port 631
 #
 # @author Thomas Equeter
@@ -23,7 +24,8 @@
 # @see https://bugzilla.redhat.com/show_bug.cgi?id=1088918
 #
 class cups::workarounds::systemd_service_restart (
-  String $unit = 'cups.socket'
+  Enum['present', 'absent'] $ensure = 'present',
+  String $unit = 'cups.socket',
 ) {
 
   if ($::systemd) {
@@ -31,6 +33,7 @@ class cups::workarounds::systemd_service_restart (
     include '::cups'
 
     systemd::dropin_file { 'wait_until_cups_listens_on_port_631.conf':
+      ensure  => $ensure,
       unit    => $unit,
       content => template(
         'cups/_header.erb',
