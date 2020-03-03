@@ -40,5 +40,5 @@ group :metatools do
   gem 'rubocop', '0.80.1'
   gem 'rubocop-performance', '1.5.2'
   gem 'rubocop-rspec', '1.38.1'
-  gem 'travis', '1.8.10'
+  gem 'travis', '1.8.11'
 end
