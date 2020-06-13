@@ -8,7 +8,7 @@ group :development do
   gem 'codacy-coverage', '2.2.1'
   gem 'coderay', '1.1.3'
   gem 'mdl', '0.9.0'
-  gem 'metadata-json-lint', '2.3.0'
+  gem 'metadata-json-lint', '2.4.0'
   gem 'pdk', '1.18.0'
   gem 'puppetlabs_spec_helper', '2.14.1'
   gem 'rake', '13.0.1'
