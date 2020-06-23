@@ -30,7 +30,7 @@ group :documentation do
 end
 
 group :release do
-  gem 'github_api', '0.18.2'
+  gem 'github_api', '0.19.0'
   gem 'puppet-blacksmith', '6.0.0'
 end
 
