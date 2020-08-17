@@ -14,7 +14,7 @@ group :development do
   gem 'rake', '13.0.1'
   gem 'rspec-puppet-facts', '2.0.0'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
-  gem 'simplecov', '0.18.5'
+  gem 'simplecov', '0.19.0'
 end
 
 group :acceptance_testing do
