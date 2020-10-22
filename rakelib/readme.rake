@@ -22,3 +22,4 @@ end
 
 task build: :readme
 task mdl: :readme
+task 'strings:generate': :readme
