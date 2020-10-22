@@ -448,7 +448,7 @@ RSpec.describe "Type 'cups_queue'" do
           let(:manifest) { { name: 'UpperFloor', ensure: 'class', members: ['BackOffice'] } }
 
           before do
-            allow(provider).to receive(:class_exists?).and_return(false)
+            allow(provider).to receive(:printer_exists?).and_return(true)
           end
 
           it 'creates the class' do
@@ -505,7 +505,7 @@ RSpec.describe "Type 'cups_queue'" do
           let(:manifest) { { name: 'Office', ensure: 'printer' } }
 
           before do
-            allow(provider).to receive(:printer_exists?).and_return(false)
+            allow(provider).to receive(:class_exists?).and_return(false)
           end
 
           it 'creates the printer' do
@@ -593,7 +593,7 @@ RSpec.describe "Type 'cups_queue'" do
         end
       end
 
-      describe 'from :printer to :class' do
+      describe 'from :printer to :absent' do
         it 'narrates the change' do
           expect(property.send(:change_to_s, :printer, :absent)).to eq('printer removed')
         end
@@ -604,13 +604,13 @@ RSpec.describe "Type 'cups_queue'" do
       it { is_expected.to have_documentation }
 
       it 'accepts :true' do
-        resource[:held] = :true
-        expect(resource[:held]).to eq(:true)
+        resource[:accepting] = :true
+        expect(resource[:accepting]).to eq(:true)
       end
 
       it 'accepts :false' do
-        resource[:held] = :false
-        expect(resource[:held]).to eq(:false)
+        resource[:accepting] = :false
+        expect(resource[:accepting]).to eq(:false)
       end
     end
 
@@ -674,13 +674,13 @@ RSpec.describe "Type 'cups_queue'" do
       it { is_expected.to have_documentation }
 
       it 'accepts :true' do
-        resource[:held] = :true
-        expect(resource[:held]).to eq(:true)
+        resource[:enabled] = :true
+        expect(resource[:enabled]).to eq(:true)
       end
 
       it 'accepts :false' do
-        resource[:held] = :false
-        expect(resource[:held]).to eq(:false)
+        resource[:enabled] = :false
+        expect(resource[:enabled]).to eq(:false)
       end
     end
 
@@ -774,13 +774,13 @@ RSpec.describe "Type 'cups_queue'" do
       it { is_expected.to have_documentation }
 
       it 'accepts :true' do
-        resource[:held] = :true
-        expect(resource[:held]).to eq(:true)
+        resource[:shared] = :true
+        expect(resource[:shared]).to eq(:true)
       end
 
       it 'accepts :false' do
-        resource[:held] = :false
-        expect(resource[:held]).to eq(:false)
+        resource[:shared] = :false
+        expect(resource[:shared]).to eq(:false)
       end
     end
 

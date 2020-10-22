@@ -61,6 +61,6 @@ def purge_all_queues
     DISPLAY printer-name
   }'
   result = shell('ipptool -t ipp://localhost/ /dev/stdin', stdin: request, acceptable_exit_codes: [0, 1])
-  queues = result.stdout.scan(%r{printer-name \(nameWithoutLanguage\) = ([^\s\"\'\\,#/]+)})
+  queues = result.stdout.scan(%r{printer-name \(nameWithoutLanguage\) = ([^\s"'\\,#/]+)})
   remove_queues(queues)
 end

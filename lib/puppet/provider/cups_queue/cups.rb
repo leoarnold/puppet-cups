@@ -94,7 +94,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   private :run_property_setter
 
   def run_attribute_setter(attribute, target_value)
-    method(attribute.to_s + '=').call(target_value) if target_value
+    method("#{attribute}=").call(target_value) if target_value
   end
   private :run_attribute_setter
 
@@ -127,7 +127,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def access=(value)
-    lpadmin('-p', name, '-u', value['policy'] + ':' + value['users'].join(','))
+    lpadmin('-p', name, '-u', "#{value['policy']}:#{value['users'].join(',')}")
   end
 
   def description
@@ -151,7 +151,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   end
 
   def held
-    query('printer-state-reasons') =~ /hold-new-jobs/ ? :true : :false
+    query('printer-state-reasons').include?('hold-new-jobs') ? :true : :false
   end
 
   def held=(value)
@@ -294,10 +294,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   def query_native_option(option)
     value = query(option)
 
-    if option == 'auth-info-required'
-      # Related issue: https://github.com/apple/cups/issues/4958
-      value = 'none' if value.empty?
-    end
+    value = 'none' if option == 'auth-info-required' && value.empty? # Related issue: https://github.com/apple/cups/issues/4958
 
     value
   end
@@ -311,7 +308,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     answer = {}
 
     lpoptions('-p', name, '-l').each_line do |line|
-      result = %r{\A(?<key>\w+)/(.*):(.*)\*(?<value>\w+)}.match(line)
+      result = %r{\A(?<key>\w+)/.*:.*\*(?<value>\w+)}.match(line)
       answer[result[:key]] = result[:value] if result
     end
 
@@ -348,7 +345,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   # @return [Array] The names of all groups (prefixed by `@`) and users currently allowed / denied to use the queue.
   def query_users(status)
     names = query("requesting-user-name-#{status}")
-    names.gsub(/[\'\"]/, '').split(',').sort.uniq if names
+    names.gsub(/['"]/, '').split(',').sort.uniq if names
   end
 
   # @private

@@ -1,11 +1,8 @@
 ---
 inherit_from: ../.rubocop.yml
 
-AllCops:
-  TargetRubyVersion: 2.3
-
-Layout/HeredocIndentation:
-  EnforcedStyle: squiggly
+Performance/CollectionLiteralInLoop:
+  Enabled: false
 
 RSpec/BeforeAfterAll:
   Exclude:
@@ -21,6 +18,9 @@ RSpec/ImplicitSubject:
 RSpec/InstanceVariable:
   Exclude:
   - 'api/ipptool_spec.rb'
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
 
 RSpec/NestedGroups:
   Enabled: false

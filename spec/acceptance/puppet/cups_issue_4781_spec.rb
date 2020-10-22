@@ -182,13 +182,13 @@ RSpec.describe 'Circumventing CUPS issue #4781' do
         end
       end
 
-      context 'when denying several users' do
+      context 'when admitting several users' do
         before(:all) do
           shell('lpadmin -p Office -v /dev/null -u allow:sshd')
           shell('cupsdisable Office')
         end
 
-        let(:access) { "{ 'policy' => 'deny', users => ['root', 'sshd'] }" }
+        let(:access) { "{ 'policy' => 'allow', users => ['root', 'sshd'] }" }
 
         it 'applies changes' do
           apply_manifest(manifest, expect_changes: true)

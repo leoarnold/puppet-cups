@@ -26,7 +26,7 @@ class ForgeModule
   def github
     return @github if @github
 
-    regex = %r{https://github.com/(?<owner>\w+)/(?<repo>[^\/\#\?\s]+)}
+    regex = %r{https://github.com/(?<owner>\w+)/(?<repo>[^/\#?\s]+)}
 
     raise ArgumentError, "metadata.json: Value for key 'source' is not a GitHub repository" unless source =~ regex
 
@@ -43,7 +43,7 @@ class ForgeModule
     releases.include?(version)
   end
 
-  def candidate # rubocop:disable Metrics/AbcSize
+  def candidate
     @changelog ||= file('CHANGELOG.md').read
 
     title = nil

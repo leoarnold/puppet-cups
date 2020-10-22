@@ -120,7 +120,7 @@ Puppet::Type.newtype(:cups_queue) do
     desc '(mandatory) Queue names may contain any printable character except SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".'
 
     validate do |name|
-      raise ArgumentError, 'Queue names may NOT contain SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".' if name =~ %r{[\s\"\'\\,#/]}
+      raise ArgumentError, 'Queue names may NOT contain SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".' if name =~ %r{[\s"'\\,#/]}
     end
   end
 

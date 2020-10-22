@@ -68,7 +68,7 @@ module PuppetX
         #
         # @return [String] The resource to query
         def resource
-          '/printers/' + ERB::Util.url_encode(@queue)
+          "/printers/#{ERB::Util.url_encode(@queue)}"
         end
 
         # @private

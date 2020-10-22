@@ -4,6 +4,7 @@ require:
   - rubocop-rspec
 
 AllCops:
+  NewCops: enable
   TargetRubyVersion: 2.4
   Exclude:
     - 'pkg/**/*'
@@ -13,13 +14,7 @@ AllCops:
 Layout/HeredocIndentation:
   Enabled: false
 
-Lint/BooleanSymbol:
-  Enabled: false
-
-Metrics/BlockLength:
-  Enabled: false
-
-Metrics/LineLength:
+Layout/LineLength:
   Max: 144
   AllowURI: true
   URISchemes:
@@ -32,6 +27,12 @@ Metrics/LineLength:
     - puppet
   Exclude:
     - 'spec/classes/init_spec.rb'
+
+Lint/BooleanSymbol:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
 
 Naming/PredicateName:
   Exclude:
