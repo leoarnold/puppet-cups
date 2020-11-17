@@ -1,0 +1,51 @@
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-16.04
+    strategy:
+      matrix:
+        ruby: [ '2.4', '2.5', '2.6' ]
+        puppet: [ '~> 5.0', '~> 6.0' ]
+    name: Ruby ${{ matrix.ruby }} using Puppet ${{ matrix.puppet }}
+    env:
+      PUPPET_GEM_VERSION: ${{ matrix.puppet }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - run: gem install bundler -v 2.1.4
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - run: bundle config set without 'acceptance_testing metatools'
+      - run: bundle install
+      - run: bundle exec rake github:actions
+      - uses: paambaati/codeclimate-action@v2.7.4
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+  release:
+    name: PuppetForge release, GitHub release, GitHub pages
+    needs: test
+    if: ${{ github.ref == 'refs/heads/release' }}
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+      - run: gem install bundler -v 2.1.4
+      - uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - run: bundle config set without 'acceptance_testing metatools'
+      - run: bundle install
+      - run: bundle exec rake forge:release
+      - run: bundle exec rake github:release
+      - run: bundle exec rake github:pages
