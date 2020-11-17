@@ -1,6 +1,6 @@
 # The CUPS module
 
-[![Build Status](https://travis-ci.org/leoarnold/puppet-cups.svg?branch=master)](https://travis-ci.org/leoarnold/puppet-cups)
+![.github/workflows/test.yml](https://github.com/leoarnold/puppet-cups/workflows/.github/workflows/test.yml/badge.svg)
 [![Depfu](https://badges.depfu.com/badges/b664de4d78caad461da4a66da7c9efeb/overview.svg)](https://depfu.com/github/leoarnold/puppet-cups)
 [![Maintainability](https://api.codeclimate.com/v1/badges/64c46cb56b156ee464de/maintainability)](https://codeclimate.com/github/leoarnold/puppet-cups/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/64c46cb56b156ee464de/test_coverage)](https://codeclimate.com/github/leoarnold/puppet-cups/test_coverage)
