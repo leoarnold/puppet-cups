@@ -32,6 +32,13 @@ jobs:
     needs: test
     if: ${{ github.ref == 'refs/heads/release' }}
     runs-on: ubuntu-16.04
+    env:
+      BLACKSMITH_FORGE_PASSWORD: ${{ secrets.BLACKSMITH_FORGE_PASSWORD }}
+      BLACKSMITH_FORGE_URL: ${{ secrets.BLACKSMITH_FORGE_URL }}
+      BLACKSMITH_FORGE_USERNAME: ${{ secrets.BLACKSMITH_FORGE_USERNAME }}
+      PUPPET_GEM_VERSION: '~> 6.0'
+      X_GITHUB_TOKEN: ${{ secrets.X_GITHUB_TOKEN }}
+      X_GITHUB_USERNAME: ${{ secrets.X_GITHUB_USERNAME }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-ruby@v1

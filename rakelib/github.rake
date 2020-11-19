@@ -16,7 +16,7 @@ namespace :github do
 
   desc 'Release the module on GitHub'
   task release: [:clean, :build] do
-    github = Github.new oauth_token: ENV['GITHUB_TOKEN']
+    github = Github.new oauth_token: ENV['X_GITHUB_TOKEN']
 
     release = {
       owner: FORGE_MODULE.github[:owner],
@@ -55,8 +55,8 @@ namespace :github do
 
     remote_uri = URI(`git remote get-url origin`.strip)
 
-    remote_uri.user = ENV['GITHUB_USERNAME']
-    remote_uri.password = ENV['GITHUB_TOKEN']
+    remote_uri.user = ENV['X_GITHUB_USERNAME']
+    remote_uri.password = ENV['X_GITHUB_TOKEN']
 
     system("git remote set-url origin #{remote_uri}")
   end
