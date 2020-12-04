@@ -20,6 +20,8 @@ task :readme do
   erb(:release, 'README.md.erb', 'README.md')
 end
 
+# rubocop:disable Rake/Desc
 task build: :readme
 task mdl: :readme
 task 'strings:generate': :readme
+# rubocop:enable Rake/Desc

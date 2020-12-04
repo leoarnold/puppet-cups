@@ -50,7 +50,7 @@ namespace :github do
     puts '[GitHub] Module successfully released'
   end
 
-  task :token do
+  task :token do # rubocop:disable Rake/Desc
     require 'uri'
 
     remote_uri = URI(`git remote get-url origin`.strip)
