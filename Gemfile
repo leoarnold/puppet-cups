@@ -11,7 +11,7 @@ group :development do
   gem 'metadata-json-lint', '3.0.0'
   gem 'pdk', '1.18.1'
   gem 'puppetlabs_spec_helper', '2.15.0'
-  gem 'rake', '13.0.1'
+  gem 'rake', '13.0.2'
   gem 'rspec-puppet-facts', '2.0.0'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
   gem 'simplecov', '~> 0.17.0' # See: https://github.com/codeclimate/test-reporter/issues/413
