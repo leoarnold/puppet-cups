@@ -293,6 +293,54 @@ RSpec.describe 'cups' do
       end
     end
 
+    describe 'policies' do
+      let(:facts) { any_supported_os }
+
+      describe 'by default' do
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Policy default>\s*JobPrivateAccess default\s*JobPrivateValues default\s*SubscriptionPrivateAccess default\s*SubscriptionPrivateValues default\s*<Limit}) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Policy authenticated>\s*JobPrivateAccess default\s*JobPrivateValues default\s*SubscriptionPrivateAccess default\s*SubscriptionPrivateValues default\s*<Limit}) }
+      end
+
+      context 'when policy options are overridden' do
+        let(:params) { {
+          'policies' => {
+            'default' => {
+              'options' => [
+                'JobPrivateAccess default',
+                'JobPrivateValues default',
+              ],
+            },
+            'authenticated' => {
+              'options' => [
+                'SubscriptionPrivateAccess default',
+                'SubscriptionPrivateValues default',
+              ],
+            }
+          }
+        } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Policy default>\s*JobPrivateAccess default\s*JobPrivateValues default\s*<Limit}) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Policy authenticated>\s*SubscriptionPrivateAccess default\s*SubscriptionPrivateValues default\s*<Limit}) }
+      end
+
+      context 'when policy options are overridden' do
+        let(:params) { {
+          'policies' => {
+            'default' => {
+              'limits' => {
+                'Create-Job Print-Job Print-URI Validate-Job' => [
+                  'Require user @OWNER @SYSTEM',
+                  'Order deny,allow'
+                ],
+              }
+            }
+          }
+        } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{<Limit\s*Create-Job\s*Print-Job\s*Print-URI\s*Validate-Job>\s*Require\s*user\s*@OWNER\s*@SYSTEM\s*Order\s*deny,allow\s*</Limit>}) }
+      end
+    end
+
     describe 'log_debug_history' do
       let(:facts) { any_supported_os }
 
