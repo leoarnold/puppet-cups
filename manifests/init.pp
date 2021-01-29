@@ -50,6 +50,7 @@
 #   in order to run CUPS and provide `ipptool`. OS dependent defaults apply.
 # @param page_log_format Sets the `PageLogFormat` directive of the CUPS server.
 # @param papersize Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
+# @param policies Sets the access policies for the CUPS server to use.
 # @param purge_unmanaged_queues Setting `true` will remove all queues from the node
 #   which do not match a `cups_queue` resource in the current catalog.
 # @param resources This attribute is intended for use with Hiera or any other ENC.
@@ -82,6 +83,7 @@ class cups (
   Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,
   Optional[String]                         $page_log_format        = undef,
   Optional[String]                         $papersize              = undef,
+  Optional[Hash]                           $policies               = undef,
   Boolean                                  $purge_unmanaged_queues = false,
   Optional[Hash]                           $resources              = undef,
   Optional[Variant[String, Array[String]]] $server_alias           = undef,
