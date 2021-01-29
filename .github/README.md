@@ -542,6 +542,46 @@ Installs, configures, and manages the CUPS service.
 
 * `papersize`: Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
 
+* `policies`: Sets the printing policies (`default` and `authenticated`) for CUPS. By default,
+  it enables the default CUPS settings.  You can override those settings by setting all the options
+  you want set in a policy or setting all the directives in one of the limits under the policy.
+  You can, of course, also add more policies and other limits under the default policies as needed.
+
+```puppet
+  class { '::cups':
+    policies => {
+      'default' => {
+        'options' => [
+          'JobPrivateAccess default',
+          'JobPrivateValues default',
+          'SubscriptionPrivateAccess default',
+        ],
+        'limits' => {
+          'Create-Job Print-Job Print-URI Validate-Job' => [
+            'Require user @OWNER @SYSTEM',
+            'Order deny,allow',
+          ],
+        },
+      }
+    }
+  }
+```
+
+You can also do the same using hiera:
+
+```yaml
+cups::policies:
+  default:
+    options:
+      - 'JobPrivateAccess default'
+      - 'JobPrivateValues default'
+      - 'SubscriptionPrivateAccess default'
+    limits:
+      'Create-Job Print-Job Print-URI Validate-Job':
+        - 'Require user @OWNER @SYSTEM'
+        - 'Order deny,allow'
+```
+
 * `purge_unmanaged_queues`: Setting `true` will remove all queues from the node
   which do not match a `cups_queue` resource in the current catalog. Defaults to `false`.
 
