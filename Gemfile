@@ -40,5 +40,5 @@ group :metatools do
   gem 'rubocop', '1.9.1'
   gem 'rubocop-performance', '1.9.2'
   gem 'rubocop-rake', '0.5.1'
-  gem 'rubocop-rspec', '2.1.0'
+  gem 'rubocop-rspec', '2.2.0'
 end
