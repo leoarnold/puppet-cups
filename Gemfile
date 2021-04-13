@@ -35,7 +35,7 @@ group :release do
 end
 
 group :metatools do
-  gem 'github-linguist', '7.13.0'
+  gem 'github-linguist', '7.14.0'
   gem 'overcommit', '0.57.0'
   gem 'rubocop', '1.12.0'
   gem 'rubocop-performance', '1.10.2'
