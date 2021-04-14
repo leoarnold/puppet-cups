@@ -44,6 +44,7 @@
 # @param max_clients_per_host Specifies the maximum number of simultaneous clients to support from a single address.
 # @param max_log_size Sets the `MaxLogSize` directive of the CUPS server.
 # @param max_request_size Specifies the maximum request/file size in bytes.
+# @param max_jobs_per_printer Specifies the maximum of jobs to be sent to printers.
 # @param package_ensure Whether CUPS packages should be `present` or `absent`.
 # @param package_manage Whether to manage package installation at all.
 # @param package_names A name or an array of names of all packages needed to be installed
@@ -77,6 +78,7 @@ class cups (
   Optional[Integer]                        $max_clients_per_host   = undef,
   Optional[Variant[Integer, String]]       $max_log_size           = undef,
   Optional[Integer]                        $max_request_size       = undef,
+  Optional[Integer]                        $max_jobs_per_printer   = undef,
   String                                   $package_ensure         = 'present',
   Boolean                                  $package_manage         = true,
   Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,
