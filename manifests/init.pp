@@ -77,6 +77,7 @@ class cups (
   Optional[Integer]                        $max_clients_per_host   = undef,
   Optional[Variant[Integer, String]]       $max_log_size           = undef,
   Optional[Integer]                        $max_request_size       = undef,
+  Optional[Integer]                        $max_jobs_per_printer   = undef,
   String                                   $package_ensure         = 'present',
   Boolean                                  $package_manage         = true,
   Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,
