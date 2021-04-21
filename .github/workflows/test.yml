@@ -1,11 +1,11 @@
 on: [push, pull_request]
 jobs:
   test:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         ruby: [ '2.5', '2.6', '2.7' ]
-        puppet: [ '~> 6.0' ]
+        puppet: [ '~> 6.0' , '~> 7.0' ]
     name: Ruby ${{ matrix.ruby }} using Puppet ${{ matrix.puppet }}
     env:
       PUPPET_GEM_VERSION: ${{ matrix.puppet }}
@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - run: gem install bundler -v 2.1.4
+      - run: gem install bundler -v 2.2.15
       - uses: actions/cache@v2
         with:
           path: vendor/bundle
@@ -24,14 +24,14 @@ jobs:
       - run: bundle config set without 'acceptance_testing metatools'
       - run: bundle install
       - run: bundle exec rake github:actions
-      - uses: paambaati/codeclimate-action@v2.7.4
+      - uses: paambaati/codeclimate-action@v2.7.5
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
   release:
     name: PuppetForge release, GitHub release, GitHub pages
     needs: test
     if: ${{ github.ref == 'refs/heads/release' }}
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     env:
       BLACKSMITH_FORGE_PASSWORD: ${{ secrets.BLACKSMITH_FORGE_PASSWORD }}
       BLACKSMITH_FORGE_URL: ${{ secrets.BLACKSMITH_FORGE_URL }}
@@ -44,7 +44,7 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: '2.6'
-      - run: gem install bundler -v 2.1.4
+      - run: gem install bundler -v 2.2.15
       - uses: actions/cache@v2
         with:
           path: vendor/bundle
