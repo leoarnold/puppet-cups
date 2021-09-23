@@ -12,7 +12,7 @@ group :development do
   gem 'pdk', '2.2.0'
   gem 'puppetlabs_spec_helper', '4.0.1'
   gem 'rake', '13.0.6'
-  gem 'rspec-puppet-facts', '2.0.2'
+  gem 'rspec-puppet-facts', '2.0.3'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
   gem 'simplecov', '~> 0.17.0' # See: https://github.com/codeclimate/test-reporter/issues/413
 end
