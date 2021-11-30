@@ -25,7 +25,7 @@ group :acceptance_testing do
 end
 
 group :documentation do
-  gem 'puppet-strings', '2.8.0'
+  gem 'puppet-strings', '2.9.0'
   gem 'redcarpet', '3.5.1'
 end
 
