@@ -18,7 +18,7 @@ group :development do
 end
 
 group :acceptance_testing do
-  gem 'beaker', '4.32.0'
+  gem 'beaker', '4.33.0'
   gem 'beaker-puppet', '1.22.2'
   gem 'beaker-rspec', '7.1.0'
   gem 'beaker-vagrant', '0.7.1'
