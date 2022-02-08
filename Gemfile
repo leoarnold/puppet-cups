@@ -9,7 +9,7 @@ group :development do
   gem 'coderay', '1.1.3'
   gem 'mdl', '0.11.0'
   gem 'metadata-json-lint', '3.0.1'
-  gem 'pdk', '2.3.0'
+  gem 'pdk', '2.4.0'
   gem 'puppetlabs_spec_helper', '4.0.1'
   gem 'rake', '13.0.6'
   gem 'rspec-puppet-facts', '2.0.3'
