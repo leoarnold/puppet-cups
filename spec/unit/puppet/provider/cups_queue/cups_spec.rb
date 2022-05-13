@@ -427,7 +427,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         it 'returns nil' do
           allow(provider).to receive(:ensure).and_return(:class)
 
-          expect(provider.make_and_model).to be nil
+          expect(provider.make_and_model).to be_nil
         end
       end
 
@@ -540,7 +540,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
           it 'returns nil' do
             allow(provider).to receive(:class_exists?).and_return(true)
 
-            expect(provider.uri).to be nil
+            expect(provider.uri).to be_nil
           end
         end
       end

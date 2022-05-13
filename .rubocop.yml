@@ -6,7 +6,7 @@ require:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 2.5
   Exclude:
     - 'pkg/**/*'
     - 'spec/fixtures/**/*'
@@ -46,6 +46,9 @@ Style/AccessModifierDeclarations:
   Exclude:
     - 'lib/puppet/provider/cups_queue/cups.rb'
     - 'lib/puppet/type/cups_queue.rb'
+
+Style/FetchEnvVar:
+  Enabled: false
 
 Style/FrozenStringLiteralComment:
   Enabled: false
