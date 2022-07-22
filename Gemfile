@@ -37,7 +37,7 @@ end
 group :metatools do
   gem 'github-linguist', '7.22.0'
   gem 'overcommit', '0.59.1'
-  gem 'rubocop', '1.31.2'
+  gem 'rubocop', '1.32.0'
   gem 'rubocop-performance', '1.14.3'
   gem 'rubocop-rake', '0.6.0'
   gem 'rubocop-rspec', '2.12.1'
