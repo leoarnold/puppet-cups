@@ -23,8 +23,9 @@ jobs:
             ${{ runner.os }}-gems-
       - run: bundle config set without 'acceptance_testing metatools'
       - run: bundle install
-      - run: bundle exec rake github:actions
-      - uses: paambaati/codeclimate-action@v2.7.5
+      - uses: paambaati/codeclimate-action@v3.1.1
+        with:
+          coverageCommand: bundle exec rake github:actions
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
   release:

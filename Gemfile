@@ -17,7 +17,7 @@ group :development do
   gem 'rubocop-rake', '0.6.0'
   gem 'rubocop-rspec', '2.13.2'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
-  gem 'simplecov', '~> 0.17.0' # See: https://github.com/codeclimate/test-reporter/issues/413
+  gem 'simplecov', '0.21.2'
 end
 
 group :acceptance_testing do
