@@ -13,6 +13,10 @@ group :development do
   gem 'puppetlabs_spec_helper', '4.0.1'
   gem 'rake', '13.0.6'
   gem 'rspec-puppet-facts', '2.0.5'
+  gem 'rubocop', '1.36.0'
+  gem 'rubocop-performance', '1.15.0'
+  gem 'rubocop-rake', '0.6.0'
+  gem 'rubocop-rspec', '2.13.2'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
   gem 'simplecov', '~> 0.17.0' # See: https://github.com/codeclimate/test-reporter/issues/413
 end
@@ -37,8 +41,4 @@ end
 group :metatools do
   gem 'github-linguist', '7.23.0'
   gem 'overcommit', '0.59.1'
-  gem 'rubocop', '1.36.0'
-  gem 'rubocop-performance', '1.15.0'
-  gem 'rubocop-rake', '0.6.0'
-  gem 'rubocop-rspec', '2.13.2'
 end

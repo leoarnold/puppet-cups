@@ -4,6 +4,11 @@ inherit_from: ../.rubocop.yml
 Performance/CollectionLiteralInLoop:
   Enabled: false
 
+RSpec:
+  Language:
+    Expectations:
+      - apply_manifest
+
 RSpec/BeforeAfterAll:
   Exclude:
   - 'acceptance/**/*'
@@ -18,6 +23,10 @@ RSpec/ImplicitSubject:
 RSpec/InstanceVariable:
   Exclude:
   - 'api/ipptool_spec.rb'
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - 'acceptance/**/*'
 
 RSpec/MultipleMemoizedHelpers:
   Enabled: false

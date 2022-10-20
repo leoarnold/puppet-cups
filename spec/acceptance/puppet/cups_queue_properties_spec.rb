@@ -345,10 +345,10 @@ RSpec.describe 'Custom type `cups_queue`' do
       describe 'options' do
         context 'when using native options' do
           before(:all) do
-            shell("lpadmin -p #{Shellwords.escape(name)}" \
-                  ' -o auth-info-required=negotiate' \
-                  ' -o job-sheets-default=banner,banner' \
-                  ' -o printer-error-policy=retry-current-job')
+            shell("lpadmin -p #{Shellwords.escape(name)} " \
+                  '-o auth-info-required=negotiate ' \
+                  '-o job-sheets-default=banner,banner ' \
+                  '-o printer-error-policy=retry-current-job')
           end
 
           let(:manifest) do
