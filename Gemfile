@@ -5,7 +5,6 @@ puppet_version = ENV['PUPPET_GEM_VERSION']
 gem 'puppet', (puppet_version.nil? ? '~> 6.0' : puppet_version)
 
 group :development do
-  gem 'codacy-coverage', '2.2.1'
   gem 'coderay', '1.1.3'
   gem 'mdl', '0.12.0'
   gem 'metadata-json-lint', '3.0.2'
