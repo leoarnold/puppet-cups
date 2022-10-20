@@ -4,7 +4,7 @@ require_relative 'forge_module'
 
 namespace :github do
   desc 'Perform all static code analysis checks'
-  task actions: [:release_checks, :mdl]
+  task actions: [:release_checks, :rubocop, :mdl]
 
   desc 'Break down language statistics'
   task :linguist do
