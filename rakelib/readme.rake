@@ -7,7 +7,7 @@ def erb(mode, input, output)
   target = FORGE_MODULE.file(output)
 
   puts "[ERB] Rendering #{output} from #{input}"
-  renderer = ERB.new(template.read, 0, '>')
+  renderer = ERB.new(template.read, trim_mode: '>')
   target.write(renderer.result)
 end
 
