@@ -23,10 +23,14 @@ jobs:
             ${{ runner.os }}-gems-
       - run: bundle config set without 'acceptance_testing metatools'
       - run: bundle install
+      - uses: amancevice/setup-code-climate@v0
+        with:
+          cc_test_reporter_id: ${{ secrets.CC_TEST_REPORTER_ID }}
+      - run: cc-test-reporter before-build
       - run: bundle exec rake github:actions
-      - uses: paambaati/codeclimate-action@v2.7.5
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      - run: cc-test-reporter after-build
+        # if: ${{ github.ref == 'refs/heads/main' }}
+
   release:
     name: PuppetForge release, GitHub release, GitHub pages
     needs: test

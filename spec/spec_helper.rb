@@ -5,11 +5,8 @@ PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..')).freeze
 require 'simplecov'
 
 unless defined?(Spec::Runner::Formatter::TeamcityFormatter)
-  require 'codacy-coverage'
-
   SimpleCov.formatters = [
-    SimpleCov::Formatter::HTMLFormatter,
-    Codacy::Formatter
+    SimpleCov::Formatter::HTMLFormatter
   ]
 end
 

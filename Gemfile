@@ -5,7 +5,6 @@ puppet_version = ENV['PUPPET_GEM_VERSION']
 gem 'puppet', (puppet_version.nil? ? '~> 6.0' : puppet_version)
 
 group :development do
-  gem 'codacy-coverage', '2.2.1'
   gem 'coderay', '1.1.3'
   gem 'mdl', '0.12.0'
   gem 'metadata-json-lint', '3.0.2'
@@ -14,7 +13,7 @@ group :development do
   gem 'rake', '13.0.6'
   gem 'rspec-puppet-facts', '2.0.5'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
-  gem 'simplecov', '~> 0.17.0' # See: https://github.com/codeclimate/test-reporter/issues/413
+  gem 'simplecov', '0.21.2'
 end
 
 group :acceptance_testing do
