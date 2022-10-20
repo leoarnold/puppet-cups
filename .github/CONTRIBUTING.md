@@ -289,8 +289,8 @@ Commit message checklist:
   number(s)), and should skip the full stop.
 
 * The body should provide a meaningful commit message, which:
-  * uses the imperative, present tense: "change", not "changed" or "changes".
-  * includes motivation for the change, and contrasts its implementation with the previous behavior.
+   * uses the imperative, present tense: "change", not "changed" or "changes".
+   * includes motivation for the change, and contrasts its implementation with the previous behavior.
 
 * Describe the technical detail of the change(s). If your
   description starts to get too long, that is a good sign that you
