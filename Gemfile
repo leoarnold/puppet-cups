@@ -12,7 +12,7 @@ group :development do
   gem 'puppetlabs_spec_helper', '4.0.1'
   gem 'rake', '13.0.6'
   gem 'rspec-puppet-facts', '2.0.5'
-  gem 'rubocop', '1.38.0'
+  gem 'rubocop', '1.39.0'
   gem 'rubocop-performance', '1.15.0'
   gem 'rubocop-rake', '0.6.0'
   gem 'rubocop-rspec', '2.15.0'
