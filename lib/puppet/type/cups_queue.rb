@@ -144,7 +144,7 @@ Puppet::Type.newtype(:cups_queue) do
       raise ArgumentError, 'Please provide a non-empty array of user names.' unless value['users'].is_a?(Array) && !value['users'].empty?
 
       value['users'].each do |name|
-        raise ArgumentError, "The user or group name '#{name}' seems malformed" unless name =~ /\A@?[\w\-]+\Z/
+        raise ArgumentError, "The user or group name '#{name}' seems malformed" unless name =~ /\A@?[\w-]+\Z/
       end
     end
 
