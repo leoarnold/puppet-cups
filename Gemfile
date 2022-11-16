@@ -38,6 +38,6 @@ group :release do
 end
 
 group :metatools do
-  gem 'github-linguist', '7.23.0'
+  gem 'github-linguist', '7.24.0'
   gem 'overcommit', '0.59.1'
 end
