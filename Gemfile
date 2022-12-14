@@ -15,7 +15,7 @@ group :development do
   gem 'rubocop', '1.40.0'
   gem 'rubocop-performance', '1.15.1'
   gem 'rubocop-rake', '0.6.0'
-  gem 'rubocop-rspec', '2.15.0'
+  gem 'rubocop-rspec', '2.16.0'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
   gem 'simplecov', '0.21.2'
 end
