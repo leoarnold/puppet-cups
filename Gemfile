@@ -13,7 +13,7 @@ group :development do
   gem 'rake', '13.0.6'
   gem 'rspec-puppet-facts', '2.0.5'
   gem 'rubocop', '1.41.1'
-  gem 'rubocop-performance', '1.15.1'
+  gem 'rubocop-performance', '1.15.2'
   gem 'rubocop-rake', '0.6.0'
   gem 'rubocop-rspec', '2.16.0'
   gem 'semantic_puppet' if puppet_version.to_f < 4.9
