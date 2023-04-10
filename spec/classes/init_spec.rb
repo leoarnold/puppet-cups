@@ -397,6 +397,20 @@ RSpec.describe 'cups' do
       end
     end
 
+    describe 'max_jobs_per_printer' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxJobsPerPrinter/) }
+      end
+
+      context 'when set to 100' do
+        let(:params) { { max_jobs_per_printer: 100 } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxJobsPerPrinter 100$/) }
+      end
+    end
+
     describe 'package_manage' do
       context 'when set to true' do
         context 'with default package_names' do
