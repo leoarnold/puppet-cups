@@ -79,7 +79,7 @@ class cups (
   Optional[Integer]                        $max_request_size       = undef,
   String                                   $package_ensure         = 'present',
   Boolean                                  $package_manage         = true,
-  Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,
+  Variant[String, Array[String]]           $package_names          = $cups::params::package_names,
   Optional[String]                         $page_log_format        = undef,
   Optional[String]                         $papersize              = undef,
   Boolean                                  $purge_unmanaged_queues = false,
@@ -92,7 +92,6 @@ class cups (
   Variant[String, Array[String]]           $service_names          = 'cups',
   Optional[Boolean]                        $web_interface          = undef,
 ) inherits cups::params {
-
   contain cups::packages
   contain cups::server
   contain cups::queues
@@ -100,5 +99,4 @@ class cups (
   Class[cups::packages]
   -> Class[cups::server]
   -> Class[cups::queues]
-
 }

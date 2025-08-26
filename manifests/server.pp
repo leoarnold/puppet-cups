@@ -9,11 +9,9 @@
 # @since 2.0.0
 #
 class cups::server inherits cups {
-
   contain cups::server::config
   contain cups::server::services
 
   Class[cups::server::config]
   ~> Class[cups::server::services]
-
 }

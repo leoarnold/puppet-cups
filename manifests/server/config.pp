@@ -15,10 +15,9 @@
 #   }
 #
 class cups::server::config inherits cups::server {
-
   File {
     owner => 'root',
-    group => 'lp'
+    group => 'lp',
   }
 
   file { '/etc/cups/lpoptions':
@@ -33,15 +32,14 @@ class cups::server::config inherits cups::server {
       'cups/cupsd/_directives.erb',
       'cups/cupsd/_locations.erb',
       'cups/cupsd/_policies.erb'
-    )
+    ),
   }
 
-  if ($::cups::papersize) {
+  if ($cups::papersize) {
     exec { 'cups::papersize':
-      command => "paperconfig -p ${::cups::papersize}",
-      unless  => "cat /etc/papersize | grep -w ${::cups::papersize}",
+      command => "paperconfig -p ${cups::papersize}",
+      unless  => "cat /etc/papersize | grep -w ${cups::papersize}",
       path    => ['/usr/sbin/', '/usr/bin/', '/sbin/', '/bin/'],
     }
   }
-
 }

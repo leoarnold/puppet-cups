@@ -25,21 +25,17 @@
 class cups::workarounds::systemd_service_restart (
   String $unit = 'cups.socket'
 ) {
-
-  if ($::systemd) {
-
-    include '::cups'
+  if ($facts['systemd']) {
+    include 'cups'
 
     systemd::dropin_file { 'wait_until_cups_listens_on_port_631.conf':
       unit    => $unit,
       content => template(
         'cups/_header.erb',
         'cups/systemd/wait_until_cups_listens_on_port_631.conf.erb'
-      )
+      ),
     }
 
     Systemd::Dropin_file['wait_until_cups_listens_on_port_631.conf'] ~> Class['cups::server::services']
-
   }
-
 }
