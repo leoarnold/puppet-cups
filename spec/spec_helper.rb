@@ -1,60 +1,24 @@
 # frozen_string_literal: true
 
-PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..')).freeze
+# Managed by modulesync - DO NOT EDIT
+# https://voxpupuli.org/docs/updating-files-managed-with-modulesync/
 
-require 'simplecov'
+# puppetlabs_spec_helper will set up coverage if the env variable is set.
+# We want to do this if lib exists and it hasn't been explicitly set.
+ENV['COVERAGE'] ||= 'yes' if Dir.exist?(File.expand_path('../lib', __dir__))
 
-SimpleCov.start do
-  add_filter '/.mdl/'
-  add_filter '/rakelib/'
-  add_filter '/spec/'
-  add_filter '/vendor/'
-end
+require 'voxpupuli/test/spec_helper'
 
-# RSpec configuration
-# http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |c|
-  c.order = :random
-  Kernel.srand c.seed
-  c.disable_monkey_patching!
-  c.expect_with :rspec do |e|
-    e.syntax = :expect
+  c.facterdb_string_keys = false
+end
+
+add_mocked_facts!
+
+if File.exist?(File.join(__dir__, 'default_module_facts.yml'))
+  facts = YAML.safe_load(File.read(File.join(__dir__, 'default_module_facts.yml')))
+  facts&.each do |name, value|
+    add_custom_fact name.to_sym, value
   end
-  c.mock_with(:rspec)
-  c.example_status_persistence_file_path = '.rspec_status'
 end
-
-require 'puppetlabs_spec_helper/module_spec_helper'
-require 'rspec-puppet/spec_helper'
-
-require 'rspec-puppet-facts'
-include RspecPuppetFacts # rubocop:disable Style/MixinUsage
-add_custom_fact :systemd, nil
-
-def any_supported_os(more_facts = {})
-  facts_for(osfamily: 'Debian', operatingsystem: 'Ubuntu', lsbdistcodename: 'bionic').merge(more_facts)
-end
-
-def facts_for(operating_system)
-  facter_db_facts = FacterDB
-                    .get_facts(operating_system)
-                    .max_by { |facts| Gem::Version.new(facts[:facterversion]) }
-
-  RspecPuppetFacts.with_custom_facts('', facter_db_facts)
-end
-
-# RSpec-Puppet configuration
-# http://rspec-puppet.com/setup/
-FIXTURE_PATH = File.join(PROJECT_ROOT, 'spec', 'fixtures').freeze
-RSpec.configure do |c|
-  c.after(:suite) do
-    RSpec::Puppet::Coverage.report! unless defined?(Spec::Runner::Formatter::TeamcityFormatter)
-  end
-  c.manifest_dir = File.join(FIXTURE_PATH, 'manifests')
-  c.module_path = File.join(FIXTURE_PATH, 'modules')
-end
-
-# Make Puppet eXtension modules available
-Dir["#{PROJECT_ROOT}/lib/puppet_x/**/*.rb"].sort.each do |file|
-  require file
-end
+Dir['./spec/support/spec/**/*.rb'].sort.each { |f| require f }

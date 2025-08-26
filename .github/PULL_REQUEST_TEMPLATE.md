@@ -1,12 +1,20 @@
-_Pull Request template_.
+<!--
+Thank you for contributing to this project!
 
-This Pull Request fixes/adds ... (about 2 sentences)
+- This project has a Contributor Code of Conduct: https://voxpupuli.org/coc/
+- Please check that here is no existing issue or PR that addresses your problem.
+- Our vulnerabilities reporting process is at https://voxpupuli.org/security/
 
-This is what I added/changed/removed and why I did it ... (help the maintainer understand your PR)
+-->
+#### Pull Request (PR) description
+<!--
+Replace this comment with a description of your pull request.
+-->
 
-Related issue: (Your issue number goes here)
-
-Legal statement:
-
-By committing to this project I transfer the full copyright for my contributions
-to the current project maintainer as per the project's LICENSE file.
+#### This Pull Request (PR) fixes the following issues
+<!--
+Replace this comment with the list of issues or n/a.
+Use format:
+Fixes #123
+Fixes #124
+-->
