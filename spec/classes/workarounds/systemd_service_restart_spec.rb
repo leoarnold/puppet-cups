@@ -5,12 +5,12 @@ require 'spec_helper'
 RSpec.describe 'cups::workarounds::systemd_service_restart' do
   let(:dropin_name) { 'wait_until_cups_listens_on_port_631.conf' }
 
-  let(:dropin_content) { /^\[Socket\]\nListenStream=\[::1\]:631$/ }
+  let(:dropin_content) { %r{^\[Socket\]\nListenStream=\[::1\]:631$} }
 
   context 'when the distribution is NOT based on systemd' do
     let(:facts) { any_supported_os(systemd: false) }
 
-    it { is_expected.to_not contain_systemd__dropin_file(dropin_name) }
+    it { is_expected.not_to contain_systemd__dropin_file(dropin_name) }
   end
 
   context 'when the distribution is systemd based' do

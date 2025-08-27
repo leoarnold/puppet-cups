@@ -53,7 +53,7 @@ RSpec.describe 'Including class "cups"' do
       end
 
       it 'sets the correct value' do
-        expect(shell('lpstat -d').stdout.split(/\s/)).to include(name)
+        expect(shell('lpstat -d').stdout.split(%r{\s})).to include(name)
       end
 
       it 'is idempotent' do

@@ -58,7 +58,7 @@ RSpec.describe PuppetX::Cups::Ipp do
 
           query = described_class.new('/', '{ [CUPS-Get-Printers] }')
 
-          expect(query.results).to match_array([])
+          expect(query.results).to be_empty
         end
       end
 
@@ -200,7 +200,7 @@ RSpec.describe PuppetX::Cups::Ipp do
 
           query = described_class.new('/', request)
 
-          expect(query.results).to match_array([])
+          expect(query.results).to be_empty
         end
       end
 

@@ -95,7 +95,7 @@ RSpec.describe "Type 'cups_queue'" do
           end
 
           it 'fails to create an instance' do
-            expect { type.new(manifest) }.to raise_error(/member/)
+            expect { type.new(manifest) }.to raise_error(%r{member})
           end
         end
 
@@ -109,7 +109,7 @@ RSpec.describe "Type 'cups_queue'" do
           end
 
           it 'fails to create an instance' do
-            expect { type.new(manifest) }.to raise_error(/member/)
+            expect { type.new(manifest) }.to raise_error(%r{member})
           end
         end
 
@@ -123,7 +123,7 @@ RSpec.describe "Type 'cups_queue'" do
           end
 
           it 'is able to create an instance' do
-            expect(type.new(manifest)).to_not be_nil
+            expect(type.new(manifest)).not_to be_nil
           end
         end
 
@@ -137,7 +137,7 @@ RSpec.describe "Type 'cups_queue'" do
           end
 
           it 'is able to create an instance' do
-            expect(type.new(manifest)).to_not be_nil
+            expect(type.new(manifest)).not_to be_nil
           end
         end
       end
@@ -153,7 +153,7 @@ RSpec.describe "Type 'cups_queue'" do
         end
 
         it 'is able to create an instance' do
-          expect(type.new(manifest)).to_not be_nil
+          expect(type.new(manifest)).not_to be_nil
         end
       end
 
@@ -167,7 +167,7 @@ RSpec.describe "Type 'cups_queue'" do
         end
 
         it 'is able to create an instance' do
-          expect(type.new(manifest)).to_not be_nil
+          expect(type.new(manifest)).not_to be_nil
         end
       end
 
@@ -181,7 +181,7 @@ RSpec.describe "Type 'cups_queue'" do
         end
 
         it 'is able to create an instance' do
-          expect(type.new(manifest)).to_not be_nil
+          expect(type.new(manifest)).not_to be_nil
         end
       end
     end
@@ -195,7 +195,7 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'does NOT require any other attributes' do
-        expect(type.new(manifest)).to_not be_nil
+        expect(type.new(manifest)).not_to be_nil
       end
     end
   end
@@ -213,7 +213,7 @@ RSpec.describe "Type 'cups_queue'" do
         end
 
         it 'fails to create an instance' do
-          expect { type.new(manifest) }.to raise_error(/mutually/)
+          expect { type.new(manifest) }.to raise_error(%r{mutually})
         end
       end
     end
@@ -231,7 +231,7 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'fails to create an instance' do
-        expect { type.new(manifest) }.to raise_error(/support/)
+        expect { type.new(manifest) }.to raise_error(%r{support})
       end
     end
 
@@ -246,7 +246,7 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'fails to create an instance' do
-        expect { type.new(manifest) }.to raise_error(/support/)
+        expect { type.new(manifest) }.to raise_error(%r{support})
       end
     end
 
@@ -261,7 +261,7 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'fails to create an instance' do
-        expect { type.new(manifest) }.to raise_error(/support/)
+        expect { type.new(manifest) }.to raise_error(%r{support})
       end
     end
 
@@ -276,7 +276,7 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'fails to create an instance' do
-        expect { type.new(manifest) }.to raise_error(/support/)
+        expect { type.new(manifest) }.to raise_error(%r{support})
       end
     end
 
@@ -291,7 +291,7 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'fails to create an instance' do
-        expect { type.new(manifest) }.to raise_error(/support/)
+        expect { type.new(manifest) }.to raise_error(%r{support})
       end
     end
   end
@@ -323,61 +323,61 @@ RSpec.describe "Type 'cups_queue'" do
       it 'rejects a string with a SPACE' do
         manifest = minimal_printer.merge(name: 'RSpec Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/SPACE/)
+        expect { type.new(manifest) }.to raise_error(%r{SPACE})
       end
 
       it 'rejects a string with a TAB' do
         manifest = minimal_printer.merge(name: "RSpec\tTest_Printer")
 
-        expect { type.new(manifest) }.to raise_error(/TAB/)
+        expect { type.new(manifest) }.to raise_error(%r{TAB})
       end
 
       it 'rejects a string with a carriage return character' do
         manifest = minimal_printer.merge(name: "RSpec\rTest_Printer")
 
-        expect { type.new(manifest) }.to raise_error(/SPACE/)
+        expect { type.new(manifest) }.to raise_error(%r{SPACE})
       end
 
       it 'rejects a string with a newline character' do
         manifest = minimal_printer.merge(name: "RSpec\nTest_Printer")
 
-        expect { type.new(manifest) }.to raise_error(/SPACE/)
+        expect { type.new(manifest) }.to raise_error(%r{SPACE})
       end
 
       it 'rejects a string with a SLASH' do
         manifest = minimal_printer.merge(name: 'RSpec/Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/SLASH/)
+        expect { type.new(manifest) }.to raise_error(%r{SLASH})
       end
 
       it 'rejects a string with a BACKSLASH' do
         manifest = minimal_printer.merge(name: 'RSpec\Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/BACK[)]?SLASH/)
+        expect { type.new(manifest) }.to raise_error(%r{BACK[)]?SLASH})
       end
 
       it 'rejects a string with a SINGLEQUOTE' do
         manifest = minimal_printer.merge(name: "RSpec'Test_Printer")
 
-        expect { type.new(manifest) }.to raise_error(/QUOTE/)
+        expect { type.new(manifest) }.to raise_error(%r{QUOTE})
       end
 
       it 'rejects a string with a DOUBLEQUOTE' do
         manifest = minimal_printer.merge(name: 'RSpec"Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/QUOTE/)
+        expect { type.new(manifest) }.to raise_error(%r{QUOTE})
       end
 
       it 'rejects a string with a COMMA' do
         manifest = minimal_printer.merge(name: 'RSpec,Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/COMMA/)
+        expect { type.new(manifest) }.to raise_error(%r{COMMA})
       end
 
       it 'rejects a string with a "#"' do
         manifest = minimal_printer.merge(name: 'RSpec#Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/"#"/)
+        expect { type.new(manifest) }.to raise_error(%r{"#"})
       end
     end
 
@@ -440,7 +440,7 @@ RSpec.describe "Type 'cups_queue'" do
 
             resource.property(:ensure).set_class
 
-            expect(provider).to_not have_received(:create_class)
+            expect(provider).not_to have_received(:create_class)
           end
         end
 
@@ -497,7 +497,7 @@ RSpec.describe "Type 'cups_queue'" do
 
             resource.property(:ensure).set_printer
 
-            expect(provider).to_not have_received(:create_printer)
+            expect(provider).not_to have_received(:create_printer)
           end
         end
 
@@ -538,7 +538,7 @@ RSpec.describe "Type 'cups_queue'" do
 
             resource.property(:ensure).set_absent
 
-            expect(provider).to_not have_received(:destroy)
+            expect(provider).not_to have_received(:destroy)
           end
         end
 
@@ -645,19 +645,19 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'rejects a hash with unsupported policy' do
-        expect { resource[:access] = { 'policy' => 'random', 'users' => ['lumbergh'] } }.to raise_error(Puppet::ResourceError, /unsupported/)
+        expect { resource[:access] = { 'policy' => 'random', 'users' => ['lumbergh'] } }.to raise_error(Puppet::ResourceError, %r{unsupported})
       end
 
       it 'rejects a hash with empty users array' do
-        expect { resource[:access] = { 'policy' => 'allow', 'users' => [] } }.to raise_error(Puppet::ResourceError, /non-empty/)
+        expect { resource[:access] = { 'policy' => 'allow', 'users' => [] } }.to raise_error(Puppet::ResourceError, %r{non-empty})
       end
 
       it 'rejects user names with spaces' do
-        expect { resource[:access] = { 'policy' => 'allow', 'users' => ['@coun cil'] } }.to raise_error(Puppet::ResourceError, /malformed/)
+        expect { resource[:access] = { 'policy' => 'allow', 'users' => ['@coun cil'] } }.to raise_error(Puppet::ResourceError, %r{malformed})
       end
 
       it 'rejects user names with commas' do
-        expect { resource[:access] = { 'policy' => 'allow', 'users' => ['@coun,cil'] } }.to raise_error(Puppet::ResourceError, /malformed/)
+        expect { resource[:access] = { 'policy' => 'allow', 'users' => ['@coun,cil'] } }.to raise_error(Puppet::ResourceError, %r{malformed})
       end
     end
 

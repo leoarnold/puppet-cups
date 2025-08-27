@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../puppet_x/cups/instances'
 require_relative '../../../puppet_x/cups/queue'
 
@@ -345,7 +347,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   # @return [Array] The names of all groups (prefixed by `@`) and users currently allowed / denied to use the queue.
   def query_users(status)
     names = query("requesting-user-name-#{status}")
-    names.gsub(/['"]/, '').split(',').sort.uniq if names
+    names.gsub(%r{['"]}, '').split(',').sort.uniq if names
   end
 
   # @private

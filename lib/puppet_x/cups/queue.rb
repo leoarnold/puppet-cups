@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'erb'
 
 require_relative 'ipp'
@@ -54,7 +56,7 @@ module PuppetX
 
           answer = query.results.empty? ? '' : query.results.first
 
-          answer.gsub(/\A"|"\Z/, '')
+          answer.gsub(%r{\A"|"\Z}, '')
         end
 
         private
