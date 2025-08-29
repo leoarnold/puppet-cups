@@ -20,14 +20,14 @@ RSpec.describe 'cups' do
     end
 
     let(:undefs) do
-      [
-        :default_queue,
-        :location,
-        :papersize,
-        :resources,
-        :server_alias,
-        :server_name,
-        :web_interface
+      %i[
+        default_queue
+        location
+        papersize
+        resources
+        server_alias
+        server_name
+        web_interface
       ]
     end
 
@@ -49,7 +49,7 @@ RSpec.describe 'cups' do
 
     it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(mode: '0640') }
 
-    it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /\A###\n### This file is managed by Puppet. DO NOT EDIT.\n###\n\n/) }
+    it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{\A###\n### This file is managed by Puppet. DO NOT EDIT.\n###\n\n}) }
 
     it { is_expected.to contain_class('cups::server').that_requires('Class[cups::packages]') }
 
@@ -61,13 +61,13 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not set' do
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^AccessLogLevel/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^AccessLogLevel}) }
       end
 
       context "when set to 'config'" do
         let(:params) { { access_log_level: 'config' } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^AccessLogLevel config$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^AccessLogLevel config$}) }
       end
     end
 
@@ -77,19 +77,19 @@ RSpec.describe 'cups' do
       context 'when not set' do
         let(:params) { {} }
 
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseDNSSDSubTypes/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^BrowseDNSSDSubTypes}) }
       end
 
       context "when set to 'cups'" do
         let(:params) { { browse_dnssd_subtypes: 'cups' } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseDNSSDSubTypes_cups$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^BrowseDNSSDSubTypes_cups$}) }
       end
 
       context "when set to ['cups', 'print']" do
         let(:params) { { browse_dnssd_subtypes: %w[cups print] } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseDNSSDSubTypes_cups,_print$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^BrowseDNSSDSubTypes_cups,_print$}) }
       end
     end
 
@@ -99,19 +99,19 @@ RSpec.describe 'cups' do
       context 'when not set' do
         let(:params) { {} }
 
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseLocalProtocols/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^BrowseLocalProtocols}) }
       end
 
       context "when set to 'none'" do
         let(:params) { { browse_local_protocols: ['none'] } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseLocalProtocols none$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^BrowseLocalProtocols none$}) }
       end
 
       context "when set to ['cups', 'print']" do
         let(:params) { { browse_local_protocols: %w[dnssd ldap] } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseLocalProtocols dnssd ldap$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^BrowseLocalProtocols dnssd ldap$}) }
       end
     end
 
@@ -121,19 +121,19 @@ RSpec.describe 'cups' do
       context 'when not set' do
         let(:params) { {} }
 
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseWebIF/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^BrowseWebIF}) }
       end
 
       context 'when set to true' do
         let(:params) { { browse_web_if: true } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseWebIF Yes$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^BrowseWebIF Yes$}) }
       end
 
       context 'when set to false' do
         let(:params) { { browse_web_if: false } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^BrowseWebIF No$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^BrowseWebIF No$}) }
       end
     end
 
@@ -143,19 +143,19 @@ RSpec.describe 'cups' do
       context 'when not set' do
         let(:params) { {} }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Browsing No$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^Browsing No$}) }
       end
 
       context 'when set to true' do
         let(:params) { { browsing: true } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Browsing Yes$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^Browsing Yes$}) }
       end
 
       context 'when set to false' do
         let(:params) { { browsing: false } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Browsing No$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^Browsing No$}) }
       end
     end
 
@@ -163,14 +163,14 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not provided' do
-        it { is_expected.to_not contain_exec('cups::queues::default') }
+        it { is_expected.not_to contain_exec('cups::queues::default') }
       end
 
       context "when set to 'Office'" do
         let(:params) { { default_queue: 'Office' } }
 
         context "when the catalog does NOT contain the corresponding 'cups_queue' resource" do
-          it { is_expected.to_not compile }
+          it { is_expected.not_to compile }
         end
 
         context "when the catalog contains the corresponding 'cups_queue' resource" do
@@ -189,7 +189,7 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       describe 'by default' do
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Listen localhost:631$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^Listen localhost:631$}) }
 
         it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^Listen /var/run/cups/cups.sock$}) }
       end
@@ -197,15 +197,15 @@ RSpec.describe 'cups' do
       context "when set to '*:631'" do
         let(:params) { { listen: '*:631' } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Listen \*:631$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^Listen \*:631$}) }
       end
 
       context "when set to ['*:631', 'localhost:8080']" do
         let(:params) { { listen: ['*:631', 'localhost:8080'] } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Listen \*:631$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^Listen \*:631$}) }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^Listen localhost:8080$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^Listen localhost:8080$}) }
       end
     end
 
@@ -297,13 +297,13 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not set' do
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^LogDebugHistory/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^LogDebugHistory}) }
       end
 
       context 'when set to 5' do
         let(:params) { { log_debug_history: 5 } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^LogDebugHistory 5$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^LogDebugHistory 5$}) }
       end
     end
 
@@ -311,13 +311,13 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not set' do
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^LogLevel/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^LogLevel}) }
       end
 
       context "when set to 'debug2'" do
         let(:params) { { log_level: 'debug2' } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^LogLevel debug2$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^LogLevel debug2$}) }
       end
     end
 
@@ -325,13 +325,13 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not set' do
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^LogTimeFormat/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^LogTimeFormat}) }
       end
 
       context "when set to 'usecs'" do
         let(:params) { { log_time_format: 'usecs' } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^LogTimeFormat usecs$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^LogTimeFormat usecs$}) }
       end
     end
 
@@ -339,13 +339,13 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not set' do
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxClients/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxClients}) }
       end
 
       context 'when set to 200' do
         let(:params) { { max_clients: 200 } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxClients 200$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxClients 200$}) }
       end
     end
 
@@ -353,13 +353,13 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not set' do
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxClientsPerHost/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxClientsPerHost}) }
       end
 
       context 'when set to 200' do
         let(:params) { { max_clients_per_host: 200 } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxClientsPerHost 200$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxClientsPerHost 200$}) }
       end
     end
 
@@ -367,19 +367,19 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not set' do
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxLogSize/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxLogSize}) }
       end
 
       context 'when set to 0' do
         let(:params) { { max_log_size: 0 } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxLogSize 0$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxLogSize 0$}) }
       end
 
       context 'when set to 32m' do
         let(:params) { { max_log_size: '32m' } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxLogSize 32m$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxLogSize 32m$}) }
       end
     end
 
@@ -387,13 +387,13 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not set' do
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxRequestSize/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxRequestSize}) }
       end
 
       context 'when set to 200' do
         let(:params) { { max_request_size: 200 } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxRequestSize 200$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxRequestSize 200$}) }
       end
     end
 
@@ -415,19 +415,19 @@ RSpec.describe 'cups' do
                     case facts[:os]['name']
                     when 'Debian'
                       if facts[:os]['release']['major'].to_f < 9
-                        it { is_expected.to_not contain_package('cups-ipp-utils') }
+                        it { is_expected.not_to contain_package('cups-ipp-utils') }
                       else
                         it { is_expected.to contain_package('cups-ipp-utils').with(ensure: package_ensure) }
                       end
                     when 'Ubuntu'
                       if facts[:os]['release']['major'].to_f < 15.10
-                        it { is_expected.to_not contain_package('cups-ipp-utils') }
+                        it { is_expected.not_to contain_package('cups-ipp-utils') }
                       else
                         it { is_expected.to contain_package('cups-ipp-utils').with(ensure: package_ensure) }
                       end
                     when 'LinuxMint'
                       if facts[:os]['release']['major'].to_f < 18
-                        it { is_expected.to_not contain_package('cups-ipp-utils') }
+                        it { is_expected.not_to contain_package('cups-ipp-utils') }
                       else
                         it { is_expected.to contain_package('cups-ipp-utils').with(ensure: package_ensure) }
                       end
@@ -488,11 +488,11 @@ RSpec.describe 'cups' do
             context "on #{os}" do
               let(:facts) { facts }
 
-              it { is_expected.to_not contain_package('cups') }
+              it { is_expected.not_to contain_package('cups') }
 
-              it { is_expected.to_not contain_package('cups-ipp-utils') }
+              it { is_expected.not_to contain_package('cups-ipp-utils') }
 
-              it { is_expected.to_not contain_package('cups-ipptool') }
+              it { is_expected.not_to contain_package('cups-ipptool') }
             end
           end
         end
@@ -502,9 +502,9 @@ RSpec.describe 'cups' do
 
           let(:params) { { package_manage: false, package_names: %w[mycups myipp] } }
 
-          it { is_expected.to_not contain_package('mycups') }
+          it { is_expected.not_to contain_package('mycups') }
 
-          it { is_expected.to_not contain_package('myipp') }
+          it { is_expected.not_to contain_package('myipp') }
         end
       end
     end
@@ -513,7 +513,7 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when set to undef' do
-        it { is_expected.to_not contain_exec('cups::papersize') }
+        it { is_expected.not_to contain_exec('cups::papersize') }
       end
 
       context 'when set to a4' do
@@ -614,7 +614,7 @@ RSpec.describe 'cups' do
           context "with service_names => #{service_names}," do
             let(:params) { { service_manage: false, service_names: service_names } }
 
-            it { is_expected.to_not contain_service(service_names) }
+            it { is_expected.not_to contain_service(service_names) }
           end
         end
       end
@@ -632,7 +632,7 @@ RSpec.describe 'cups' do
               }
             end
 
-            it { is_expected.to_not contain_service('mycups') }
+            it { is_expected.not_to contain_service('mycups') }
           end
         end
       end
@@ -642,13 +642,13 @@ RSpec.describe 'cups' do
       let(:facts) { any_supported_os }
 
       context 'when not set' do
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^PageLogFormat/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^PageLogFormat}) }
       end
 
       context "when set to '%p %u %j %T %P %C'" do
         let(:params) { { page_log_format: '%p %u %j %T %P %C' } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^PageLogFormat "%p %u %j %T %P %C"$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^PageLogFormat "%p %u %j %T %P %C"$}) }
       end
     end
 
@@ -658,25 +658,25 @@ RSpec.describe 'cups' do
       context 'when not set' do
         let(:params) { {} }
 
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^ServerAlias}) }
       end
 
       context 'when set to *' do
         let(:params) { { server_alias: '*' } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias \*$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^ServerAlias \*$}) }
       end
 
       context 'when set to office.initech.com' do
         let(:params) { { server_alias: 'office.initech.com' } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias office.initech.com$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^ServerAlias office.initech.com$}) }
       end
 
       context "when set to ['office.initech.com', 'warehouse.initech.com']" do
         let(:params) { { server_alias: ['office.initech.com', 'warehouse.initech.com'] } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerAlias office.initech.com warehouse.initech.com$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^ServerAlias office.initech.com warehouse.initech.com$}) }
       end
     end
 
@@ -686,13 +686,13 @@ RSpec.describe 'cups' do
       context 'when not set' do
         let(:params) { {} }
 
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^ServerName/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^ServerName}) }
       end
 
       context 'when set to office.initech.com' do
         let(:params) { { server_name: 'office.initech.com' } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ServerName office.initech.com$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^ServerName office.initech.com$}) }
       end
     end
 
@@ -702,19 +702,19 @@ RSpec.describe 'cups' do
       context 'when not set' do
         let(:params) { {} }
 
-        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface/) }
+        it { is_expected.not_to contain_file('/etc/cups/cupsd.conf').with(content: %r{^WebInterface}) }
       end
 
       context 'when set to true' do
         let(:params) { { web_interface: true } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface Yes$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^WebInterface Yes$}) }
       end
 
       context 'when set to false' do
         let(:params) { { web_interface: false } }
 
-        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^WebInterface No$/) }
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^WebInterface No$}) }
       end
     end
   end

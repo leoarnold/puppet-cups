@@ -42,7 +42,7 @@ RSpec.describe 'Custom type `cups_queue`' do
         apply_manifest(manifest, catch_changes: true)
       end
 
-      it 'deleted the queue' do # rubocop:disable RSpec/NoExpectationExample
+      it 'deleted the queue' do
         shell("lpstat -p #{Shellwords.escape(queue)}", acceptable_exit_codes: [1])
       end
     end

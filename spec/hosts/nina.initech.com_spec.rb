@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.configure do |c|
-  c.manifest = "#{Dir.pwd}/spec/fixtures/manifests/site.pp"
+  c.manifest = "#{Dir.pwd}/spec/hosts/nina.initech.com_site.pp"
 end
 
 RSpec.describe 'nina.initech.com' do

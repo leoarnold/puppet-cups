@@ -9,7 +9,6 @@
 # @since 1.0.0
 #
 class cups::params {
-
   case $facts['os']['family'] {
     'Debian': {
       case $facts['os']['name'] {
@@ -56,5 +55,4 @@ class cups::params {
       $package_names = undef
     }
   }
-
 }

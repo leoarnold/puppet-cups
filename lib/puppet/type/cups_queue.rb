@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pathname'
 require 'uri'
 
@@ -101,8 +103,8 @@ Puppet::Type.newtype(:cups_queue) do
     end
 
     def change_to_s(current_value, new_value)
-      return "created a #{should_to_s(new_value)}" unless [:class, :printer].include?(current_value)
-      return "#{is_to_s(current_value)} removed" unless [:class, :printer].include?(new_value)
+      return "created a #{should_to_s(new_value)}" unless %i[class printer].include?(current_value)
+      return "#{is_to_s(current_value)} removed" unless %i[class printer].include?(new_value)
 
       "changed from #{is_to_s(current_value)} to #{should_to_s(new_value)}"
     end
@@ -144,7 +146,7 @@ Puppet::Type.newtype(:cups_queue) do
       raise ArgumentError, 'Please provide a non-empty array of user names.' unless value['users'].is_a?(Array) && !value['users'].empty?
 
       value['users'].each do |name|
-        raise ArgumentError, "The user or group name '#{name}' seems malformed" unless name =~ /\A@?[\w-]+\Z/
+        raise ArgumentError, "The user or group name '#{name}' seems malformed" unless name =~ %r{\A@?[\w-]+\Z}
       end
     end
 
@@ -247,9 +249,7 @@ Puppet::Type.newtype(:cups_queue) do
       }
 
       value.each_key do |key|
-        if properties.key? key
-          raise ArgumentError, "Please use the `cups_queue` property '#{properties[value]}' instead of setting the option '#{value}'."
-        end
+        raise ArgumentError, "Please use the `cups_queue` property '#{properties[value]}' instead of setting the option '#{value}'." if properties.key? key
       end
     end
 

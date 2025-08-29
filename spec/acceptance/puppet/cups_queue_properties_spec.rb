@@ -24,13 +24,13 @@ RSpec.describe 'Custom type `cups_queue`' do
         context 'with policy => allow' do
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure => 'printer',
-              access => {
-                'policy' => 'allow',
-                'users'  => ['nina', 'lumbergh', '@council', 'nina'],
+              cups_queue { '#{name}':
+                ensure => 'printer',
+                access => {
+                  'policy' => 'allow',
+                  'users'  => ['nina', 'lumbergh', '@council', 'nina'],
+                }
               }
-            }
             MANIFEST
           end
 
@@ -46,13 +46,13 @@ RSpec.describe 'Custom type `cups_queue`' do
         context 'with policy => allow and changing users' do
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure => 'printer',
-              access => {
-                'policy' => 'allow',
-                'users'  => ['lumbergh', 'bolton'],
+              cups_queue { '#{name}':
+                ensure => 'printer',
+                access => {
+                  'policy' => 'allow',
+                  'users'  => ['lumbergh', 'bolton'],
+                }
               }
-            }
             MANIFEST
           end
 
@@ -68,13 +68,13 @@ RSpec.describe 'Custom type `cups_queue`' do
         context 'with policy => deny' do
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure => 'printer',
-              access => {
-                'policy' => 'deny',
-                'users'  => ['nina', 'lumbergh', '@council', 'nina'],
+              cups_queue { '#{name}':
+                ensure => 'printer',
+                access => {
+                  'policy' => 'deny',
+                  'users'  => ['nina', 'lumbergh', '@council', 'nina'],
+                }
               }
-            }
             MANIFEST
           end
 
@@ -90,13 +90,13 @@ RSpec.describe 'Custom type `cups_queue`' do
         context 'with policy => deny and changing users' do
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure => 'printer',
-              access => {
-                'policy' => 'deny',
-                'users'  => ['lumbergh', 'bolton'],
+              cups_queue { '#{name}':
+                ensure => 'printer',
+                access => {
+                  'policy' => 'deny',
+                  'users'  => ['lumbergh', 'bolton'],
+                }
               }
-            }
             MANIFEST
           end
 
@@ -112,13 +112,13 @@ RSpec.describe 'Custom type `cups_queue`' do
         context 'when unsetting all restrictions' do
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure => 'printer',
-              access => {
-                'policy' => 'allow',
-                'users'  => ['all'],
+              cups_queue { '#{name}':
+                ensure => 'printer',
+                access => {
+                  'policy' => 'allow',
+                  'users'  => ['all'],
+                }
               }
-            }
             MANIFEST
           end
 
@@ -231,7 +231,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to_not match(/printer-state-reasons=\S*paused\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).not_to match(%r{printer-state-reasons=\S*paused\S*})
           end
 
           it 'is idempotent' do
@@ -242,10 +242,10 @@ RSpec.describe 'Custom type `cups_queue`' do
         context 'when set to false' do
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure  => 'printer',
-              enabled => false
-            }
+              cups_queue { '#{name}':
+                ensure  => 'printer',
+                enabled => false
+              }
             MANIFEST
           end
 
@@ -254,7 +254,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to match(/printer-state-reasons=\S*paused\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to match(%r{printer-state-reasons=\S*paused\S*})
           end
 
           it 'is idempotent' do
@@ -271,10 +271,10 @@ RSpec.describe 'Custom type `cups_queue`' do
         context 'when set to true' do
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure => 'printer',
-              held   => true
-            }
+              cups_queue { '#{name}':
+                ensure => 'printer',
+                held   => true
+              }
             MANIFEST
           end
 
@@ -283,7 +283,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to match(/printer-state-reasons=\S*hold-new-jobs\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to match(%r{printer-state-reasons=\S*hold-new-jobs\S*})
           end
 
           it 'is idempotent' do
@@ -294,10 +294,10 @@ RSpec.describe 'Custom type `cups_queue`' do
         context 'when set to false' do
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure => 'printer',
-              held   => false
-            }
+              cups_queue { '#{name}':
+                ensure => 'printer',
+                held   => false
+              }
             MANIFEST
           end
 
@@ -306,7 +306,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to_not match(/printer-state-reasons=\S*hold-new-jobs\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).not_to match(%r{printer-state-reasons=\S*hold-new-jobs\S*})
           end
 
           it 'is idempotent' do
@@ -322,10 +322,10 @@ RSpec.describe 'Custom type `cups_queue`' do
 
         let(:manifest) do
           <<~MANIFEST
-          cups_queue { '#{name}':
-            ensure   => 'printer',
-            location => 'Room 101'
-          }
+            cups_queue { '#{name}':
+              ensure   => 'printer',
+              location => 'Room 101'
+            }
           MANIFEST
         end
 
@@ -353,14 +353,14 @@ RSpec.describe 'Custom type `cups_queue`' do
 
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure  => 'printer',
-              options => {
-                'auth-info-required'   => 'username,password',
-                'printer-error-policy' => 'stop-printer',
-                'job-sheets-default'   => 'none,none'
+              cups_queue { '#{name}':
+                ensure  => 'printer',
+                options => {
+                  'auth-info-required'   => 'username,password',
+                  'printer-error-policy' => 'stop-printer',
+                  'job-sheets-default'   => 'none,none'
+                }
               }
-            }
             MANIFEST
           end
 
@@ -380,12 +380,12 @@ RSpec.describe 'Custom type `cups_queue`' do
 
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure  => 'printer',
-              options => {
-                'Duplex'   => 'DuplexNoTumble',
+              cups_queue { '#{name}':
+                ensure  => 'printer',
+                options => {
+                  'Duplex'   => 'DuplexNoTumble',
+                }
               }
-            }
             MANIFEST
           end
 
@@ -413,10 +413,10 @@ RSpec.describe 'Custom type `cups_queue`' do
         context 'when set to true' do
           let(:manifest) do
             <<~MANIFEST
-            cups_queue { '#{name}':
-              ensure => 'printer',
-              shared => true
-            }
+              cups_queue { '#{name}':
+                ensure => 'printer',
+                shared => true
+              }
             MANIFEST
           end
 

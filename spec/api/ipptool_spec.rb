@@ -134,8 +134,8 @@ RSpec.describe 'Ipptool' do
           describe 'stdout' do
             it do
               expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
-        EXPECTED: STATUS successful-ok (got client-error-not-found)
-        status-message="No destinations added."
+                EXPECTED: STATUS successful-ok (got client-error-not-found)
+                status-message="No destinations added."
               OUTPUT
 
               expect(@result.stdout).to eq expected
@@ -161,7 +161,7 @@ RSpec.describe 'Ipptool' do
 
             it { expect(@result.stdout).to include 'EXPECTED: STATUS successful-ok (got client-error-not-found)' }
 
-            it { expect(@result.stdout).to_not include 'printer-name' }
+            it { expect(@result.stdout).not_to include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -215,7 +215,7 @@ RSpec.describe 'Ipptool' do
           describe 'stdout' do
             it { expect(@result.stdout).to include '[PASS]' }
 
-            it { expect(@result.stdout).to_not include 'printer-name' }
+            it { expect(@result.stdout).not_to include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -253,8 +253,8 @@ RSpec.describe 'Ipptool' do
           describe 'stdout' do
             it do
               expected = DEBIAN_PWG_RASTER_PATCH ? '' : <<~OUTPUT
-        EXPECTED: STATUS successful-ok (got client-error-not-found)
-        status-message="No destinations added."
+                EXPECTED: STATUS successful-ok (got client-error-not-found)
+                status-message="No destinations added."
               OUTPUT
 
               expect(@result.stdout).to eq expected
@@ -280,7 +280,7 @@ RSpec.describe 'Ipptool' do
 
             it { expect(@result.stdout).to include 'EXPECTED: STATUS successful-ok (got client-error-not-found)' }
 
-            it { expect(@result.stdout).to_not include 'printer-name' }
+            it { expect(@result.stdout).not_to include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -333,7 +333,7 @@ RSpec.describe 'Ipptool' do
           describe 'stdout' do
             it { expect(@result.stdout).to include '[PASS]' }
 
-            it { expect(@result.stdout).to_not include 'printer-name' }
+            it { expect(@result.stdout).not_to include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -398,7 +398,7 @@ RSpec.describe 'Ipptool' do
           describe 'stdout' do
             it { expect(@result.stdout).to include '[PASS]' }
 
-            it { expect(@result.stdout).to_not include 'printer-name' }
+            it { expect(@result.stdout).not_to include 'printer-name' }
           end
 
           describe 'stderr' do
@@ -452,7 +452,7 @@ RSpec.describe 'Ipptool' do
           describe 'stdout' do
             it { expect(@result.stdout).to include '[PASS]' }
 
-            it { expect(@result.stdout).to_not include 'printer-name' }
+            it { expect(@result.stdout).not_to include 'printer-name' }
           end
 
           describe 'stderr' do

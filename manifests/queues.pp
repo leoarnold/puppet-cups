@@ -9,9 +9,7 @@
 # @since 2.0.0
 #
 class cups::queues inherits cups {
-
   contain cups::queues::default
   contain cups::queues::resources
   contain cups::queues::unmanaged
-
 }

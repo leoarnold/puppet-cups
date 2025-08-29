@@ -61,9 +61,9 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         end
 
         let(:resource_hash) do
-          specified.map do |name|
+          specified.to_h do |name|
             [name, cups_queue.new(name: name, ensure: :printer)]
-          end.to_h
+          end
         end
 
         before do
@@ -498,7 +498,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
           let(:desired) { { 'TimeZone' => 'Saturn' } }
 
           it 'fails' do
-            expect { provider.options }.to raise_error(/TimeZone/)
+            expect { provider.options }.to raise_error(%r{TimeZone})
           end
         end
 
@@ -607,7 +607,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         it 'does not raise an error' do
           allow(provider).to receive(:query).with('printer-make-and-model').and_return('Local Raw Printer')
 
-          expect { provider.send(:check_make_and_model) }.to_not raise_error
+          expect { provider.send(:check_make_and_model) }.not_to raise_error
         end
       end
 
@@ -619,7 +619,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
           it 'does not raise an error' do
             allow(provider).to receive(:query).with('printer-make-and-model').and_return('HP DeskJet 550C')
 
-            expect { provider.send(:check_make_and_model) }.to_not raise_error
+            expect { provider.send(:check_make_and_model) }.not_to raise_error
           end
         end
 
@@ -627,7 +627,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
           it 'does not raise an error' do
             allow(provider).to receive(:query).with('printer-make-and-model').and_return('Local Raw Printer')
 
-            expect { provider.send(:check_make_and_model) }.to raise_error(/make_and_model/)
+            expect { provider.send(:check_make_and_model) }.to raise_error(%r{make_and_model})
           end
         end
       end
@@ -641,7 +641,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         it 'fails on unsupported options' do
           allow(provider).to receive(:supported_options_is).and_return(current)
 
-          expect { provider.send(:specified_options_is, desired) }.to raise_error(/TimeZone/)
+          expect { provider.send(:specified_options_is, desired) }.to raise_error(%r{TimeZone})
         end
       end
 
